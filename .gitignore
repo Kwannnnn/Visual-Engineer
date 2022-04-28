@@ -1,0 +1,7 @@
+# OS Generated
+.DS_Store
+
+# IDE Generated
+.idea
+*.iml
+.vscode
