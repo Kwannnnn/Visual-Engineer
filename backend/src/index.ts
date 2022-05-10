@@ -12,7 +12,7 @@ const app: Express = express();
 const PORT: number = parseInt(process.env.PORT as string, 10) || 3000;
 
 // eslint-disable-next-line
-export let orm: MikroORM;
+export let orm: MikroORM; // Use this ORM instance to interact with the database
 
 const setup = async () => {
   orm = await MikroORM.init(config as any);
