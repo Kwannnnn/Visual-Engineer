@@ -1,8 +1,8 @@
 import { Entity, Property } from '@mikro-orm/core';
-import { MechanicalEquipment } from './MechanicalEquipment';
+import MechanicalEquipment from './MechanicalEquipment';
 
 @Entity()
-export class RotatingEquipment extends MechanicalEquipment {
+export default class RotatingEquipment extends MechanicalEquipment {
   @Property()
     preliminaryPower!: number;
 
