@@ -1,6 +1,8 @@
-import { Entity, Property, PrimaryKey } from '@mikro-orm/core';
+import {
+  Property, PrimaryKey, ManyToOne,
+} from '@mikro-orm/core';
+import { Board } from './Board';
 
-@Entity()
 export abstract class Item {
   @PrimaryKey()
     tag!: string;
@@ -19,4 +21,7 @@ export abstract class Item {
 
   @Property({ nullable: false })
     diameter!: number;
+
+  @ManyToOne(() => Board)
+    board!: Board;
 }
