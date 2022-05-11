@@ -2,12 +2,17 @@ declare namespace Prop {
     type ButtonProp = {
         onClick?: () => void;
         className?: string;
-        children?: JSX;
+        children?: any;
     }
 
     type ContainerProp = {
         className?: string;
-        children?: JSX;
+        children?: any;
+    }
+
+    type DBItemProp = {
+        className?: string;
+        properties: { [key: string]: any }[];
     }
 }
 
