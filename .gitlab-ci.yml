@@ -25,7 +25,7 @@ install:
 backend:build:
   stage: build
   script:
-    - cd packages/backend
+    - cd backend
     - npm
   needs:
     - install
