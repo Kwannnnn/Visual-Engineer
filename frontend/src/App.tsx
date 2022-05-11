@@ -2,6 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Button from './components/Button';
+import Container from './components/Container';
 
 function App() {
   return (
@@ -20,6 +21,19 @@ function App() {
           Learn React
         </a>
         <Button>Hi</Button>
+        <Container>
+          <p>Yo</p>
+          <p>Ey</p>
+          <p>Hey</p>
+          <p>One very annoyingly long text that is
+            super stupid to style and to deal with cause why not
+          </p>
+          <p>1234</p>
+          <p>More stuff</p>
+          <p>And even more stuff</p>
+          <p>And the rest of the stuff</p>
+          <p>English is difficult</p>
+        </Container>
       </header>
     </div>
   );
