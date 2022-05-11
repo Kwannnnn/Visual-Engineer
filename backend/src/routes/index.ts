@@ -1,9 +1,2 @@
-import { Router, Request, Response } from 'express';
-
-const router = Router();
-
-router.get('/', (req: Request, res: Response) => {
-  res.send('Visual Engineer API');
-});
-
-export default router;
+export { default as objectsRouter } from './objects.route';
+export { default as indexRouter } from './index.route';
