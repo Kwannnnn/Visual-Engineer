@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Button from './components/Button';
@@ -20,6 +20,13 @@ function App() {
       student: false,
     }
   ];
+  interface DBData {
+    id: string,
+    name: string,
+    age:number,
+    student: boolean,
+  }
+  const [data, setData] = useState<DBData[]>([]);
   return (
     <div className="App">
       <header className="App-header">
@@ -35,9 +42,9 @@ function App() {
         >
           Learn React
         </a>
-        <Button>Hi</Button>
+        <Button onClick={() => { setData(json); }}>TEST</Button>
         <Container>
-          <DBItemContainer properties={json} />
+          <DBItemContainer properties={data} />
         </Container>
       </header>
     </div>
