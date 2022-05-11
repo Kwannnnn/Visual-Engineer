@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { DI } from '../../index';
+// import { Request, Response } from 'express';
+// import { DI } from '../../index';
 
 // export const getAll = async (req: Request, res: Response) => {
 //   const items = await DI.itemRepository.findAll();
