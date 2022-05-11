@@ -1,5 +1,5 @@
-import { MechanicalEquipment } from './MechanicalEquipment';
+import MechanicalEquipment from './MechanicalEquipment';
 
-export abstract class StaticEquipment extends MechanicalEquipment {
+export default class StaticEquipment extends MechanicalEquipment {
 
 }

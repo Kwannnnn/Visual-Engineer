@@ -3,7 +3,7 @@ import {
 } from '@mikro-orm/core';
 import { Board } from './Board';
 
-export abstract class Item {
+export default abstract class Item {
   @PrimaryKey()
     tag!: string;
 

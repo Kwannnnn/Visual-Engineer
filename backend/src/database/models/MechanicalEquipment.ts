@@ -1,7 +1,7 @@
 import { Property } from '@mikro-orm/core';
-import { Item } from './Item';
+import Item from './Item';
 
-export abstract class MechanicalEquipment extends Item {
+export default abstract class MechanicalEquipment extends Item {
   @Property({ nullable: false })
     emptyMass!: number;
 
