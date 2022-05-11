@@ -3,27 +3,34 @@ import cors from 'cors';
 import winston from 'winston';
 import expressWinston from 'express-winston';
 import debug from 'debug';
-import { MikroORM, RequestContext } from '@mikro-orm/core';
-import indexRouter from './routes/index';
+import { EntityRepository, MikroORM, RequestContext } from '@mikro-orm/core';
+import { indexRouter, objectsRouter } from './routes';
 import 'dotenv/config';
 import config from './mikro-orm.config';
+import { Item } from './database/models/Item';
 
+const dbg: debug.Debugger = debug('http');
 const app: Express = express();
 const PORT: number = parseInt(process.env.PORT as string, 10) || 3000;
 
 // eslint-disable-next-line
-export let orm: MikroORM; // Use this ORM instance to interact with the database
+export const DI = {} as {
+  orm: MikroORM,
+  itemRepository: EntityRepository<Item>,
+}; // Use this ORM instance to interact with the database
 
-const setup = async () => {
-  orm = await MikroORM.init(config as any);
-  const dbg = debug('http');
+export const setup = (async () => {
+  DI.orm = await MikroORM.init(config as any);
+  DI.itemRepository = DI.orm.em.getRepository(Item);
 
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.use((req, res, next) => {
-    RequestContext.create(orm.em, next);
-  });
+  app.use((req, res, next) => RequestContext.create(DI.orm.em, next));
+
+  // Routes
+  app.use('/', indexRouter);
+  app.use('/api/v1/objects', objectsRouter);
 
   app.use(expressWinston.logger({
     transports: [
@@ -39,12 +46,7 @@ const setup = async () => {
     // colorize: true,
   }));
 
-  // Routes
-  app.use('/', indexRouter);
-
   app.listen(PORT, () => {
     dbg(`Server is listening at on port ${PORT}`);
   });
-};
-
-setup();
+})();
