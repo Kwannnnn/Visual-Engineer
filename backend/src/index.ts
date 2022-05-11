@@ -16,12 +16,12 @@ const PORT: number = parseInt(process.env.PORT as string, 10) || 3000;
 // eslint-disable-next-line
 export const DI = {} as {
   orm: MikroORM,
-  itemRepository: EntityRepository<Item>,
+  // itemRepository: EntityRepository<Item>,
 }; // Use this ORM instance to interact with the database
 
 export const setup = (async () => {
   DI.orm = await MikroORM.init(config as any);
-  DI.itemRepository = DI.orm.em.getRepository(Item);
+  // DI.itemRepository = DI.orm.em.getRepository(Item);
 
   app.use(cors());
   app.use(express.json());
@@ -30,7 +30,9 @@ export const setup = (async () => {
 
   // Routes
   app.use('/', indexRouter);
-  app.use('/api/v1/objects', objectsRouter);
+
+  // FIXME
+  // app.use('/api/v1/objects', objectsRouter); 
 
   app.use(expressWinston.logger({
     transports: [
