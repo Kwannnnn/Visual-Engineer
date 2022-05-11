@@ -4,6 +4,7 @@ import winston from 'winston';
 import expressWinston from 'express-winston';
 import debug from 'debug';
 import { EntityRepository, MikroORM, RequestContext } from '@mikro-orm/core';
+import { Server } from 'http';
 import { indexRouter, objectsRouter } from './routes';
 import 'dotenv/config';
 import config from './mikro-orm.config';
@@ -18,6 +19,9 @@ export const DI = {} as {
   orm: MikroORM,
   itemRepository: EntityRepository<Item>,
 }; // Use this ORM instance to interact with the database
+
+// eslint-disable-next-line import/no-mutable-exports
+export let server: Server;
 
 export const setup = (async () => {
   DI.orm = await MikroORM.init(config as any);
@@ -46,7 +50,9 @@ export const setup = (async () => {
     // colorize: true,
   }));
 
-  app.listen(PORT, () => {
+  server = app.listen(PORT, () => {
     dbg(`Server is listening at on port ${PORT}`);
   });
+
+  return app;
 })();

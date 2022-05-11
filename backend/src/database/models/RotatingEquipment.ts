@@ -3,10 +3,9 @@ import { MechanicalEquipment } from './MechanicalEquipment';
 
 @Entity()
 export class RotatingEquipment extends MechanicalEquipment {
-    @Property()
+  @Property()
     preliminaryPower!: number;
 
-    @Property()
+  @Property()
     finalPower!: number;
 }
- 
