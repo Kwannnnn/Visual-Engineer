@@ -1,0 +1,48 @@
+image: node
+
+stages:
+  - install
+  - build
+  - lint
+  - test
+
+cache:
+  paths:
+    - backend/node_modules/
+    - frontend/node_modules/
+  when: on_success
+
+install:
+  stage: install
+  script:
+    - cd backend
+    - npm ci
+    - cd ../frontend
+    - npm ci
+
+# Backend
+
+backend:build:
+  stage: build
+  script:
+    - cd packages/backend
+    - npm
+  needs:
+    - install
+
+backend:lint:
+  stage: lint
+  only:
+    changes:
+      - backend/**/*
+  needs:
+    - install
+  script:
+    - cd backend
+    - npm run lint
+
+sast:
+  stage: test
+  needs: []
+include:
+  - template: Security/SAST.gitlab-ci.yml
