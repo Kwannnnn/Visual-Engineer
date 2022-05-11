@@ -26,7 +26,7 @@ backend:build:
   stage: build
   script:
     - cd backend
-    - npm
+    - npm run build
   needs:
     - install
 
@@ -40,6 +40,16 @@ backend:lint:
   script:
     - cd backend
     - npm run lint
+
+# Frontend
+frontend:build:
+
+  stage: build
+  script:
+    - cd frontend
+    - npm run build
+  needs:
+    - install
 
 sast:
   stage: test
