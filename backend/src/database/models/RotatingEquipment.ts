@@ -1,11 +1,10 @@
 import { Property } from '@mikro-orm/core';
-import { MechanicalEquipment } from './MechanicalEquipment';
+import MechanicalEquipment from './MechanicalEquipment';
 
-export abstract class RotatingEquipment extends MechanicalEquipment {
-    @Property()
+export default abstract class RotatingEquipment extends MechanicalEquipment {
+  @Property()
     preliminaryPower!: number;
 
-    @Property()
+  @Property()
     finalPower!: number;
 }
- 
