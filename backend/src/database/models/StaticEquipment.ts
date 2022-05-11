@@ -1,7 +1,5 @@
-import { Entity } from '@mikro-orm/core';
 import { MechanicalEquipment } from './MechanicalEquipment';
 
-@Entity()
-export class StaticEquipment extends MechanicalEquipment {
+export abstract class StaticEquipment extends MechanicalEquipment {
 
 }
