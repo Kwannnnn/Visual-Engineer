@@ -1,7 +1,7 @@
 import { Entity, Property, PrimaryKey } from '@mikro-orm/core';
 
 @Entity()
-export abstract class Item {
+export default abstract class Item {
   @PrimaryKey()
     tag!: string;
 

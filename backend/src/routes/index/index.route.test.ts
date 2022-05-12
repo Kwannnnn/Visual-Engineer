@@ -1,6 +1,7 @@
 import { Server } from 'http';
 import request from 'supertest';
-import { server, setup, DI } from '../../index';
+import { server, setup } from '../../index';
+import DI from '../../DI';
 
 let app: Server;
 

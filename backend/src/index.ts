@@ -3,22 +3,17 @@ import cors from 'cors';
 import winston from 'winston';
 import expressWinston from 'express-winston';
 import debug from 'debug';
-import { EntityRepository, MikroORM, RequestContext } from '@mikro-orm/core';
 import { Server } from 'http';
+import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { indexRouter, objectsRouter } from './routes';
 import 'dotenv/config';
 import config from './mikro-orm.config';
-import { Item } from './database/models/Item';
+import { Item } from './database/models';
+import DI from './DI';
 
 const dbg: debug.Debugger = debug('http');
 const app: Express = express();
 const PORT: number = parseInt(process.env.PORT as string, 10) || 3000;
-
-// eslint-disable-next-line
-export const DI = {} as {
-  orm: MikroORM,
-  itemRepository: EntityRepository<Item>,
-}; // Use this ORM instance to interact with the database
 
 // eslint-disable-next-line import/no-mutable-exports
 export let server: Server;
