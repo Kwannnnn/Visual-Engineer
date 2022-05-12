@@ -52,8 +52,6 @@ backend:test:
   script:
     - cd backend
     - docker-compose -f test.docker-compose.yml up --build --exit-code-from backend
-  needs:
-    - install
 
 # Frontend
 frontend:build:
