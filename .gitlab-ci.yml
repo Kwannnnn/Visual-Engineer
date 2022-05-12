@@ -51,7 +51,7 @@ backend:test:
     DOCKER_DRIVER: overlay2
   script:
     - cd backend
-    - npm run ci:integration
+    - docker-compose -f test.docker-compose.yml up --build --exit-code-from backend
   needs:
     - install
 
