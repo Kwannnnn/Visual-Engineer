@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  postgres:
+    image: 'postgres:latest'
+    container_name: ve-dev-db
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+  backend:
+    image: registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/dhi2ve1/backend:latest
+    container_name: ve-dev-backend
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: ["./wait-for.sh", "postgres:5432", "--", "npm", "test"]
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASS}@postgres:5432/${DB_NAME}
