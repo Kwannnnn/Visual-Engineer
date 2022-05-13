@@ -1,9 +1,9 @@
 import { EntityRepository, MikroORM } from '@mikro-orm/core';
-import { Item } from './database/models';
+import { PipeFitting } from './database/models';
 
 const DI = {} as {
-  orm: MikroORM,
-  itemRepository: EntityRepository<Item>,
+  orm: MikroORM;
+  itemRepository: EntityRepository<PipeFitting>;
 }; // Use this ORM instance to interact with the database
 
 export default DI;

@@ -1,8 +1,7 @@
-import { Entity, Property } from '@mikro-orm/core';
+import { Property } from '@mikro-orm/core';
 import Item from './Item';
 
-@Entity()
-export default class MechanicalEquipment extends Item {
+export default abstract class MechanicalEquipment extends Item {
   @Property({ nullable: false })
     emptyMass!: number;
 

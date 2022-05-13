@@ -1,6 +1,7 @@
-import { Entity, Property, PrimaryKey } from '@mikro-orm/core';
+import { Property, PrimaryKey, ManyToOne } from '@mikro-orm/core';
+// eslint-disable-next-line import/no-cycle
+import Board from './Board';
 
-@Entity()
 export default abstract class Item {
   @PrimaryKey()
     tag!: string;
@@ -19,4 +20,7 @@ export default abstract class Item {
 
   @Property({ nullable: false })
     diameter!: number;
+
+  @ManyToOne(() => Board)
+    board!: Board;
 }

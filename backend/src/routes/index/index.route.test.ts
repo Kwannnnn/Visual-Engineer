@@ -10,9 +10,12 @@ beforeEach(async () => {
   app = server;
 });
 
-afterEach(() => {
-  app.close();
-  DI.orm.close();
+afterEach((done) => {
+  app.close(done);
+});
+
+afterEach(async () => {
+  await DI.orm.close();
 });
 
 describe('GET /', () => {
