@@ -44,7 +44,21 @@ backend:lint:
   script:
     - cd backend
     - npm run lint
-    
+
+backend:apidoc:
+  stage: build
+  only:
+    changes:
+      - backend/**/*
+  needs:
+    - install
+  script:
+    - cd backend
+    - npm run apidoc
+  artifacts:
+    paths:
+      - backend/dist/docs/apidoc/
+
 backend:integration:
   stage: test
   only:
