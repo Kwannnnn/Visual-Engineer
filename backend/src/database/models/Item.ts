@@ -1,7 +1,6 @@
 import {
-  Entity, Property, PrimaryKey, ManyToOne,
+  Property, PrimaryKey, ManyToOne, Entity,
 } from '@mikro-orm/core';
-// eslint-disable-next-line
 import Board from './Board';
 
 @Entity({

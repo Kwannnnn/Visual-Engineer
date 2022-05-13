@@ -14,6 +14,7 @@ async function setup() {
   DI.orm = await MikroORM.init(config as any);
   DI.itemRepository = DI.orm.em.getRepository(Item);
   DI.boardRepository = DI.orm.em.getRepository(Board);
+  DI.em = DI.orm.em;
 
   app.use(cors());
   app.use(express.json());

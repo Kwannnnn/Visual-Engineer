@@ -1,9 +1,9 @@
-import { EntityRepository, MikroORM } from '@mikro-orm/core';
-import { Item } from './database/models';
-import Board from './database/models/Board';
+import { EntityRepository, MikroORM, EntityManager } from '@mikro-orm/core';
+import { Item, Board } from './database/models';
 
 const DI = {} as {
   orm: MikroORM,
+  em: EntityManager,
   itemRepository: EntityRepository<Item>,
   boardRepository: EntityRepository<Board>
 }; // Use this ORM instance to interact with the database

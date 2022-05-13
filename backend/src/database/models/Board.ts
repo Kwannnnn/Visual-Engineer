@@ -1,7 +1,6 @@
 import {
-  Entity, Property, PrimaryKey, OneToMany, Collection,
+  Entity, Property, PrimaryKey, OneToMany, Collection
 } from '@mikro-orm/core';
-// eslint-disable-next-line
 import Item from './Item';
 
 @Entity()
