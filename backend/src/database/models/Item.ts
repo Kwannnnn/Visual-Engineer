@@ -1,9 +1,10 @@
 import {
-  Property, PrimaryKey, ManyToOne,
+  Property, PrimaryKey, ManyToOne, Entity,
 } from '@mikro-orm/core';
 import { Board } from './Board';
 
-export abstract class Item {
+@Entity()
+export class Item {
   @PrimaryKey()
     tag!: string;
 
