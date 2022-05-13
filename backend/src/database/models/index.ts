@@ -9,3 +9,4 @@ export { default as RotatingEquipment } from './RotatingEquipment';
 export { default as StaticEquipment } from './StaticEquipment';
 export { default as Tank } from './Tank';
 export { default as Vessel } from './Vessel';
+export { default as Board } from './Board';
