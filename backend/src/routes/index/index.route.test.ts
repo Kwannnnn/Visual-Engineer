@@ -3,19 +3,18 @@ import request from 'supertest';
 import { server, setup } from '../../index';
 import DI from '../../DI';
 
-let app: Server;
+let httpServer: Server;
+let app: Express.Application;
 
 beforeEach(async () => {
-  await setup;
-  app = server;
+  app = await setup;
+  httpServer = server;
 });
 
 afterEach((done) => {
-  app.close(done);
-});
-
-afterEach(async () => {
-  await DI.orm.close();
+  DI.orm.close().then(() => {
+    httpServer.close(() => done());
+  });
 });
 
 describe('GET /', () => {
