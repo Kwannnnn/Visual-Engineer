@@ -28,9 +28,7 @@ export const setup = (async () => {
 
   // Routes
   app.use('/', indexRouter);
-
-  // FIXME
-  // app.use('/api/v1/objects', objectsRouter);
+  app.use('/api/v1/objects', objectsRouter);
 
   app.use(expressWinston.logger({
     transports: [

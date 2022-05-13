@@ -1,7 +1,7 @@
 import {
   Property, PrimaryKey, ManyToOne,
 } from '@mikro-orm/core';
-import { Board } from './Board';
+import Board from './Board';
 
 export default abstract class Item {
   @PrimaryKey()

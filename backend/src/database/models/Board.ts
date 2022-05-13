@@ -1,10 +1,10 @@
 import {
   Entity, Property, PrimaryKey, OneToMany, Collection,
 } from '@mikro-orm/core';
-import { Item } from './Item';
+import Item from './Item';
 
 @Entity()
-export class Board {
+export default class Board {
   @PrimaryKey({ autoincrement: true })
     id!: number;
 
