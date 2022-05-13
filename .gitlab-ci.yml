@@ -43,9 +43,12 @@ backend:lint:
   script:
     - cd backend
     - npm run lint
-
-backend:test:
+    
+backend:integration:
   stage: test
+  only:
+    changes:
+      - backend/**/*
   image: docker/compose:1.29.2
   services:
     - docker:dind
@@ -61,11 +64,27 @@ backend:test:
 
 frontend:build:
   stage: build
+  only:
+    changes:
+      - frontend/**/*
   script:
     - cd frontend
     - npm run build
   needs:
     - install
+
+frontend:cypress:
+  image: cypress/browsers:node16.13.2-chrome97-ff96
+  stage: test
+  only:
+    changes:
+      - frontend/**/*
+  needs:
+    - install
+  script:
+    - cd frontend
+    - npx cypress install
+    - npm run test:cypress
 
 sast:
   stage: test
