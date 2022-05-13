@@ -11,11 +11,22 @@ services:
   backend:
     image: registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/dhi2ve1/backend-test:latest
     container_name: ve-test-backend
-    build: 
+    build:
       context: .
       dockerfile: test.Dockerfile
-    command: ["./wait-for.sh", "postgres:5432", "--", "npm", "test"]
+    command:
+      [
+        "./wait-for.sh",
+        "postgres:5432",
+        "--",
+        "npm",
+        "run",
+        "ci:test"
+      ]
     depends_on:
       - postgres
     environment:
       - DATABASE_URL=postgres://ve-test:ve-test@postgres:5432/ve-test
+      - JEST_JUNIT_OUTPUT_DIR=/tmp/jest
+    volumes:
+      - ./dist/jest:/tmp/jest

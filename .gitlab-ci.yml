@@ -59,6 +59,11 @@ backend:integration:
     - cd backend
     - docker-compose -f test.docker-compose.yml up --build --exit-code-from backend
   needs: []
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - backend/dist/jest/junit.xml
 
 # Frontend
 
