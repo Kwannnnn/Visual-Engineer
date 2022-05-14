@@ -2,10 +2,12 @@ declare namespace Prop {
     type ButtonProp = {
         onClick?: () => void;
         className?: string;
+        id: string;
         children?: any;
     }
 
     type ContainerProp = {
+        id: string;
         className?: string;
         children?: any;
     }

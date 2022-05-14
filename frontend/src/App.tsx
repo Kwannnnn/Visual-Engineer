@@ -39,8 +39,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Button onClick={() => setData(json)}>Read Data</Button>
-        <Container>
+        <Button id="test-button" onClick={() => setData(json)}>Read Data</Button>
+        <Container id="test-container">
           <DBItemContainer properties={data} />
         </Container>
       </header>
