@@ -49,6 +49,10 @@ Two Dockerfiles have been written, one for the [backend itself](./backend/Docker
 
 The main backend docker image can be locally built using `npm run docker:build`, and then launched using `npm run docker:run`.
 
+### SonarQube
+
+Our current SonarQube server is located [here](https://sonarqube.philipposslicher.tech:8443/). Use the credentials found in our Discord server to authenticate.
+
 ## Frontend
 
 For the available frontend scripts, see the accompanying [README](./frontend/README.md) file.
