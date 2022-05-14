@@ -4,7 +4,7 @@ import winston from 'winston';
 import expressWinston from 'express-winston';
 import debug from 'debug';
 import { EntityRepository, MikroORM, RequestContext } from '@mikro-orm/core';
-import { indexRouter, objectsRouter } from './routes';
+import { boardRouter, indexRouter } from './routes';
 import 'dotenv/config';
 import config from './mikro-orm.config';
 import { Item } from './database/models/Item';
@@ -33,6 +33,7 @@ export const setup = (async () => {
 
   // Routes
   app.use('/', indexRouter);
+  app.use('/api/v1/boards', boardRouter);
 
   // FIXME
   // app.use('/api/v1/objects', objectsRouter); 
