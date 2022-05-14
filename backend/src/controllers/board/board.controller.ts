@@ -6,3 +6,23 @@ export const getAll = async (req:Request, res: Response) => {
 
   res.send(boards);
 };
+
+export const getById = async (req: Request, res: Response) => {
+    const id: number = +req.params.id;
+
+    try {
+        const board = await DI.boardRepository.findOne({ id });
+
+        if (!board) {
+            return res.status(404).json({
+                message: 'Board not found',
+            });
+        }
+
+        return res.json(board);
+    } catch (e: any) {
+        return res.status(400).json({
+            message: e.message,
+        })
+    }
+}
