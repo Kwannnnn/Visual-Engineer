@@ -5,44 +5,41 @@ import Button from './components/Button';
 import Container from './components/Container';
 import DBItemContainer from './components/DBItemContainer';
 
+interface Item {
+  Tag: string,
+  DescriptiveName: string,
+  Length: number,
+  Width: number,
+  Depth: number,
+  Diameter: number,
+}
+
 function App() {
+  const [data, setData] = useState<Item[]>([]);
+
   const json = [
     {
-      id: 'a',
-      name: 'bob',
-      age: 22,
-      student: true,
+      Tag: '#583FA293D3',
+      DescriptiveName: 'Cleaner',
+      Length: 2.52,
+      Width: 2.35,
+      Depth: 1.47,
+      Diameter: 1.79,
     },
     {
-      id: 'b',
-      name: 'jack',
-      age: 19,
-      student: false,
+      Tag: '#7A52B98F2C',
+      DescriptiveName: 'Heater',
+      Length: 0.83,
+      Width: 1.2,
+      Depth: 0.53,
+      Diameter: 1.35,
     }
   ];
-  interface DBData {
-    id: string,
-    name: string,
-    age:number,
-    student: boolean,
-  }
-  const [data, setData] = useState<DBData[]>([]);
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p className="text-red-600">
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <Button onClick={() => { setData(json); }}>TEST</Button>
+        <Button onClick={() => setData(json)}>Read Data</Button>
         <Container>
           <DBItemContainer properties={data} />
         </Container>
