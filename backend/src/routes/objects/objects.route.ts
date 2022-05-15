@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { objectController } from '../../controllers';
 
-const router: Router = Router();
+const objectsRouter: Router = Router();
 
 /**
  * @api {get} /api/v1/objects Get all objects
@@ -32,7 +32,7 @@ const router: Router = Router();
  *       }
  *     ]
  */
-router.get('/', objectController.getAll);
+objectsRouter.get('/', objectController.getAll);
 
 /**
  * @api {get} /api/v1/objects/:tag Get a specific object by its identifier
@@ -61,6 +61,6 @@ router.get('/', objectController.getAll);
  *       "message": "Item not found"
  *     }
  */
-router.get('/:tag', objectController.getByTag);
+objectsRouter.get('/:tag', objectController.getByTag);
 
-export default router;
+export default objectsRouter;

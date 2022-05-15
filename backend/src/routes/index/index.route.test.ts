@@ -1,20 +1,15 @@
-import { Server } from 'http';
 import request from 'supertest';
-import { server, setup } from '../../index';
+import setup from '../../index';
 import DI from '../../DI';
 
-let httpServer: Server;
 let app: Express.Application;
 
 beforeEach(async () => {
-  app = await setup;
-  httpServer = server;
+  app = await setup();
 });
 
-afterEach((done) => {
-  DI.orm.close().then(() => {
-    httpServer.close(() => done());
-  });
+afterEach(() => {
+  DI.orm.close();
 });
 
 describe('GET /', () => {
