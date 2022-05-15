@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import cors from 'cors';
 import { MikroORM, RequestContext } from '@mikro-orm/core';
-import { PipeFitting } from './database/models';
+import { Item } from './database/models';
 import { indexRouter, objectsRouter } from './routes';
 import 'dotenv/config';
 import config from './mikro-orm.config';
@@ -11,7 +11,7 @@ const app: Express = express();
 
 async function setup() {
   DI.orm = await MikroORM.init(config as any);
-  DI.itemRepository = DI.orm.em.getRepository(PipeFitting);
+  DI.itemRepository = DI.orm.em.getRepository(Item);
 
   app.use(cors());
   app.use(express.json());
