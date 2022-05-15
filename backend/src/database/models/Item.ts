@@ -44,6 +44,6 @@ export default abstract class Item {
     diameter!: number;
 
   // FIXME
-  @ManyToOne(() => Board)
+  @ManyToOne('Board')
     board!: Board;
 }
