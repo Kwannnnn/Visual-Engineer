@@ -1,9 +1,7 @@
 import request from 'supertest';
-// import { Server } from 'http';
 import setup from '../../index';
 import DI from '../../DI';
 
-// let httpServer: Server;
 let app: Express.Application;
 
 beforeEach(async () => {
