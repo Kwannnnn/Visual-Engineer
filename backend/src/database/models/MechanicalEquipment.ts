@@ -1,19 +1,41 @@
-import { Property } from '@mikro-orm/core';
-import { Item } from './Item';
+import { Entity, Property } from '@mikro-orm/core';
+import Item from './Item';
 
-export abstract class MechanicalEquipment extends Item {
-  @Property({ nullable: false })
-    emptyMass!: number;
+@Entity({ discriminatorValue: 'mechanicalEquipment' })
+export default abstract class MechanicalEquipment extends Item {
+  constructor(
+    tag: string,
+    name: string,
+    length: number,
+    width: number,
+    depth: number,
+    diameter: number,
+    emptyMass: number,
+    head: number,
+    filledMass: number,
+    netVolume: number,
+    grossVolume: number,
+  ) {
+    super(tag, name, length, width, depth, diameter);
+    this.emptyMass = emptyMass;
+    this.head = head;
+    this.filledMass = filledMass;
+    this.netVolume = netVolume;
+    this.grossVolume = grossVolume;
+  }
 
-  @Property({ nullable: false })
-    head!: number;
+  @Property()
+    emptyMass?: number;
 
-  @Property({ nullable: false })
-    filledMass!: number;
+  @Property()
+    head?: number;
 
-  @Property({ nullable: false })
-    netVolume!: number;
+  @Property()
+    filledMass?: number;
 
-  @Property({ nullable: false })
-    grossVolume!: number;
+  @Property()
+    netVolume?: number;
+
+  @Property()
+    grossVolume?: number;
 }

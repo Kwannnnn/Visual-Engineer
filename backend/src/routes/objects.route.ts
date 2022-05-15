@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { objectController } from '../controllers';
 
-// const router: Router = Router();
+const objectsRouter: Router = Router();
 
-// // Get all objects
-// router.get('/', objectController.getAll);
+// Get all objects
+objectsRouter.get('/', objectController.getAll);
 
-// // Get an object by ID
-// router.get('/:tag', objectController.getByTag);
+// Get an object by ID
+objectsRouter.get('/:tag', objectController.getByTag);
 
-// export default router;
+export default objectsRouter;

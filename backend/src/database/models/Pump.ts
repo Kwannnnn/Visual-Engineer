@@ -1,7 +1,7 @@
 import { Entity } from '@mikro-orm/core';
-import { RotatingEquipment } from './RotatingEquipment';
+import RotatingEquipment from './RotatingEquipment';
 
-@Entity()
-export class Pump extends RotatingEquipment {
+@Entity({ discriminatorValue: 'pump' })
+export default class Pump extends RotatingEquipment {
 
 }
