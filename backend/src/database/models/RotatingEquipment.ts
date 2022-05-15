@@ -1,9 +1,9 @@
 import { Entity, Property } from '@mikro-orm/core';
 import MechanicalEquipment from './MechanicalEquipment';
 
-@Entity({ 
+@Entity({
   discriminatorValue: 'rotatingEquipment',
-  abstract: true
+  abstract: true,
 })
 export default abstract class RotatingEquipment extends MechanicalEquipment {
   constructor(

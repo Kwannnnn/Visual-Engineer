@@ -2,9 +2,9 @@ import { Entity, Enum } from '@mikro-orm/core';
 import PressureClass from './PressureClass.enum';
 import Item from './Item';
 
-@Entity({ 
+@Entity({
   discriminatorValue: 'pipeItem',
-  abstract: true
+  abstract: true,
 })
 export default abstract class PipeItem extends Item {
   constructor(
