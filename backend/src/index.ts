@@ -2,7 +2,7 @@ import express, { Express } from 'express';
 import cors from 'cors';
 import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { Item } from './database/models';
-import { indexRouter, objectsRouter } from './routes';
+import { indexRouter, objectsRouter, boardRouter } from './routes';
 import 'dotenv/config';
 import config from './mikro-orm.config';
 import DI from './DI';
@@ -21,6 +21,7 @@ async function setup() {
   // Routes
   app.use('/', indexRouter);
   app.use('/api/v1/objects', objectsRouter);
+  app.use('/api/v1/boards', boardRouter);
 
   return app;
 }
