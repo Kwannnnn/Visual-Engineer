@@ -1,19 +1,19 @@
-import { response } from 'express';
-import { Server } from 'http';
 import request from 'supertest';
-import { server, setup, DI } from '../index';
+// import { Server } from 'http';
+import setup from '../index';
+import DI from '../DI';
 
-let app: Server;
+// let httpServer: Server;
+let app: Express.Application;
 
 beforeEach(async () => {
-  await setup;
-  app = server;
+  app = await setup();
 });
 
 afterEach(() => {
-  app.close();
   DI.orm.close();
 });
+
 
 describe('GET Board endpoints', () => {
   describe('GET api/v1/boards', () => {
