@@ -1,9 +1,9 @@
 version: '3'
 
 services:
-  db_local:
+  postgres:
     image: 'postgres:latest'
-    container_name: hbo-ict-db
+    container_name: ve-dev-db
     ports:
       - 5434:5432
     environment:
