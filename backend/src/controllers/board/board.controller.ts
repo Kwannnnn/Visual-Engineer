@@ -62,7 +62,7 @@ export const postBoard = async (req: Request, res: Response) => {
         const board = DI.em.create(Board, req.body);
         await DI.boardRepository.persist(board).flush();
 
-        return res.json(board);
+        return res.status(201).json(board);
     } catch (e: any) {
         return res.status(400).json({
             message: e.message,
@@ -96,6 +96,7 @@ export const postItemToBoard = async (req: Request, res: Response) => {
         board.items.add(item)
         await DI.em.flush();
 
+        res.status(201)
         return res.json(board);
     } catch (e: any) {
         return res.status(400).json({
