@@ -1,5 +1,5 @@
 import {
-  Entity, Property, PrimaryKey, OneToMany, Collection
+  Entity, Property, PrimaryKey, OneToMany, Collection,
 } from '@mikro-orm/core';
 import Item from './Item';
 

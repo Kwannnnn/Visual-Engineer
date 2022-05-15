@@ -12,7 +12,6 @@ afterEach(() => {
   DI.orm.close();
 });
 
-
 describe('GET Board endpoints', () => {
   describe('GET api/v1/boards', () => {
     test('should return all boards', async () => {
@@ -30,7 +29,7 @@ describe('GET Board endpoints', () => {
 
     test('should return 404 when a board with id does not exist', async () => {
       const response = await request(app).get('/api/v1/boards/6969');
-      
+
       expect(response.statusCode).toEqual(404);
     });
   });
@@ -42,7 +41,7 @@ describe('POST Board endpoints', () => {
       const response = await request(app)
         .post('/api/v1/boards')
         .send({
-          name: 'new board'
+          name: 'new board',
         });
 
       expect(response.statusCode).toEqual(201);
@@ -52,24 +51,23 @@ describe('POST Board endpoints', () => {
       const response = await request(app)
         .post('/api/v1/boards')
         .send({});
-        
+
       expect(response.statusCode).toEqual(400);
     });
   });
 
-  //TODO: the tests below are not finished
+  // TODO: the tests below are not finished
   describe('POST api/v1/boards/:id/items', () => {
     test('should return the posted board', async () => {
-
       // first post a board
-      const firstResponse = await request(app)
-        .post('/api/v1/boards')
-        .send({
-          name: 'new board'
-        });
+      // const firstResponse = await request(app)
+      //   .post('/api/v1/boards')
+      //   .send({
+      //     name: 'new board',
+      //   });
 
       // get id of the new board
-      const id: number = firstResponse.body.id;
+      // const { id } = firstResponse.body;
 
       // const response = await request(app)
       //   .post(`/api/v1/boards/${id}/items`)
@@ -100,4 +98,4 @@ describe('POST Board endpoints', () => {
       expect(true);
     });
   });
-})
+});
