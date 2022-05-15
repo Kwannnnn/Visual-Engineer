@@ -12,7 +12,7 @@ export const getByTag = async (req: Request, res: Response) => {
   try {
     const item = await DI.itemRepository.findOne({ tag });
 
-    if (item === undefined) {
+    if (!item) {
       return res.status(404).json({
         message: 'Item not found',
       });
