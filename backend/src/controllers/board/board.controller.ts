@@ -9,32 +9,34 @@ export const getAll = async (req:Request, res: Response) => {
 };
 
 export const getById = async (req: Request, res: Response) => {
-    const id: number = +req.params.id;
+  const id: number = +req.params.id;
 
-    try {
-        const board = await DI.boardRepository.findOne({ id });
+  try {
+      const board = await DI.boardRepository.findOne(id);
+      console.log(board);
 
-        if (!board) {
-            return res.status(404).json({
-                message: 'Board not found',
-            });
-        }
+      if (!board) {
+          return res.status(404).json({
+              message: 'Board not found',
+          });
+      }
 
-        return res.json(board);
-    } catch (e: any) {
-        return res.status(400).json({
-            message: e.message,
-        })
-    }
+      return res.json(board);
+  } catch (e: any) {
+      return res.status(400).json({
+          message: e.message,
+      });
+  }
 };
 
 export const deleteItemfromBoard = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { string: tag } = req.params;  
+  const id: number = +req.params.id; 
+  const { string: tag } = req.params; 
+
   try {
     // find the board
-    const board = await DI.boardRepository.findOne({ id: parseInt(id)});
-    
+    const board = await DI.boardRepository.findOne( id ); 
+
     if (!board) {
       return res.status(404).json({
           message: 'Board not found',
@@ -51,7 +53,7 @@ export const deleteItemfromBoard = async (req: Request, res: Response) => {
     }
     
     board.items.remove(item);
-    return res.send(item);
+    res.status(201);
 
   } catch (e: any) {
     return res.status(400).json({
@@ -61,15 +63,22 @@ export const deleteItemfromBoard = async (req: Request, res: Response) => {
 };
 
 export const deleteBoard = async (req: Request, res: Response) => {
-  const { id } =  req.params;
+  const id: number = +req.params.id;
 
   try{
     // find the board
-    const board = await DI.boardRepository.find({ id: parseInt(id) });
+    const board = await DI.boardRepository.findOne( id );
 
-    DI.boardRepository.remove({ id });
 
-    return res.send(board);
+    if (!board) {
+      return res.status(404).json({
+          message: 'Board not found',
+      });
+    }
+
+    DI.boardRepository.remove(board);
+
+    res.status(201);
     
   } catch (e: any) {
     return res.status(400).json({
