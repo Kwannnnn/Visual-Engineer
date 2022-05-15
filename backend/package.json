@@ -14,7 +14,7 @@
     "build": "npx tsc",
     "prod": "DEBUG=http node dist/index.js",
     "start": "npm run build && cross-env DEBUG=http PORT=3000 npm run prod",
-    "dev": "concurrently \"npx tsc --watch\" \"cross-env DEBUG=http PORT=3000 nodemon -q dist/index.js\"",
+    "dev": "concurrently \"npx tsc --watch\" \"cross-env DEBUG=http PORT=3000 nodemon -q dist/server.js\"",
     "lint": "npx eslint src --ext .ts",
     "lint:fix": "npx eslint src --ext .ts --fix",
     "apidoc": "npx apidoc -i src/routes/ -o dist/docs/apidoc/",

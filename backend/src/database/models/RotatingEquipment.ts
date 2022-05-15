@@ -1,10 +1,32 @@
-import { Property } from '@mikro-orm/core';
+import { Entity, Property } from '@mikro-orm/core';
 import MechanicalEquipment from './MechanicalEquipment';
 
+@Entity({ discriminatorValue: 'rotatingEquipment' })
 export default abstract class RotatingEquipment extends MechanicalEquipment {
-  @Property()
-    preliminaryPower!: number;
+  constructor(
+    tag: string,
+    name: string,
+    length: number,
+    width: number,
+    depth: number,
+    diameter: number,
+    emptyMass: number,
+    head: number,
+    filledMass: number,
+    netVolume: number,
+    grossVolume: number,
+    preliminaryPower: number,
+    finalPower: number,
+  ) {
+    // eslint-disable-next-line max-len
+    super(tag, name, length, width, depth, diameter, emptyMass, head, filledMass, netVolume, grossVolume);
+    this.preliminaryPower = preliminaryPower;
+    this.finalPower = finalPower;
+  }
 
   @Property()
-    finalPower!: number;
+    preliminaryPower?: number;
+
+  @Property()
+    finalPower?: number;
 }
