@@ -10,4 +10,4 @@ COPY . .
 
 RUN chmod +x ./wait-for.sh
 
-CMD ./wait-for.sh postgres:5432 -- npm run db:update && npm test
+CMD ./wait-for.sh postgres:5432 -- npm run db:update && npm run ci:test
