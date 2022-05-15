@@ -1,7 +1,7 @@
 import {
   Entity, Property, PrimaryKey, OneToMany, Collection
 } from '@mikro-orm/core';
-import { Item } from '.';
+import Item from './Item';
 
 @Entity()
 export default class Board {

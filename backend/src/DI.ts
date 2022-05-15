@@ -1,5 +1,4 @@
-import { EntityRepository, MikroORM } from '@mikro-orm/core';
-import { EntityManager } from '@mikro-orm/postgresql';
+import { EntityRepository, MikroORM, EntityManager } from '@mikro-orm/core';
 import { Item, Board } from './database/models';
 
 const DI = {} as {
