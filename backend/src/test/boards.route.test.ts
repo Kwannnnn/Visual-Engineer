@@ -29,7 +29,6 @@ describe('GET Board endpoints', () => {
 
     test('should return 404 when a board with id does not exist', async () => {
       const response = await request(app).get('/api/v1/boards/6969');
-
       expect(response.statusCode).toEqual(404);
     });
   });
@@ -51,7 +50,6 @@ describe('POST Board endpoints', () => {
       const response = await request(app)
         .post('/api/v1/boards')
         .send({});
-
       expect(response.statusCode).toEqual(400);
     });
   });
