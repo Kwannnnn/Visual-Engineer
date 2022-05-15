@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { DI } from '../../index';
-import { Board } from '../../database/models/Board';
-import { Item } from '../../database/models/Item';
+import DI from '../../DI';
+import { Item, Board } from '../../database/models';
 
 export const getAll = async (req: Request, res: Response) => {
     const boards = await DI.boardRepository.findAll();
@@ -12,7 +11,7 @@ export const getById = async (req: Request, res: Response) => {
     const id: number = +req.params.id;
 
     try {
-        const board = await DI.boardRepository.findOne({ id });
+        const board = await DI.boardRepository.findOne(id);
 
         if (!board) {
             return res.status(404).json({
