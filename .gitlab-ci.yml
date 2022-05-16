@@ -83,8 +83,6 @@ backend:integration:
 backend:image:
   stage: image
   cache: []
-  needs:
-    - backend:integration
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
