@@ -1,6 +1,5 @@
 import { EntityRepository, MikroORM } from '@mikro-orm/core';
-import { Item } from './database/models';
-import { Board } from './database/models'
+import { Item, Board } from './database/models';
 
 const DI = {} as {
   orm: MikroORM,
