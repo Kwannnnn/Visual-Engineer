@@ -12,26 +12,25 @@ afterEach(() => {
   DI.orm.close();
 });
 
-describe('/objects', () => {
-  describe('GET /objects', () => {
-    it('should return a list of all existing objects', async () => {
-      const response = await request(app).get('/api/v1/objects');
+describe('/boards', () => {
+  describe('GET /boards', () => {
+    it('should return a list of all existing boards', async () => {
+      const response = await request(app).get('/api/v1/boards');
       expect(response.status).toEqual(200);
       expect(response.body).toEqual([]);
     });
   });
 
-  describe('GET /objects/:tag', () => {
-    describe('given the object does exist', () => {
-      it('should return an existing object', async () => {
-        // TODO: update this test whenever database is seeded
-        expect(true).toBe(true);
+  describe('GET /boards/:id', () => {
+    describe('given the board exists', () => {
+      it('should return an existing board', async () => {
+        expect(true).toEqual(true);
       });
     });
 
-    describe('given the object does not exist', () => {
+    describe('given the board does not exist', () => {
       it('should return 404', async () => {
-        const response = await request(app).get('/api/v1/objects/3737');
+        const response = await request(app).get('/api/v1/boards/4000');
         expect(response.status).toEqual(404);
       });
     });
