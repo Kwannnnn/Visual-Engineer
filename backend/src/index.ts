@@ -1,9 +1,7 @@
 import express, { Express } from 'express';
 import cors from 'cors';
-import winston from 'winston';
-import expressWinston from 'express-winston';
-import { Board } from './database/models/Board';
 import { MikroORM, RequestContext } from '@mikro-orm/core';
+import Board from './database/models/Board';
 import { Item } from './database/models';
 import { boardRouter, indexRouter, objectsRouter } from './routes';
 import 'dotenv/config';

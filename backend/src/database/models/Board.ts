@@ -1,16 +1,17 @@
 import {
   Entity, Property, PrimaryKey, OneToMany, Collection,
 } from '@mikro-orm/core';
+// eslint-disable-next-line
 import Item from './Item';
 
 @Entity()
-export class Board {
+export default class Board {
   constructor(
-    name: string
+    name: string,
   ) {
-    this.name = name; 
+    this.name = name;
   }
-  
+
   @PrimaryKey({ autoincrement: true })
     id!: number;
 

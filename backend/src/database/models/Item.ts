@@ -1,7 +1,8 @@
 import {
   Entity, Property, PrimaryKey, ManyToOne,
 } from '@mikro-orm/core';
-import { Board } from './Board';
+// eslint-disable-next-line
+import Board from './Board';
 
 @Entity({
   discriminatorColumn: 'type',
