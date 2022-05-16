@@ -18,8 +18,9 @@ export default abstract class MechanicalEquipment extends Item {
     filledMass: number,
     netVolume: number,
     grossVolume: number,
+    type: string
   ) {
-    super(tag, name, length, width, depth, diameter);
+    super(tag, name, length, width, depth, diameter, type);
     this.emptyMass = emptyMass;
     this.head = head;
     this.filledMass = filledMass;
