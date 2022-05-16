@@ -73,7 +73,7 @@ backend:integration:
   script:
     - cd backend
     - docker-compose -f test.docker-compose.yml up --build --exit-code-from backend
-  needs: []
+  cache: []
   artifacts:
     when: always
     reports:
@@ -82,6 +82,7 @@ backend:integration:
 
 backend:image:
   stage: image
+  cache: []
   needs:
     - backend:integration
   image:
