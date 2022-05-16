@@ -5,6 +5,12 @@ import Item from './Item';
 
 @Entity()
 export class Board {
+  constructor(
+    name: string
+  ) {
+    this.name = name; 
+  }
+  
   @PrimaryKey({ autoincrement: true })
     id!: number;
 
