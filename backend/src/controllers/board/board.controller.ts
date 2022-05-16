@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
-import { Item, Board } from '../../database/models';
 
 export const getAll = async (req:Request, res: Response) => {
   const boards = await DI.boardRepository.findAll();
@@ -44,7 +43,7 @@ export const deleteItemfromBoard = async (req: Request, res: Response) => {
     }
 
     const items = board.items.getItems(); // gets array of all the items
-    const item = items.find((Item) => Item.tag = tag); // finds an item with the same tag
+    const item = items.find(Item => Item.tag = tag); // finds an item with the same tag
 
     if (!item) {
       return res.status(404).json({
@@ -53,7 +52,8 @@ export const deleteItemfromBoard = async (req: Request, res: Response) => {
     }
     
     board.items.remove(item);
-    res.status(201);
+    return res.send('Deleted item ' + item.name + ' from board ' + 
+      board.name + ' and ID ' + board.id);
 
   } catch (e: any) {
     return res.status(400).json({
@@ -75,9 +75,8 @@ export const deleteBoard = async (req: Request, res: Response) => {
       });
     }
 
-    DI.boardRepository.remove(board);
-
-    res.status(201);
+    DI.boardRepository.removeAndFlush(board);
+    return res.send('Deleted board ' + board.name + " with ID " + board.id );
     
   } catch (e: any) {
     return res.status(400).json({
