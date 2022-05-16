@@ -1,7 +1,6 @@
 import {
-  Entity, Property, PrimaryKey, ManyToOne
+  Entity, Property, PrimaryKey,
 } from '@mikro-orm/core';
-import Board from './Board';
 
 @Entity({
   discriminatorColumn: 'type',
@@ -44,6 +43,6 @@ export default abstract class Item {
     diameter!: number;
 
   // FIXME
-  @ManyToOne(() => Board)
-    board!: Board;
+  // @ManyToOne(() => Board)
+  //   board!: Board;
 }

@@ -1,7 +1,6 @@
 import {
-  Entity, Property, PrimaryKey, OneToMany, Collection
+  Entity, Property, PrimaryKey,
 } from '@mikro-orm/core';
-import Item from './Item';
 
 @Entity()
 export default class Board {
@@ -12,6 +11,6 @@ export default class Board {
     name!: string;
 
   // FIXME
-  @OneToMany('Item', 'board')
-    items = new Collection<Item>(this);
+  // @OneToMany('Item', 'board')
+  //   items = new Collection<Item>(this);
 }

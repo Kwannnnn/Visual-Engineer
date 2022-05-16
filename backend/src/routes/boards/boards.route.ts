@@ -9,12 +9,10 @@ boardRouter.get('/', boardController.getAll);
 // Get a board by ID
 boardRouter.get('/:id', boardController.getById);
 
-
 // Delete a board by ID
 boardRouter.delete('/:id', boardController.deleteBoard);
 
 // Delete an item from a board
-boardRouter.delete('/:id/items/:tag', boardController.deleteItemfromBoard);
+// boardRouter.delete('/:id/items/:tag', boardController.deleteItemfromBoard);
 
 export default boardRouter;
-
