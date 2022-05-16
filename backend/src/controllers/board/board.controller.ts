@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { DI } from '../../index';
 
-export const getAll = async (req:Request, res: Response) => {
-  const boards = await DI.boardRepository.findAll();
+export const getAll = async (req: Request, res: Response) => {
+    const boards = await DI.boardRepository.findAll();
 
-  res.send(boards);
+    res.send(boards);
 };
 
 export const getById = async (req: Request, res: Response) => {
@@ -41,6 +41,7 @@ export const getBoardObjects = async (req: Request, res: Response) => {
 
         await board.items.init();
         const items = board.items.getItems();
+        DI.boardRepository.persistAndFlush(board);
 
         return res.json(items);
     } catch (e: any) {
