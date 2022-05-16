@@ -17,6 +17,7 @@ export default abstract class Item {
     width: number,
     depth: number,
     diameter: number,
+    type: string
   ) {
     this.tag = tag;
     this.name = name;
@@ -24,10 +25,14 @@ export default abstract class Item {
     this.width = width;
     this.depth = depth;
     this.diameter = diameter;
+    this.type = type;
   }
 
   @PrimaryKey()
     tag!: string;
+
+  @Property()
+    type?: string;
 
   @Property({ nullable: false })
     name!: string;
