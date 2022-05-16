@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
-import { Item, Board } from '../../database/models';
+import { Item, Board, Pipeline } from '../../database/models';
+import PressureClass from '../../database/models/PressureClass.enum';
 
 export const getAll = async (req: Request, res: Response) => {
   const boards = await DI.boardRepository.findAll();
@@ -67,8 +68,21 @@ export const postItemToBoard = async (req: Request, res: Response) => {
       });
     }
 
-    const item = DI.em.create(Item, req.body);
-    board.items.add(item);
+    const pipeline = new Pipeline(
+        '132-45a',
+        'Test pump',
+        37,
+        37,
+        37,
+        37,
+        PressureClass.PN10,
+        'testFlange',
+        'testLining',
+        'PipeItem'
+    );
+    
+    // const item = DI.em.create(Pipeline, req.body);
+    board.items.add(pipeline);
     await DI.em.flush();
 
     res.status(201);
