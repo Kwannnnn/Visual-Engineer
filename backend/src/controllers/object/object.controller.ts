@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { DI } from '../../index';
+import DI from '../../DI';
 
 export const getAll = async (req: Request, res: Response) => {
   const items = await DI.itemRepository.findAll();
@@ -7,10 +7,10 @@ export const getAll = async (req: Request, res: Response) => {
 };
 
 export const getByTag = async (req: Request, res: Response) => {
-  const { string: tag } = req.params;
+  const { tag } = req.params;
 
   try {
-    const item = await DI.itemRepository.find({ tag });
+    const item = await DI.itemRepository.findOne({ tag });
 
     if (!item) {
       return res.status(404).json({

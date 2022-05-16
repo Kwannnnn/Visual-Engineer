@@ -12,6 +12,13 @@
     "moduleResolution": "node",
     "typeRoots": [
       "typings"
-    ]
-  }
+    ],
+    "types": [
+      "@types/jest",
+    ],
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": ["dist/**/**"]
 }

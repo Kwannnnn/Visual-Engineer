@@ -30,4 +30,3 @@ export default abstract class RotatingEquipment extends MechanicalEquipment {
   @Property()
     finalPower?: number;
 }
- 

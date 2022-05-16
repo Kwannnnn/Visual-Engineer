@@ -2,29 +2,20 @@ import express, { Express } from 'express';
 import cors from 'cors';
 import winston from 'winston';
 import expressWinston from 'express-winston';
-import debug from 'debug';
-import { EntityRepository, MikroORM, RequestContext } from '@mikro-orm/core';
+import { Board } from './database/models/Board';
+import { MikroORM, RequestContext } from '@mikro-orm/core';
+import { Item } from './database/models';
 import { boardRouter, indexRouter, objectsRouter } from './routes';
 import 'dotenv/config';
 import config from './mikro-orm.config';
-import Item from './database/models/Item';
-import { Board } from './database/models/Board';
+import DI from './DI';
 
-const dbg: debug.Debugger = debug('http');
 const app: Express = express();
-const PORT: number = parseInt(process.env.PORT as string, 10) || 3000;
 
-// eslint-disable-next-line
-export const DI = {} as {
-  orm: MikroORM,
-  boardRepository: EntityRepository<Board>,
-  itemRepository: EntityRepository<Item>,
-}; // Use this ORM instance to interact with the database
-
-export const setup = (async () => {
+async function setup() {
   DI.orm = await MikroORM.init(config as any);
-  DI.boardRepository = DI.orm.em.getRepository(Board);
   DI.itemRepository = DI.orm.em.getRepository(Item);
+  DI.boardRepository = DI.orm.em.getRepository(Board);
 
   app.use(cors());
   app.use(express.json());
@@ -33,24 +24,10 @@ export const setup = (async () => {
 
   // Routes
   app.use('/', indexRouter);
+  app.use('/api/v1/objects', objectsRouter);
   app.use('/api/v1/boards', boardRouter);
-  app.use('/api/v1/objects', objectsRouter); 
 
-  app.use(expressWinston.logger({
-    transports: [
-      new winston.transports.Console(),
-    ],
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.json(),
-    ),
-    meta: false,
-    msg: 'HTTP {{req.method}} {{req.url}}',
-    // expressFormat: true,
-    // colorize: true,
-  }));
+  return app;
+}
 
-  app.listen(PORT, () => {
-    dbg(`Server is listening at on port ${PORT}`);
-  });
-})();
+export default setup;

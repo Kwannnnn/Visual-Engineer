@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import { Board } from '../../database/models/Board';
-import { DI } from '../../index';
+import DI from '../../DI';
 
 export const getAll = async (req: Request, res: Response) => {
     const boards = await DI.boardRepository.findAll();
