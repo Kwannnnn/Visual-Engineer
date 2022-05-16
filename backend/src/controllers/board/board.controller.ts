@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Board } from '../../database/models/Board';
 import { DI } from '../../index';
 
 export const getAll = async (req: Request, res: Response) => {
