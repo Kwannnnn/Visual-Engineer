@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
-import { Item, Board, Pipeline, Blower, PipeFitting, Pump, Tank, Vessel } from '../../database/models';
-import PressureClass from '../../database/models/PressureClass.enum';
+import { Board, Pipeline, Blower, PipeFitting, Pump, Tank, Vessel } from '../../database/models';
 
 export const getAll = async (req: Request, res: Response) => {
   const boards = await DI.boardRepository.findAll();
@@ -82,7 +81,7 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
         || !checkTypeSpecificAttributes(req.body) // check type-specific attributes
     ) {
         res.status(400);
-        return res.json({ message: 'One or more Item properties are missing' });    
+        return res.json({ message: 'One or more Item properties are missing' });
     }
 
   try {
@@ -96,7 +95,7 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
     }
 
         let item: any;
-        
+
         switch (req.body.type) {
             case 'blower': {
                 item = DI.em.create(Blower, req.body);
@@ -122,14 +121,13 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
                 item = DI.em.create(Vessel, req.body);
                 break;
             }
-    
         }
 
         board.items.add(item);
         await DI.em.flush();
 
         res.status(201);
-        return res.json(board);
+        return res.json(item);
     } catch (e: any) {
         return res.status(400).json({
             message: e.message,
@@ -139,7 +137,7 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
 
 
 function checkTypeSpecificAttributes(body: any): boolean {
-    let attributesExist:boolean = true;
+    let attributesExist: boolean = true;
     switch (body.type) {
         case 'blower': {
             // all additioal attributes are optional
@@ -154,7 +152,7 @@ function checkTypeSpecificAttributes(body: any): boolean {
         case 'pipeline': {
             if (!body.pressureClass) {
                 attributesExist = false;
-            }            
+            }
             break;
         }
         case 'pump': {
