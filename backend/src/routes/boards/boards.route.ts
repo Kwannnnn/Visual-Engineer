@@ -1,5 +1,7 @@
 import { Router } from 'express';
+import { body } from 'express-validator';
 import { boardController } from '../../controllers';
+import validate from '../../middleware/validate';
 
 const router: Router = Router();
 
@@ -87,5 +89,45 @@ router.get('/:id', boardController.getById);
  *     }
  */
 router.get('/:id/objects', boardController.getBoardObjects);
+
+/**
+ * @api {patch} /api/v1/boards/:id Update a specific board by its identifier
+ * @apiDescription Updates the fields of a board,
+ * and returns a resource response containing the specified board.
+ * Returns a 404 error message if no such board is found.
+ * @apiVersion 1.0.0
+ * @apiName PatchBoard
+ * @apiGroup Board
+ *
+ * @apiParam {Integer} id Board identifier
+ *
+ * @apiSuccess (Success 200) {Board} board A resource response containing a board.
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *        "id": 1,
+ *        "name": "PTPFu02",
+ *     }
+ * @apiErrorExample Error-Response-NotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
+ * @apiErrorExample Error-Response-InvalidFields:
+ *
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "errors": [
+ *          {
+ *              "msg": "Invalid value",
+ *              "param": "name",
+ *              "location": "body"
+ *          }
+ *       ]
+ *     }
+ */
+router.patch('/:id', validate([
+  body('name').isAlphanumeric(),
+]), boardController.patchById as any);
 
 export default router;
