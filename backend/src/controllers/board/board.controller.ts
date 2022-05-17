@@ -53,7 +53,7 @@ export const getBoardObjects = async (req: Request, res: Response) => {
 
 export const deleteObjectFromBoard = async (req: Request, res: Response) => {
   const id: number = +req.params.id;
-  const { string: tag } = req.params;
+  const { tag } = req.params;
 
   try {
     // find the board
@@ -66,7 +66,7 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
     }
 
     const items = board.items.getItems(); // gets array of all the items
-    const item = items.find((Item) => Item.tag = tag); // finds an item with the same tag
+    const item = items.find((Item) => Item.tag === tag); // finds an item with the same tag
 
     if (!item) {
       return res.status(404).json({
@@ -79,7 +79,6 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
     res.status(204);
     return res.send(`Deleted item ${item.name} from board ${
       board.name} and ID ${board.id}`);
-
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
@@ -104,7 +103,6 @@ export const deleteBoard = async (req: Request, res: Response) => {
 
     res.status(204);
     return res.send(`Deleted board ${board.name} with ID ${board.id}`);
-
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
