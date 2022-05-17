@@ -88,4 +88,10 @@ router.get('/:id', boardController.getById);
  */
 router.get('/:id/objects', boardController.getBoardObjects);
 
+// Post a board
+router.post('/', boardController.postBoard);
+
+// Post an item to a board
+router.post('/:id/items', boardController.postItemToBoard);
+
 export default router;
