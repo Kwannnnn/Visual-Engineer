@@ -44,7 +44,6 @@ export const getBoardObjects = async (req: Request, res: Response) => {
     DI.boardRepository.persistAndFlush(board);
 
     return res.json(items);
-
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
@@ -90,21 +89,19 @@ export const deleteBoard = async (req: Request, res: Response) => {
 
   try {
     // find the board
-    const board = await DI.boardRepository.findOne(id); 
+    const board = await DI.boardRepository.findOne(id);
 
     if (!board) {
       return res.status(404).json({
         message: 'Board not found',
       });
     }
-    
+
     DI.boardRepository.removeAndFlush(board);
     return res.send(`Deleted board ${board.name} with ID ${board.id}`);
-
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
     });
   }
 };
-
