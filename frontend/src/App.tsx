@@ -1,48 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
-import Button from './components/Button';
-import Container from './components/Container';
-import DBItemContainer from './components/DBItemContainer';
-
-interface Item {
-  Tag: string,
-  DescriptiveName: string,
-  Length: number,
-  Width: number,
-  Depth: number,
-  Diameter: number,
-}
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Login from './pages/Login';
 
 function App() {
-  const [data, setData] = useState<Item[]>([]);
-
-  const json = [
-    {
-      Tag: '#583FA293D3',
-      DescriptiveName: 'Cleaner',
-      Length: 2.52,
-      Width: 2.35,
-      Depth: 1.47,
-      Diameter: 1.79,
-    },
-    {
-      Tag: '#7A52B98F2C',
-      DescriptiveName: 'Heater',
-      Length: 0.83,
-      Width: 1.2,
-      Depth: 0.53,
-      Diameter: 1.35,
-    }
-  ];
-
   return (
     <div className="App">
-      <header className="App-header">
-        <Button id="test-button" onClick={() => setData(json)}>Read Data</Button>
-        <Container id="test-container">
-          <DBItemContainer properties={data} />
-        </Container>
-      </header>
+      <div className="flex flex-col h-screen">
+        <Routes>
+          <Route path="/" element={<Navbar />}>
+            <Route index element={<Home />} />
+            <Route path="/login" element={<Login />} />
+          </Route>
+        </Routes>
+      </div>
     </div>
   );
 }
