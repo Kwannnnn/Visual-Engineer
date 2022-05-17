@@ -4,7 +4,6 @@ import Item from './Item';
 
 @Entity({
   discriminatorValue: 'pipeItem',
-  abstract: true,
 })
 export default abstract class PipeItem extends Item {
   constructor(
@@ -22,5 +21,5 @@ export default abstract class PipeItem extends Item {
   }
 
   @Enum(() => PressureClass)
-    pressureClass?: PressureClass;
+    pressureClass!: PressureClass;
 }

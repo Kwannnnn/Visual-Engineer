@@ -3,7 +3,6 @@ import Item from './Item';
 
 @Entity({
   discriminatorValue: 'mechanicalEquipment',
-  abstract: true,
 })
 export default abstract class MechanicalEquipment extends Item {
   constructor(

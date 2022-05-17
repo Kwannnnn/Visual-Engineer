@@ -3,7 +3,6 @@ import MechanicalEquipment from './MechanicalEquipment';
 
 @Entity({
   discriminatorValue: 'rotatingEquipment',
-  abstract: true,
 })
 export default abstract class RotatingEquipment extends MechanicalEquipment {
   constructor(
