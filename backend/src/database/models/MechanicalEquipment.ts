@@ -25,18 +25,18 @@ export default abstract class MechanicalEquipment extends Item {
     this.grossVolume = grossVolume;
   }
 
-  @Property()
-    emptyMass?: number;
+  @Property({ type: 'float' })
+  emptyMass?: number;
 
-  @Property()
-    head?: number;
+  @Property({ type: 'float' })
+  head?: number;
 
-  @Property()
-    filledMass?: number;
+  @Property({ type: 'float' })
+  filledMass?: number;
 
-  @Property()
-    netVolume?: number;
+  @Property({ type: 'float' })
+  netVolume?: number;
 
-  @Property()
-    grossVolume?: number;
+  @Property({ type: 'float' })
+  grossVolume?: number;
 }
