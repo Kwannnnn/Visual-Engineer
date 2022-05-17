@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
-import { Item, Board, Pipeline } from '../../database/models';
+import { Item, Board, Pipeline, Blower, PipeFitting, Pump, Tank, Vessel } from '../../database/models';
 import PressureClass from '../../database/models/PressureClass.enum';
 
 export const getAll = async (req: Request, res: Response) => {
@@ -70,16 +70,19 @@ export const postBoard = async (req: Request, res: Response) => {
     }
 };
 
-export const postItemToBoard = async (req: Request, res: Response) => {
+export const postObjectToBoard = async (req: Request, res: Response) => {
+    // general check for all items
     if (!req.body.tag
         || !req.body.name
         || !req.body.length
         || !req.body.width
         || !req.body.depth
         || !req.body.diameter
+        || !req.body.type
+        || !checkTypeSpecificAttributes(req.body) // check type-specific attributes
     ) {
         res.status(400);
-        return res.json({ message: 'Item properties are missing' });
+        return res.json({ message: 'One or more Item properties are missing' });    
     }
 
     try {
@@ -92,28 +95,82 @@ export const postItemToBoard = async (req: Request, res: Response) => {
             });
         }
 
-    const pipeline = new Pipeline(
-        '132-45a',
-        'Test pump',
-        37,
-        37,
-        37,
-        37,
-        PressureClass.PN10,
-        'testFlange',
-        'testLining',
-        'PipeItem'
-    );
+        let item: any;
+        
+        switch (req.body.type) {
+            case 'blower': {
+                item = DI.em.create(Blower, req.body);
+                break;
+            }
+            case 'pipeFitting': {
+                item = DI.em.create(PipeFitting, req.body);
+                break;
+            }
+            case 'pipeline': {
+                item = DI.em.create(Pipeline, req.body);
+                break;
+            }
+            case 'pump': {
+                item = DI.em.create(Pump, req.body);
+                break;
+            }
+            case 'tank': {
+                item = DI.em.create(Tank, req.body);
+                break;
+            }
+            case 'vessel': {
+                item = DI.em.create(Vessel, req.body);
+                break;
+            }
     
-    // const item = DI.em.create(Pipeline, req.body);
-    board.items.add(pipeline);
-    await DI.em.flush();
+        }
 
-    res.status(201);
-    return res.json(board);
-  } catch (e: any) {
-    return res.status(400).json({
-      message: e.message,
-    });
-  }
+        board.items.add(item);
+        await DI.em.flush();
+
+        res.status(201);
+        return res.json(board);
+    } catch (e: any) {
+        return res.status(400).json({
+            message: e.message,
+        });
+    }
 };
+
+
+function checkTypeSpecificAttributes(body: any): boolean {
+    let attributesExist:boolean = true;
+    switch (body.type) {
+        case 'blower': {
+            // all additioal attributes are optional
+            break;
+        }
+        case 'pipeFitting': {
+            if (!body.pressureClass) {
+                attributesExist = false;
+            }
+            break;
+        }
+        case 'pipeline': {
+            if (!body.pressureClass) {
+                attributesExist = false;
+            }            
+            break;
+        }
+        case 'pump': {
+            // all additioal attributes are optional
+            break;
+        }
+        case 'tank': {
+            // all additioal attributes are optional
+            break;
+        }
+        case 'vessel': {
+            // all additioal attributes are optional
+            break;
+        }
+
+    }
+
+    return attributesExist;
+}

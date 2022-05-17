@@ -92,6 +92,6 @@ router.get('/:id/objects', boardController.getBoardObjects);
 router.post('/', boardController.postBoard);
 
 // Post an item to a board
-router.post('/:id/items', boardController.postItemToBoard);
+router.post('/:id/objects', boardController.postObjectToBoard);
 
 export default router;
