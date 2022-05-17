@@ -1,8 +1,9 @@
 import express, { Express } from 'express';
 import cors from 'cors';
 import { MikroORM, RequestContext } from '@mikro-orm/core';
-import { Item, Board } from './database/models';
-import { indexRouter, objectsRouter, boardRouter } from './routes';
+import Board from './database/models/Board';
+import { Item } from './database/models';
+import { boardRouter, indexRouter, objectsRouter } from './routes';
 import 'dotenv/config';
 import config from './mikro-orm.config';
 import DI from './DI';
