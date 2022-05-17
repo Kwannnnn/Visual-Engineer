@@ -41,6 +41,8 @@ router.get('/', boardController.getAll);
  *        "id": 1,
  *        "name": "PTPFu01",
  *     }
+ * 
+ * @apiError BoardNotFound Board with id <code>{id}</code> does not exist
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 404 Not Found
  *     {
@@ -80,6 +82,8 @@ router.get('/:id', boardController.getById);
  *          "diameter": "37"
  *       }
  *     ]
+ * 
+ *  @apiError BoardNotFound Board with id <code>{id}</code> does not exist
  *  @apiErrorExample Error-Response:
  *     HTTP/1.1 404 Not Found
  *     {
@@ -88,10 +92,56 @@ router.get('/:id', boardController.getById);
  */
 router.get('/:id/objects', boardController.getBoardObjects);
 
-// Delete a board by ID
+/**
+ * @api {delete} /api/v1/boards/:id Delete a board
+ * @apiDescription Returns a successful deletion message or a 404 
+ * error message if the board does not exist
+ * @apiVersion 1.0.0
+ * @apiName DeleteBoard
+ * @apiGroup Board
+ * 
+ * @apiParam {Integer} id Board identifier
+ * 
+ * @apiSuccessExample Success-Response:
+ *      HTTP/1.1 204 No Content
+ *      
+ * @apiError BoardNotFound Board with id <code>{id}</code> does not exist    
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
+ */
 router.delete('/:id', boardController.deleteBoard);
 
-// Delete an item from a board
-// router.delete('/:id/items/:tag', boardController.deleteItemfromBoard);
+/**
+ * @api {delete} /api/v1/boards/:id/objects/:tag Delete an item from a board
+ * @apiDescription Returns a successful deletion message or a 404 
+ * error message if the board or item does not exist
+ * @apiVersion 1.0.0
+ * @apiName DeleteObjectFromBoard
+ * @apiGroup Board
+ * 
+ * @apiParam {Integer} id Board identifier
+ *           {String} tag Item identifier
+ * 
+ * @apiSuccessExample Success-Response:
+ *      HTTP/1.1 204 No Content
+ * 
+ * @apiError BoardNotFound Board with id <code>{id}</code> does not exist
+ * @apiErrorExample BoardNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
+ * 
+ * @apiError ItemNotFound Item with id <code>{id}</code> does not exist
+ * @apiErrorExample ItemNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Item not found"
+ *     }
+ */
+router.delete('/:id/objects/:tag', boardController.deleteObjectFromBoard);
 
 export default router;

@@ -24,6 +24,7 @@ describe('/boards', () => {
   describe('GET /boards/:id', () => {
     describe('given the board exists', () => {
       it('should return an existing board', async () => {
+        // TODO: update this test whenever database is seeded
         expect(true).toEqual(true);
       });
     });
@@ -31,6 +32,22 @@ describe('/boards', () => {
     describe('given the board does not exist', () => {
       it('should return 404', async () => {
         const response = await request(app).get('/api/v1/boards/4000');
+        expect(response.status).toEqual(404);
+      });
+    });
+  });
+
+  describe('DELETE /boards/:id', () => {
+    describe('given the board exists', () => {
+      it('should return a success message', async () => {
+         // TODO: update this test whenever database is seeded
+         expect(true).toEqual(true);
+      });
+    });
+
+    describe('given the board does not exist', ()  => {
+      it('should return 404',async () => {
+        const response = await request(app).delete('/api/v1/boards/4000');
         expect(response.status).toEqual(404);
       });
     });
