@@ -6,7 +6,7 @@ interface ToolboxProps {
 
 function Toolbox({ className }: ToolboxProps) {
   return (
-    <div className={`bg-yellow-500 ${className}`}>
+    <aside className={`bg-yellow-500 overflow-y-auto ${className}`}>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eget ex accumsan,
         aliquet
@@ -75,7 +75,7 @@ function Toolbox({ className }: ToolboxProps) {
         feugiat.
         feugiat.
       </p>
-    </div>
+    </aside>
   );
 }
 

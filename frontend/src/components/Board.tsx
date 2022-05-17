@@ -6,7 +6,9 @@ interface BoardProps {
 
 function Board({ className }: BoardProps) {
   return (
-    <div className={`${className}`}>Board</div>
+    <main className={`overflow-auto ${className}`}>
+      Board
+    </main>
   );
 }
 

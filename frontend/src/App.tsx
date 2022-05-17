@@ -7,15 +7,13 @@ import Login from './pages/Login';
 
 function App() {
   return (
-    <div className="App">
-      <div className="flex flex-col h-screen">
-        <Routes>
-          <Route path="/" element={<Navbar />}>
-            <Route index element={<Home />} />
-            <Route path="/login" element={<Login />} />
-          </Route>
-        </Routes>
-      </div>
+    <div className="flex flex-col h-screen">
+      <Routes>
+        <Route path="/" element={<Navbar />}>
+          <Route index element={<Home />} />
+          <Route path="/login" element={<Login />} />
+        </Route>
+      </Routes>
     </div>
   );
 }
