@@ -1,5 +1,5 @@
 import {
-  Entity, Property, PrimaryKey, ManyToOne,
+  Property, PrimaryKey, ManyToOne, Entity,
 } from '@mikro-orm/core';
 // eslint-disable-next-line
 import Board from './Board';
@@ -17,6 +17,7 @@ export default abstract class Item {
     width: number,
     depth: number,
     diameter: number,
+    type: string,
   ) {
     this.tag = tag;
     this.name = name;
@@ -24,27 +25,30 @@ export default abstract class Item {
     this.width = width;
     this.depth = depth;
     this.diameter = diameter;
+    this.type = type;
   }
 
-  @PrimaryKey()
+  @PrimaryKey({ nullable: false })
     tag!: string;
+
+  @Property()
+    type!: string;
 
   @Property({ nullable: false })
     name!: string;
 
-  @Property({ nullable: false })
+  @Property({ nullable: false, type: 'float' })
     length!: number;
 
-  @Property({ nullable: false })
+  @Property({ nullable: false, type: 'float' })
     width!: number;
 
-  @Property({ nullable: false })
+  @Property({ nullable: false, type: 'float' })
     depth!: number;
 
-  @Property({ nullable: false })
+  @Property({ nullable: false, type: 'float' })
     diameter!: number;
 
-  // FIXME
-  @ManyToOne(() => Board)
+  @ManyToOne('Board')
     board!: Board;
 }

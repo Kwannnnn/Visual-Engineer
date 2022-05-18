@@ -1,7 +1,9 @@
 import { Entity, Property } from '@mikro-orm/core';
 import MechanicalEquipment from './MechanicalEquipment';
 
-@Entity({ discriminatorValue: 'rotatingEquipment' })
+@Entity({
+  discriminatorValue: 'rotatingEquipment',
+})
 export default abstract class RotatingEquipment extends MechanicalEquipment {
   constructor(
     tag: string,
@@ -17,16 +19,17 @@ export default abstract class RotatingEquipment extends MechanicalEquipment {
     grossVolume: number,
     preliminaryPower: number,
     finalPower: number,
+    type: string,
   ) {
     // eslint-disable-next-line max-len
-    super(tag, name, length, width, depth, diameter, emptyMass, head, filledMass, netVolume, grossVolume);
+    super(tag, name, length, width, depth, diameter, emptyMass, head, filledMass, netVolume, grossVolume, type);
     this.preliminaryPower = preliminaryPower;
     this.finalPower = finalPower;
   }
 
-  @Property()
+  @Property({ nullable: true, type: 'float' })
     preliminaryPower?: number;
 
-  @Property()
+  @Property({ nullable: true, type: 'float' })
     finalPower?: number;
 }
