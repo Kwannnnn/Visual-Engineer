@@ -1,12 +1,12 @@
 import React from 'react';
 
-interface ToolboxProps {
+interface PropertiesSidebarProps {
   className?: string
 }
 
-function Toolbox({ className }: ToolboxProps) {
+function PropertiesSidebar({ className }: PropertiesSidebarProps) {
   return (
-    <aside className={`bg-yellow-500 overflow-y-auto ${className}`}>
+    <aside className={`bg-green-500 overflow-y-auto ${className}`}>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eget ex accumsan,
         aliquet
@@ -79,4 +79,4 @@ function Toolbox({ className }: ToolboxProps) {
   );
 }
 
-export default Toolbox;
+export default PropertiesSidebar;

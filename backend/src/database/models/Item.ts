@@ -1,7 +1,8 @@
 import {
-  Entity, Property, PrimaryKey,
+  Entity, Property, PrimaryKey, ManyToOne,
 } from '@mikro-orm/core';
-// import Board from './Board';
+// eslint-disable-next-line
+import Board from './Board';
 
 @Entity({
   discriminatorColumn: 'type',
@@ -44,6 +45,6 @@ export default abstract class Item {
     diameter!: number;
 
   // FIXME
-  // @ManyToOne(() => Board)
-  //   board!: Board;
+  @ManyToOne(() => Board)
+    board!: Board;
 }
