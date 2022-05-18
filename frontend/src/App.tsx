@@ -3,6 +3,7 @@ import './App.css';
 import Button from './components/Button';
 import Container from './components/Container';
 import DBItemContainer from './components/DBItemContainer';
+import BoardList from './components/list/BoardList';
 
 interface Item {
   Tag: string,
@@ -38,10 +39,11 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Button id="test-button" onClick={() => setData(json)}>Read Data</Button>
+        {/* <Button id="test-button" onClick={() => setData(json)}>Read Data</Button>
         <Container id="test-container">
           <DBItemContainer properties={data} />
-        </Container>
+        </Container> */}
+        <BoardList />
       </header>
     </div>
   );
