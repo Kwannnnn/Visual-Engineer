@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusSquare, faCube } from '@fortawesome/free-solid-svg-icons';
+import { faPlusSquare, faCube, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ReactNodeBuilder from '../util/ReactNodeBuilder';
 
 interface ReqProp {
@@ -19,9 +19,13 @@ interface Listing {
   items?: Item[]
 }
 
+function handleListClick(): void {
+  const [data, setData] = useState<Item[]>([]);
+}
+
 function renderItemList(items: Listing): React.ReactNode {
-  const listBuilder = new ReactNodeBuilder('m-2 p-1');
-  const listItemBuilder = new ReactNodeBuilder();
+  const listBuilder = new ReactNodeBuilder('text-yellow-500');
+  const listItemBuilder = new ReactNodeBuilder('text-green-500 mb-2');
   if (!items || items === null) return <>ERROR: Items could not be rendered</>;
 
   if (items.group) {
@@ -34,33 +38,38 @@ function renderItemList(items: Listing): React.ReactNode {
   if (items.items) {
     items.items.forEach((i) => {
       listItemBuilder.append(
-        <div><FontAwesomeIcon icon={faCube} /> {i.name} {listBuilder.build()}</div>
+        <>
+          <div className="cursor-move">
+            <FontAwesomeIcon icon={faCube} />
+            {` ${i.name}`}
+          </div>
+          {listBuilder.build()}
+        </>
       );
     });
   }
   listBuilder.append(
-    <div><FontAwesomeIcon icon={faPlusSquare} /> {items.group}{listItemBuilder.build()}</div>
+    <>
+      <span
+        className="hover:opacity-50 transition-all cursor-pointer"
+        role="button"
+        tabIndex={0}
+        onClick={() => { handleListClick(); }}
+        onKeyDown={() => { handleListClick(); }}
+      >
+        <FontAwesomeIcon icon={faPlusSquare} />
+        {` ${items.group}`}
+      </span>
+      {listItemBuilder.build()}
+    </>
   );
-  /*
-  if (items.children) {
-    items.children.forEach((c) => {
-      listBuilder.append(renderItemList(c));
-    });
-  } else if (items.items) {
-    items.items.forEach((i) => {
-      listBuilder.append(
-        <div><FontAwesomeIcon icon={faCube} /> {i.name} {listBuilder.build()}</div>
-      );
-    });
-  }
-  */
 
   return listBuilder.build();
 }
 
 function Toolbox({ className, items, id }: ReqProp) {
   return (
-    <div className={`overflow-auto rounded-md w-full h-full ${className}`} id={id}>
+    <div className={`overflow-auto rounded-md w-full h-ful m-2 p-2 ${className}`} id={id}>
       {
         renderItemList(items)
       }
