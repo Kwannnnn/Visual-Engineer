@@ -2,18 +2,13 @@ import React from 'react';
 
 interface BuilderData {
     data?: React.ReactNode;
-    divStyle?: string;
-    id?: string;
 }
 
 class ReactNodeBuilder {
   private readonly node: BuilderData;
 
-  constructor(tailwindClasses?: string, id?: string) {
-    this.node = {
-      divStyle: tailwindClasses,
-      id,
-    };
+  constructor() {
+    this.node = {};
   }
 
   append(item: React.ReactNode): ReactNodeBuilder {
@@ -26,11 +21,9 @@ class ReactNodeBuilder {
 
     if (this.node.data) {
       result = (
-        <div className={this.node.divStyle} id={this.node.id}>{this.node.data}</div>
+        <div>{this.node.data}</div>
       );
     } else result = '';
-    this.node.data = undefined;
-    this.node.data = undefined;
     this.node.data = undefined;
     return result;
   }
