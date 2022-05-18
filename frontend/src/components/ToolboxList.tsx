@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusSquare } from '@fortawesome/free-solid-svg-icons';
+import { IconDefinition, faPlusSquare, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ReactNodeBuilder from '../util/ReactNodeBuilder';
 import ToolboxItem from './ToolboxItem';
 
@@ -24,6 +24,18 @@ function ToolboxList(prop: {listing: Listing[]}) {
   }
 
   prop.listing.forEach((listing) => {
+    const [visible, setVisibility] = useState<boolean>(true);
+    const [image, setIcon] = useState<IconDefinition>(faPlus);
+
+    const toggleVisibility = () => {
+      if (visible) {
+        setVisibility(false);
+        setIcon(faPlusSquare);
+      } else {
+        setVisibility(true);
+        setIcon(faPlus);
+      }
+    };
     if (listing.group) {
       if (listing.subsets) {
         subsetBuilder.append(<ToolboxList listing={listing.subsets} />);
@@ -33,54 +45,27 @@ function ToolboxList(prop: {listing: Listing[]}) {
           itemBuilder.append(<ToolboxItem name={item.name} />);
         });
       }
+
       listBuilder.append(
         <div>
           <span
-            className="hover:opacity-50 transition-all cursor-pointer text-yellow-500"
+            className="hover:opacity-50 transition-all cursor-pointer text-yellow-500 select-none"
             role="button"
             tabIndex={0}
-            onClick={undefined}
+            onClick={() => toggleVisibility()}
             onKeyDown={undefined}
           >
-            <FontAwesomeIcon icon={faPlusSquare} />
+            <FontAwesomeIcon icon={image} />
             {` ${listing.group}`}
           </span>
-          {subsetBuilder.build()}
-          {itemBuilder.build()}
+          <div className={visible ? '' : 'hidden'}>
+            {subsetBuilder.build()}
+            {itemBuilder.build()}
+          </div>
         </div>
       );
     }
   });
-
-  /*
-  prop.listing.forEach((item) => {
-    if (item.group) {
-      listBuilder.append(
-        <span
-          className="hover:opacity-50 transition-all cursor-pointer"
-          role="button"
-          tabIndex={0}
-          onClick={undefined}
-          onKeyDown={undefined}
-        >
-          <FontAwesomeIcon icon={faPlusSquare} />
-          {` ${item.group}`}
-        </span>
-      );
-    }
-    if (item.group && item.subsets) {
-      // listBuilder.append(<ToolboxList listing={item.subsets} />);
-    } else if (item.items) {
-      prop.listing.forEach((i) => {
-        i.items?.forEach((itm) => {
-          listBuilder.append(
-            <ToolboxItem name={itm.name} />
-          );
-        });
-      });
-    }
-  });
-  */
 
   return (
     <>
