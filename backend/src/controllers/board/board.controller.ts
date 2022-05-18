@@ -115,8 +115,9 @@ export const patchBoardObjects = async (
     Object.keys(req.body!).forEach((param) => {
       if (!properties.includes(param)) {
         fieldErrors.push({
-          message: 'Illegal field',
-          field: param,
+          msg: 'Illegal field',
+          param,
+          location: 'body',
         });
       }
     });

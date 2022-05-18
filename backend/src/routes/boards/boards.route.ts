@@ -28,8 +28,7 @@ router.get('/', boardController.getAll);
 
 /**
  * @api {get} /api/v1/boards/:id Get a specific board by its identifier
- * @apiDescription Returns a resource response containing the specified board. Returns a 404 error
- * message if no such board is found.
+ * @apiDescription Returns a resource response containing the specified board.
  * @apiVersion 1.0.0
  * @apiName GetBoard
  * @apiGroup Board
@@ -43,11 +42,7 @@ router.get('/', boardController.getAll);
  *        "id": 1,
  *        "name": "PTPFu01",
  *     }
- * @apiErrorExample Error-Response-BoardNotFound:
- *     HTTP/1.1 404 Not Found
- *     {
- *       "message": "Board not found"
- *     }
+ * @apiUse BoardNotFoundError
  */
 router.get('/:id', boardController.getById);
 
@@ -82,11 +77,7 @@ router.get('/:id', boardController.getById);
  *          "diameter": "37"
  *       }
  *     ]
- *  @apiErrorExample Error-Response-BoardNotFound:
- *     HTTP/1.1 404 Not Found
- *     {
- *       "message": "Board not found"
- *     }
+ * @apiUse BoardNotFoundError
  */
 router.get('/:id/objects', boardController.getBoardObjects);
 
@@ -108,23 +99,8 @@ router.get('/:id/objects', boardController.getBoardObjects);
  *        "id": 1,
  *        "name": "PTPFu02",
  *     }
- * @apiErrorExample Error-Response-BoardNotFound:
- *     HTTP/1.1 404 Not Found
- *     {
- *       "message": "Board not found"
- *     }
- * @apiErrorExample Error-Response-InvalidFields:
- *
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "errors": [
- *          {
- *              "msg": "Invalid value",
- *              "param": "name",
- *              "location": "body"
- *          }
- *       ]
- *     }
+ * @apiUse BoardNotFoundError
+ * @apiUse InvalidFields
  */
 router.patch('/:id', validate([
   body('name').isAlphanumeric(),
@@ -138,7 +114,7 @@ router.patch('/:id', validate([
  * @apiGroup Board
  *
  * @apiParam {Integer} id Board identifier
- * @apiParam {Integer} objectId Object tag
+ * @apiParam {String} objectId Object tag
  *
  * @apiSuccess (Success 200) {Object} object The updated board object
  * @apiSuccessExample Success-Response:
@@ -148,16 +124,9 @@ router.patch('/:id', validate([
  *          "name": "Blower",
  *          "length": "30",
  *       }
- *  @apiErrorExample Error-Response-BoardNotFound:
- *     HTTP/1.1 404 Not Found
- *     {
- *       "message": "Board not found"
- *     }
- *  @apiErrorExample Error-Response-ObjectNotFound:
- *     HTTP/1.1 404 Not Found
- *     {
- *       "message": "Object not found"
- *     }
+ * @apiUse BoardNotFoundError
+ * @apiUse ObjectNotFoundError
+ * @apiUse InvalidFields
  */
 router.patch(
   '/:id/objects/:objectId',
@@ -167,3 +136,44 @@ router.patch(
 );
 
 export default router;
+
+// apidoc definitions
+
+/**
+* @apiDefine BoardNotFoundError
+* @apiVersion 1.0.0
+* @apiError BoardNotFound Returns a 404 error message if no such board is found
+* @apiErrorExample Error-Response-BoardNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
+* */
+
+/**
+* @apiDefine ObjectNotFoundError
+* @apiVersion 1.0.0
+* @apiError ObjectNotFound Returns a 404 error message if no such object is found
+* @apiErrorExample Error-Response-ObjectNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Object not found"
+ *     }
+* */
+
+/**
+* @apiDefine InvalidFields
+* @apiVersion 1.0.0
+* @apiError IllegalFields Returns an array of illegal field validation errors
+* @apiErrorExample Error-Response-IllegalFields:
+*     HTTP/1.1 400 Bad Request
+*     {
+*       "errors": [
+*          {
+*            "msg": "Illegal field",
+*            "param": "lining",
+*            "location": "body"
+*          }
+*        ]
+*     }
+* */

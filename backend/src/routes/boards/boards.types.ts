@@ -23,6 +23,7 @@ interface IPatchBoardObject extends Pipeline, PipeFitting, Pump, Blower, Tank, V
 export type PatchBoardObject = Omit<IPatchBoardObject, 'board'>;
 
 export interface FieldError {
-  message: string;
-  field: string;
+  msg: string;
+  param: string;
+  location: string;
 }
