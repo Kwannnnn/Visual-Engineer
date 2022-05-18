@@ -1,5 +1,5 @@
 import {
-  Property, PrimaryKey, ManyToOne, Entity, FloatType,
+  Property, PrimaryKey, ManyToOne, Entity,
 } from '@mikro-orm/core';
 // eslint-disable-next-line
 import Board from './Board';
@@ -17,7 +17,7 @@ export default abstract class Item {
     width: number,
     depth: number,
     diameter: number,
-    type: string
+    type: string,
   ) {
     this.tag = tag;
     this.name = name;

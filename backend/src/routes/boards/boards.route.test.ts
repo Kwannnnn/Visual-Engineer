@@ -1,21 +1,11 @@
 import request from 'supertest';
+import { v4 as uuidv4 } from 'uuid';
 import setup from '../../index';
 import DI from '../../DI';
-import { v4 as uuidv4 } from 'uuid';
-
 
 let app: Express.Application;
 
-beforeEach(async () => {
-  app = await setup();
-});
-
-afterEach(() => {
-  exampleItem.tag = uuidv4(); // generate unique tag for item after each test
-  DI.orm.close();
-});
-
-let exampleItem = {
+const exampleItem = {
   tag: '#583FA293D3',
   name: 'Cleaner',
   length: 2.52,
@@ -29,11 +19,20 @@ let exampleItem = {
   grossVolume: 23.7,
   preliminaryPower: 454,
   finalPower: 600,
-  type: "pump"
+  type: 'pump',
 };
 
-//TODO: Drop and then update the database before running the test
-//TODO: since the database is not seeded yet
+beforeEach(async () => {
+  app = await setup();
+});
+
+afterEach(() => {
+  exampleItem.tag = uuidv4(); // generate unique tag for item after each test
+  DI.orm.close();
+});
+
+// TODO: Drop and then update the database before running the test
+// TODO: since the database is not seeded yet
 
 describe('GET Board endpoints', () => {
   describe('GET api/v1/boards', () => {
@@ -80,7 +79,7 @@ describe('POST Board endpoints', () => {
           id: 1,
           items: [],
           name: 'new board',
-        }
+        },
       );
     });
 
@@ -96,16 +95,16 @@ describe('POST Board endpoints', () => {
   describe('POST api/v1/boards/:id/objects', () => {
     test('should return the posted object', async () => {
       const response = await request(app)
-        .post(`/api/v1/boards/1/objects`)
+        .post('/api/v1/boards/1/objects')
         .send(exampleItem);
 
       expect(response.statusCode).toEqual(201);
       expect(response.body).toEqual({
         ...exampleItem,
-        "board": {
-          "id": 1,
-          "name": "new board"
-      }
+        board: {
+          id: 1,
+          name: 'new board',
+        },
       });
     });
 
@@ -134,7 +133,7 @@ describe('POST Board endpoints', () => {
           grossVolume: 23.7,
           preliminaryPower: 454,
           finalPower: 600,
-          type: "pump"
+          type: 'pump',
         });
 
       expect(response.statusCode).toEqual(400);

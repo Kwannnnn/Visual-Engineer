@@ -90,14 +90,14 @@ router.get('/:id/objects', boardController.getBoardObjects);
 
 /**
  * @api {post} /api/v1/boards Post a board
- * @apiDescription Returns a resource response containing the newly posted board in the system. 
+ * @apiDescription Returns a resource response containing the newly posted board in the system.
  * Returns a 400 error message if the board name is missing.
  * @apiVersion 1.0.0
  * @apiName PostBoard
  * @apiGroup Board
  *
  * @apiBody {Object} attributes Object containing attributes of the board to be added
- * 
+ *
  * @apiSuccess (Success 201) {Object} object representing the newly added board
  * @apiSuccessExample Success-Response:
  * * HTTP/1.1 201 CREATED
@@ -116,7 +116,7 @@ router.post('/', boardController.postBoard);
 
 /**
  * @api {post} /api/v1/boards/:id/objects Post an object to a specific board
- * @apiDescription Posts an object to a board and returns the object. 
+ * @apiDescription Posts an object to a board and returns the object.
  * Returns a 404 error message if the board is not found.
  * Returns a 400 error message if the required item attributes are missing.
  * @apiVersion 1.0.0
@@ -125,7 +125,7 @@ router.post('/', boardController.postBoard);
  *
  * @apiParam {Number} id Board identifier
  * @apiBody {Object} attributes Object containing attributes of the object to be added
- * 
+ *
  * @apiSuccess (Success 201) {Object} object representing the newly added object
  * @apiSuccessExample Success-Response:
  * * HTTP/1.1 201 CREATED

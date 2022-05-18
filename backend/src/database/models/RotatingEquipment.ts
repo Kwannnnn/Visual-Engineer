@@ -19,7 +19,7 @@ export default abstract class RotatingEquipment extends MechanicalEquipment {
     grossVolume: number,
     preliminaryPower: number,
     finalPower: number,
-    type: string
+    type: string,
   ) {
     // eslint-disable-next-line max-len
     super(tag, name, length, width, depth, diameter, emptyMass, head, filledMass, netVolume, grossVolume, type);
@@ -28,8 +28,8 @@ export default abstract class RotatingEquipment extends MechanicalEquipment {
   }
 
   @Property({ type: 'float' })
-  preliminaryPower?: number;
+    preliminaryPower?: number;
 
   @Property({ type: 'float' })
-  finalPower?: number;
+    finalPower?: number;
 }
