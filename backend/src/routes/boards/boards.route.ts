@@ -88,10 +88,73 @@ router.get('/:id', boardController.getById);
  */
 router.get('/:id/objects', boardController.getBoardObjects);
 
-// Post a board
+/**
+ * @api {post} /api/v1/boards Post a board
+ * @apiDescription Returns a resource response containing the newly posted board in the system. 
+ * Returns a 400 error message if the board name is missing.
+ * @apiVersion 1.0.0
+ * @apiName PostBoard
+ * @apiGroup Board
+ *
+ * @apiBody {Object} attributes Object containing attributes of the board to be added
+ * 
+ * @apiSuccess (Success 201) {Object} object representing the newly added board
+ * @apiSuccessExample Success-Response:
+ * * HTTP/1.1 201 CREATED
+ *       {
+ *          "id": 1,
+ *          "items": [],
+ *          "name": "new board",
+ *       }
+ *  @apiErrorExample Error-Response:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "Board name missing"
+ *     }
+ */
 router.post('/', boardController.postBoard);
 
-// Post an item to a board
+/**
+ * @api {post} /api/v1/boards/:id/objects Post an object to a specific board
+ * @apiDescription Posts an object to a board and returns the object. 
+ * Returns a 404 error message if the board is not found.
+ * Returns a 400 error message if the required item attributes are missing.
+ * @apiVersion 1.0.0
+ * @apiName PostBoardObjects
+ * @apiGroup Board
+ *
+ * @apiParam {Number} id Board identifier
+ * @apiBody {Object} attributes Object containing attributes of the object to be added
+ * 
+ * @apiSuccess (Success 201) {Object} object representing the newly added object
+ * @apiSuccessExample Success-Response:
+ * * HTTP/1.1 201 CREATED
+ *       {
+ *          "tag": "#583FA293",
+ *          "name": "Cleaner",
+ *          "length": 2.52,
+ *          "width": 2.35,
+ *          "depth": 1.47,
+ *          "diameter": 1.79,
+ *          "type": "pump",
+ *          "emptyMass": 69,
+ *          "head": 1,
+ *          "filledMass": 5.4,
+ *          "netVolume": 12.3,
+ *          "grossVolume": 23.7,
+ *          "preliminaryPower": 454,
+ *          "finalPower": 600,
+ *          "board": {
+ *              "id": 1,
+ *              "name": "asd"
+ *          }
+ *      }
+ *  @apiErrorExample Error-Response:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "One or more Item attributes are missing"
+ *     }
+ */
 router.post('/:id/objects', boardController.postObjectToBoard);
 
 export default router;
