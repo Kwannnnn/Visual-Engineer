@@ -24,8 +24,8 @@ function ToolboxList(prop: {listing: Listing[]}) {
   }
 
   prop.listing.forEach((listing) => {
-    const [visible, setVisibility] = useState<boolean>(true);
-    const [image, setIcon] = useState<IconDefinition>(faPlus);
+    const [visible, setVisibility] = useState<boolean>(false);
+    const [image, setIcon] = useState<IconDefinition>(faPlusSquare);
 
     const toggleVisibility = () => {
       if (visible) {
@@ -49,7 +49,7 @@ function ToolboxList(prop: {listing: Listing[]}) {
       listBuilder.append(
         <div>
           <span
-            className="hover:opacity-50 transition-all cursor-pointer text-yellow-500 select-none"
+            className="hover:opacity-50 transition-all cursor-pointe select-none"
             role="button"
             tabIndex={0}
             onClick={() => toggleVisibility()}
