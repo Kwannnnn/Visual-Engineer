@@ -24,6 +24,7 @@
     "rules": {
         "no-use-before-define": "off",
         "react/require-default-props": "off",
+        "react/destructuring-assignment": "off",
         "no-shadow": "off",
         "comma-dangle": "off",
         "@typescript-eslint/comma-dangle": [
