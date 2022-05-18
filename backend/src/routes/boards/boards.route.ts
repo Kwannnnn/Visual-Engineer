@@ -143,7 +143,8 @@ router.post('/', boardController.postBoard);
  * @apiBody {Float} filledMass Filled mass property if object is of type 'MechanicalEquipment'
  * @apiBody {Float} netVolume Net volume property if object is of type 'MechanicalEquipment'
  * @apiBody {Float} grossVolume Gross volume property if object is of type 'MechanicalEquipment'
- * @apiBody {Float} preliminaryPower Preliminary power property if object is of type 'RotatingEquipment'
+ * @apiBody {Float} preliminaryPower Preliminary power property
+ *                  if object is of type 'RotatingEquipment'
  * @apiBody {Float} finalPower Final power property if object is of type 'RotatingEquipment'
  *
  * @apiSuccess (Success 201) {Object} object representing the newly added object

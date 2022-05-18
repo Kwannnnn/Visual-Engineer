@@ -31,7 +31,7 @@ export default abstract class Item {
   @PrimaryKey({ nullable: false })
     tag!: string;
 
-  @Property()
+  @Property({ nullable: false })
     type!: string;
 
   @Property({ nullable: false })
