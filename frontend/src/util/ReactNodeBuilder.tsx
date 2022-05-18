@@ -29,7 +29,9 @@ class ReactNodeBuilder {
         <div className={this.node.divStyle} id={this.node.id}>{this.node.data}</div>
       );
     } else result = '';
-    this.node.data = '';
+    this.node.data = undefined;
+    this.node.data = undefined;
+    this.node.data = undefined;
     return result;
   }
 }
