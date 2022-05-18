@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
-import { BoardParams, PatchBoardBody } from '../../routes/boards/boards.types';
+import {
+  BoardObjectParams, BoardParams, FieldError, PatchBoardBody, PatchBoardObject,
+} from '../../routes/boards/boards.types';
 import { TypedRequest } from '../../routes/util/typed-request';
 
 export const getAll = async (req: Request, res: Response) => {
@@ -68,6 +70,62 @@ export const patchById = async (req: TypedRequest<BoardParams, PatchBoardBody>, 
     if (req.body?.name) {
       board.name = req.body.name;
     }
+
+    await DI.boardRepository.persistAndFlush(board);
+
+    return res.json(board);
+  } catch (e: any) {
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+
+export const patchBoardObjects = async (
+  req: TypedRequest<BoardObjectParams, PatchBoardObject>,
+  res: Response,
+) => {
+  const { id: boardId, objectId } = req.params;
+
+  try {
+    const board = await DI.boardRepository.findOne({ id: boardId }, { populate: ['items'] });
+
+    if (!board) {
+      return res.status(404).json({
+        message: 'Board not found',
+      });
+    }
+
+    const { items } = board;
+
+    const item = await DI.itemRepository.findOne({ tag: objectId });
+
+    if (!item || !items.contains(item)) {
+      return res.status(404).json({
+        message: 'Object not found',
+      });
+    }
+
+    const hiddenFields = ['__gettersDefined', 'board', 'tag'];
+
+    const properties = Object.getOwnPropertyNames(item).filter(((p) => !hiddenFields.includes(p)));
+
+    const fieldErrors: FieldError[] = [];
+
+    Object.keys(req.body!).forEach((param) => {
+      if (!properties.includes(param)) {
+        fieldErrors.push({
+          message: 'Illegal field',
+          field: param,
+        });
+      }
+    });
+
+    if (fieldErrors.length > 0) {
+      return res.status(400).json({ errors: fieldErrors });
+    }
+
+    Object.assign(item, req.body);
 
     await DI.boardRepository.persistAndFlush(board);
 

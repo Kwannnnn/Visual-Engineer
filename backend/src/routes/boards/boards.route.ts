@@ -43,7 +43,7 @@ router.get('/', boardController.getAll);
  *        "id": 1,
  *        "name": "PTPFu01",
  *     }
- * @apiErrorExample Error-Response:
+ * @apiErrorExample Error-Response-BoardNotFound:
  *     HTTP/1.1 404 Not Found
  *     {
  *       "message": "Board not found"
@@ -82,7 +82,7 @@ router.get('/:id', boardController.getById);
  *          "diameter": "37"
  *       }
  *     ]
- *  @apiErrorExample Error-Response:
+ *  @apiErrorExample Error-Response-BoardNotFound:
  *     HTTP/1.1 404 Not Found
  *     {
  *       "message": "Board not found"
@@ -108,7 +108,7 @@ router.get('/:id/objects', boardController.getBoardObjects);
  *        "id": 1,
  *        "name": "PTPFu02",
  *     }
- * @apiErrorExample Error-Response-NotFound:
+ * @apiErrorExample Error-Response-BoardNotFound:
  *     HTTP/1.1 404 Not Found
  *     {
  *       "message": "Board not found"
@@ -129,5 +129,41 @@ router.get('/:id/objects', boardController.getBoardObjects);
 router.patch('/:id', validate([
   body('name').isAlphanumeric(),
 ]), boardController.patchById as any);
+
+/**
+ * @api {patch} /api/v1/boards/:id/objects/:objectId Update a specific object in a board
+ * @apiDescription Patches fields for a given object in a board.
+ * @apiVersion 1.0.0
+ * @apiName PatchBoardObject
+ * @apiGroup Board
+ *
+ * @apiParam {Integer} id Board identifier
+ * @apiParam {Integer} objectId Object tag
+ *
+ * @apiSuccess (Success 200) {Object} object The updated board object
+ * @apiSuccessExample Success-Response:
+*      HTTP/1.1 200 OK
+ *       {
+ *          "tag": "112-3sa2-da2",
+ *          "name": "Blower",
+ *          "length": "30",
+ *       }
+ *  @apiErrorExample Error-Response-BoardNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
+ *  @apiErrorExample Error-Response-ObjectNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Object not found"
+ *     }
+ */
+router.patch(
+  '/:id/objects/:objectId',
+  validate([
+    body('name').isEmpty()]),
+  boardController.patchBoardObjects as any,
+);
 
 export default router;
