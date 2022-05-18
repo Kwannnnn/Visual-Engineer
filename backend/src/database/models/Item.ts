@@ -28,11 +28,11 @@ export default abstract class Item {
     this.type = type;
   }
 
-  @PrimaryKey()
+  @PrimaryKey({ nullable: false })
     tag!: string;
 
   @Property()
-    type?: string;
+    type!: string;
 
   @Property({ nullable: false })
     name!: string;

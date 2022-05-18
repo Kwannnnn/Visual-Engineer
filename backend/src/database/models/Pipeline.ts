@@ -21,9 +21,9 @@ export default class Pipeline extends PipeItem {
     this.lining = lining;
   }
 
-  @Property()
+  @Property({ nullable: true })
     flange?: string;
 
-  @Property()
+  @Property({ nullable: true })
     lining?: string;
 }

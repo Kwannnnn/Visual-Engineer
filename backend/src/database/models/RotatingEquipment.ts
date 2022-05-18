@@ -27,9 +27,9 @@ export default abstract class RotatingEquipment extends MechanicalEquipment {
     this.finalPower = finalPower;
   }
 
-  @Property({ type: 'float' })
+  @Property({ nullable: true, type: 'float' })
     preliminaryPower?: number;
 
-  @Property({ type: 'float' })
+  @Property({ nullable: true, type: 'float' })
     finalPower?: number;
 }
