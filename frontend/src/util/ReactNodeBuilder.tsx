@@ -1,17 +1,18 @@
 import React from 'react';
 
 interface BuilderData {
-    data: React.ReactNode;
-    divStyle: string;
+    data?: React.ReactNode;
+    divStyle?: string;
+    id?: string;
 }
 
 class ReactNodeBuilder {
   private readonly node: BuilderData;
 
-  constructor(tailwindClasses?: string) {
+  constructor(tailwindClasses?: string, id?: string) {
     this.node = {
-      data: '',
-      divStyle: tailwindClasses ?? '',
+      divStyle: tailwindClasses,
+      id,
     };
   }
 
@@ -21,9 +22,15 @@ class ReactNodeBuilder {
   }
 
   build(): React.ReactNode {
-    return (
-      <div className={this.node.divStyle}>{this.node.data}</div>
-    );
+    let result;
+
+    if (this.node.data) {
+      result = (
+        <div className={this.node.divStyle} id={this.node.id}>{this.node.data}</div>
+      );
+    } else result = '';
+    this.node.data = '';
+    return result;
   }
 }
 
