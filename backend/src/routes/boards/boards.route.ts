@@ -170,6 +170,8 @@ router.post('/', boardController.postBoard);
  *              "name": "asd"
  *          }
  *      }
+ * @apiError ItemAttributeMissing: The request body is missing a required attribute.
+ * @apiError BoardNotFound: Board with identifier <code>id</code> does not exist.
  *  @apiErrorExample ItemAttributeMissing:
  *     HTTP/1.1 400 Bad Request
  *     {
