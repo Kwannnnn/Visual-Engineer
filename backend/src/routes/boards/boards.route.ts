@@ -170,7 +170,7 @@ router.post('/', boardController.postBoard);
  *              "name": "asd"
  *          }
  *      }
- *  @apiErrorExample Error-Response:
+ *  @apiErrorExample ItemAttributeMissing:
  *     HTTP/1.1 400 Bad Request
  *     {
  *       "message": "One or more Item attributes are missing"
