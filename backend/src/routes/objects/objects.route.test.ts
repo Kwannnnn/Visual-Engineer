@@ -1,20 +1,20 @@
 import request from 'supertest';
+import { ISeedManager } from '@mikro-orm/core';
 import setup from '../../index';
 import DI from '../../DI';
+import DatabaseSeeder from '../../database/seeders/DatabaseSeeder';
 
 let app: Express.Application;
 
 beforeEach(async () => {
   app = await setup();
-  // FIXME if this is enabled in multiple files something goes wrong with creation of the database
-  // await DI.orm.getSchemaGenerator().refreshDatabase();
-  // const seeder: ISeedManager = DI.orm.getSeeder();
-  // await seeder.seed(DatabaseSeeder);
+  await DI.orm.getSchemaGenerator().refreshDatabase();
+  const seeder: ISeedManager = DI.orm.getSeeder();
+  await seeder.seed(DatabaseSeeder);
 });
 
 afterEach(async () => {
-  // FIXME if this is enabled in multiple files something goes wrong with creation of the database
-  // await DI.orm.getSchemaGenerator().clearDatabase();
+  await DI.orm.getSchemaGenerator().clearDatabase();
   DI.orm.close();
 });
 
