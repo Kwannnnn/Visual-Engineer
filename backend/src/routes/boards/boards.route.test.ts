@@ -102,24 +102,10 @@ describe('POST Board endpoints', () => {
     });
 
     test('should return 400 when one or more object attributes are missing', async () => {
+      const { length, width, ...otherProps } = exampleItem;
       const response = await request(app)
         .post('/api/v1/boards/1/objects')
-        .send({
-          tag: '#583FA293D3',
-          name: 'Cleaner',
-          // length: 2.52,
-          // width: 2.35,
-          depth: 1.47,
-          diameter: 1.79,
-          emptyMass: 69,
-          head: 1,
-          filledMass: 5.4,
-          netVolume: 12.3,
-          grossVolume: 23.7,
-          preliminaryPower: 454,
-          finalPower: 600,
-          type: 'pump',
-        });
+        .send({ otherProps });
 
       expect(response.statusCode).toEqual(400);
     });
