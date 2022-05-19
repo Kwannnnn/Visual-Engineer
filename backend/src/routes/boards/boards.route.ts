@@ -111,7 +111,7 @@ router.get('/:id/objects', boardController.getBoardObjects);
  *     {
  *       "message": "Board name missing"
  *     }
- * @apiErrorExample Error-Response:
+ * @apiErrorExample BoardNotFound:
  *     HTTP/1.1 404 Not Found
  *     {
  *       "message": "Board not found"
