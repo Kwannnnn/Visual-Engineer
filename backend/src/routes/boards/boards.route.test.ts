@@ -6,7 +6,7 @@ import DI from '../../DI';
 let app: Express.Application;
 
 const exampleItem = {
-  tag: '#583FA293D3',
+  tag: uuidv4(),
   name: 'Cleaner',
   length: 2.52,
   width: 2.35,
@@ -120,7 +120,7 @@ describe('POST Board endpoints', () => {
       const response = await request(app)
         .post('/api/v1/boards/1/objects')
         .send({
-          tag: '#583FA293D3',
+          tag: exampleItem.tag,
           name: 'Cleaner',
           // length: 2.52,
           // width: 2.35,
@@ -137,6 +137,127 @@ describe('POST Board endpoints', () => {
         });
 
       expect(response.statusCode).toEqual(400);
+    });
+  });
+});
+
+describe('PATCH Board endpoints', () => {
+  describe('PATCH api/v1/boards/1', () => {
+    test('should return the updated board', async () => {
+      // FIXME: This request is just here to create a board
+      await request(app)
+        .post('/api/v1/boards')
+        .send({
+          name: 'board1',
+        });
+
+      const response = await request(app)
+        .patch('/api/v1/boards/2')
+        .send({
+          name: 'my board',
+        });
+
+      expect(response.statusCode).toEqual(200);
+      expect(response.body).toEqual(
+        {
+          id: 2,
+          name: 'my board',
+        },
+      );
+    });
+
+    test('should return 404 when a nonexistent board ID is used', async () => {
+      const response = await request(app)
+        .patch('/api/v1/boards/77')
+        .send({
+        });
+      expect(response.statusCode).toEqual(404);
+    });
+  });
+
+  describe('PATCH api/v1/boards/:id/objects/:objectId', () => {
+    test('should return the updated object', async () => {
+      // FIXME: This request is just here to create an item in the board
+      await request(app)
+        .post('/api/v1/boards/2/objects')
+        .send({
+          ...exampleItem,
+          tag: 'p1',
+        });
+
+      const response = await request(app)
+        .patch('/api/v1/boards/2/objects/p1')
+        .send({
+          length: 5,
+        });
+
+      expect(response.statusCode).toEqual(200);
+      expect(response.body).toEqual(
+        {
+          ...exampleItem,
+          tag: 'p1',
+          length: 5,
+          board: 2,
+        },
+      );
+    });
+
+    test('should return 404 when board with id does not exist', async () => {
+      const response = await request(app)
+        .post('/api/v1/boards/500/objects/p1')
+        .send({});
+
+      expect(response.statusCode).toEqual(404);
+    });
+
+    test('should return 404 when the object does not exist', async () => {
+      const response = await request(app)
+        .post('/api/v1/boards/2/objects/sometag')
+        .send({});
+
+      expect(response.statusCode).toEqual(404);
+    });
+
+    test('should return 400 when an invalid field is updated', async () => {
+      const response = await request(app)
+        .patch('/api/v1/boards/2/objects/p1')
+        .send({
+          tag: 'new-p1-tag',
+        });
+
+      expect(response.statusCode).toEqual(400);
+      expect(response.body).toEqual(
+        {
+          errors: [
+            {
+              msg: 'Illegal field',
+              param: 'tag',
+              location: 'body',
+            },
+          ],
+        },
+      );
+    });
+
+    test('should return 400 when an illegal field is updated (for a pump object type)', async () => {
+      const response = await request(app)
+        .patch('/api/v1/boards/2/objects/p1')
+        .send({
+          flange: 'some-flange',
+        });
+
+      expect(response.statusCode).toEqual(400);
+      expect(response.body).toEqual(
+        {
+          errors: [
+            {
+              msg: 'Illegal field',
+              param: 'flange',
+              location: 'body',
+            },
+          ],
+        },
+      );
     });
   });
 });
