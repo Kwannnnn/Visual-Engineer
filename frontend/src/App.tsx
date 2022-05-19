@@ -1,49 +1,26 @@
 import React, { useState } from 'react';
+import { getAllBoards, getBoardById } from './utils/apis';
 import './App.css';
-import Button from './components/Button';
-import Container from './components/Container';
-import DBItemContainer from './components/DBItemContainer';
-import BoardList from './components/list/BoardList';
-
-interface Item {
-  Tag: string,
-  DescriptiveName: string,
-  Length: number,
-  Width: number,
-  Depth: number,
-  Diameter: number,
-}
 
 function App() {
-  const [data, setData] = useState<Item[]>([]);
-
-  const json = [
-    {
-      Tag: '#583FA293D3',
-      DescriptiveName: 'Cleaner',
-      Length: 2.52,
-      Width: 2.35,
-      Depth: 1.47,
-      Diameter: 1.79,
-    },
-    {
-      Tag: '#7A52B98F2C',
-      DescriptiveName: 'Heater',
-      Length: 0.83,
-      Width: 1.2,
-      Depth: 0.53,
-      Diameter: 1.35,
-    }
-  ];
-
+  const boards = getAllBoards();
+  const board = getBoardById(1);
+  // const boardObjects = getBoardObjects(1);
   return (
     <div className="App">
       <header className="App-header">
-        {/* <Button id="test-button" onClick={() => setData(json)}>Read Data</Button>
-        <Container id="test-container">
-          <DBItemContainer properties={data} />
-        </Container> */}
-        <BoardList />
+        <div>
+          <h1>getAllBoards</h1>
+          <div>{boards}</div>
+          <br />
+          <h1>getBoardById:</h1>
+          <div>
+            ID: {board.id} / Name: {board.name}
+          </div>
+          <br />
+          {/* <h1>getBoardObjects</h1>
+          <div>{boardObjects}</div> */}
+        </div>
       </header>
     </div>
   );
