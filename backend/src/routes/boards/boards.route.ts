@@ -103,7 +103,7 @@ router.get('/:id/objects', boardController.getBoardObjects);
  * @apiUse InvalidFields
  */
 router.patch('/:id', validate([
-  body('name').isAlphanumeric(),
+  body('name').optional(),
 ]), boardController.patchById as any);
 
 /**
@@ -130,9 +130,7 @@ router.patch('/:id', validate([
  */
 router.patch(
   '/:id/objects/:objectId',
-  validate([
-    body('name').isEmpty()]),
-  boardController.patchBoardObjects as any,
+  boardController.patchBoardObjects,
 );
 
 /**
