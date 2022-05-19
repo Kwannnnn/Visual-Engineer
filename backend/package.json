@@ -10,7 +10,7 @@
   },
   "license": "ISC",
   "scripts": {
-    "test": "npx jest",
+    "test": "npx jest --runInBand",
     "build": "npx tsc",
     "prod": "DEBUG=http node dist/index.js",
     "start": "npm run build && cross-env DEBUG=http PORT=3000 npm run prod",
