@@ -108,7 +108,7 @@ router.get('/:id/objects', boardController.getBoardObjects);
  *       }
  * @apiError BoardNameMissing: The <code>name</code> field of the request body is missing.
  * @apiError BoardNotFound: Board with identifier <code>id</code> does not exist.
- *  @apiErrorExample Error-Response:
+ *  @apiErrorExample BoardNameMissing:
  *     HTTP/1.1 400 Bad Request
  *     {
  *       "message": "Board name missing"
