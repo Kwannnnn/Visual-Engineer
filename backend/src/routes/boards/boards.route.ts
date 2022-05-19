@@ -175,7 +175,7 @@ router.post('/', boardController.postBoard);
  *     {
  *       "message": "One or more Item attributes are missing"
  *     }
- *  @apiErrorExample Error-Response:
+ *  @apiErrorExample BoardNotFound:
  *     HTTP/1.1 404 Not Found
  *     {
  *       "message": "Board not found"
