@@ -6,7 +6,7 @@
   "author": "dhi2v.e1",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/saxion.nl/hbo-ict/2.4-project/dhi2ve1.git"
+    "url": "https://gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1.git"
   },
   "license": "ISC",
   "scripts": {
@@ -21,8 +21,8 @@
     "db:update": "npx mikro-orm schema:update -r",
     "db:drop": "npx mikro-orm schema:drop -r",
     "db:fresh": "npx mikro-orm schema:fresh -r",
-    "docker:build": "docker build -t registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/dhi2ve1/backend:latest .",
-    "docker:run": "docker run -d -p 3000:3000 --name=visual-engineer-backend registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/dhi2ve1/backend:latest",
+    "docker:build": "docker build -t registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/backend:latest .",
+    "docker:run": "docker run -d -p 3000:3000 --name=visual-engineer-backend registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/backend:latest",
     "ci:integration": "docker-compose -f test.docker-compose.yml up --build --exit-code-from backend",
     "ci:test": "npx jest --ci --reporters=default --reporters=jest-junit"
   },
