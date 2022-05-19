@@ -1,7 +1,9 @@
 import request from 'supertest';
-import { v4 as uuidv4 } from 'uuid';
+import { ISeedManager } from '@mikro-orm/core';
 import setup from '../../index';
 import DI from '../../DI';
+import DatabaseSeeder from '../../database/seeders/DatabaseSeeder';
+import { sampleBoards } from '../../database/seeders/BoardSeeder';
 
 let app: Express.Application;
 
@@ -24,11 +26,14 @@ const exampleItem = {
 
 beforeEach(async () => {
   app = await setup();
+  await DI.orm.getSchemaGenerator().refreshDatabase();
+  const seeder: ISeedManager = DI.orm.getSeeder();
+  await seeder.seed(DatabaseSeeder);
 });
 
-afterEach(() => {
-  exampleItem.tag = uuidv4(); // generate unique tag for item after each test
-  DI.orm.close();
+afterEach(async () => {
+  await DI.orm.getSchemaGenerator().clearDatabase();
+  await DI.orm.close();
 });
 
 // TODO: Drop and then update the database before running the test
@@ -38,28 +43,19 @@ describe('GET Board endpoints', () => {
   describe('GET api/v1/boards', () => {
     test('should return all boards', async () => {
       const response = await request(app).get('/api/v1/boards');
-      expect(response.statusCode).toEqual(200);
-      expect(response.body).toEqual([]);
+      expect(response.status).toEqual(200);
+      expect(response.body).toHaveLength(3);
     });
   });
 
-  describe('GET api/v1/boards/:tag', () => {
-    test('should return an existing board', async () => {
-      // TODO: update this test whenever database is seeded
-      expect(true);
-    });
-
-    test('should return 404 when a board with id does not exist', async () => {
-      const response = await request(app).get('/api/v1/boards/6969');
-      expect(response.statusCode).toEqual(404);
-    });
-  });
-
-  describe('GET api/v1/boards/:tag/objects', () => {
-    test('should return an existing board', async () => {
-      // TODO: update this test whenever database is seeded
-      // const response = await request(app).get('/api/v1/boards/1/objects');
-      expect(true);
+  describe('GET /boards/:id', () => {
+    describe('given the board exists', () => {
+      it('should return an existing board', async () => {
+        const { id, name } = sampleBoards[0];
+        const response = await request(app).get(`/api/v1/boards/${id}`);
+        expect(response.status).toEqual(200);
+        expect(response.body).toEqual({ id, name });
+      });
     });
   });
 });
