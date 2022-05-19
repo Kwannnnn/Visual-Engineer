@@ -170,7 +170,7 @@ export const patchBoardObjects = async (
 
     await DI.boardRepository.persistAndFlush(board);
 
-    return res.json(board);
+    return res.json(item);
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
