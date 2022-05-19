@@ -98,7 +98,7 @@ router.get('/:id/objects', boardController.getBoardObjects);
  *
  * @apiBody {String} name Name of the board to be added
  *
- * @apiSuccess (Success 201) {Object} A resource response containing an object
+ * @apiSuccess (Success 200) {Board} board A resource response containing a board.
  * @apiSuccessExample Success-Response:
  * * HTTP/1.1 201 CREATED
  *       {

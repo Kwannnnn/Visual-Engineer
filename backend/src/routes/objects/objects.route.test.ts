@@ -1,7 +1,7 @@
 import request from 'supertest';
+import { ISeedManager } from '@mikro-orm/core';
 import setup from '../../index';
 import DI from '../../DI';
-import { ISeedManager } from '@mikro-orm/core';
 import DatabaseSeeder from '../../database/seeders/DatabaseSeeder';
 
 let app: Express.Application;
