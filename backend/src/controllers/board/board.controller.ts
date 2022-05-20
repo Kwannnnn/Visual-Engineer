@@ -57,6 +57,67 @@ export const getBoardObjects = async (req: TypedRequest<BoardParams, any>, res: 
   }
 };
 
+export const deleteObjectFromBoard = async (req: Request, res: Response) => {
+  const id: number = +req.params.id;
+  const { tag } = req.params;
+
+  try {
+    const board = await DI.boardRepository.findOne(id);
+
+    if (!board) {
+      return res.status(404).json({
+        message: 'Board not found',
+      });
+    }
+
+    await board.items.init();
+
+    const items = board.items.getItems();
+    const item = items.find((Item) => Item.tag === tag);
+
+    if (!item) {
+      return res.status(404).json({
+        message: 'Item not found',
+      });
+    }
+
+    DI.itemRepository.removeAndFlush(item);
+    board.items.remove(item);
+
+    return res.status(204).send();
+  } catch (e: any) {
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+
+export const deleteBoard = async (req: Request, res: Response) => {
+  const id: number = +req.params.id;
+
+  try {
+    const board = await DI.boardRepository.findOne(id);
+
+    if (!board) {
+      return res.status(404).json({
+        message: 'Board not found',
+      });
+    }
+
+    await board.items.init();
+
+    const items = board.items.getItems();
+    DI.itemRepository.removeAndFlush(items);
+    DI.boardRepository.removeAndFlush(board);
+
+    return res.status(204).send();
+  } catch (e: any) {
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+
 export const patchById = async (req: TypedRequest<BoardParams, PatchBoardBody>, res: Response) => {
   const { id } = req.params;
 
@@ -184,9 +245,5 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
         message: e.message,
       });
     }
-
-    return res.status(400).json({
-      message: e.message,
-    });
   }
 };

@@ -17,6 +17,7 @@ export default class PipelineFactory extends Factory<Pipeline> {
       pressureClass: PressureClass.PN10,
       flange: faker.datatype.string(),
       lining: faker.datatype.string(),
+      type: 'pipeline',
     };
   }
 }

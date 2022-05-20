@@ -18,6 +18,7 @@ export default class VesselFactory extends Factory<Tank> {
       filledMass: faker.datatype.float(),
       netVolume: faker.datatype.float(),
       grossVolume: faker.datatype.float(),
+      type: 'tank',
     };
   }
 }
