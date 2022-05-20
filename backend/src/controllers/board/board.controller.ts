@@ -56,7 +56,6 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
   const { tag } = req.params;
 
   try {
-    // find the board
     const board = await DI.boardRepository.findOne(id);
 
     if (!board) {
@@ -65,8 +64,10 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
       });
     }
 
-    const items = board.items.getItems(); // gets array of all the items
-    const item = items.find((Item) => Item.tag === tag); // finds an item with the same tag
+    await board.items.init();
+
+    const items = board.items.getItems();
+    const item = items.find((Item) => Item.tag === tag);
 
     if (!item) {
       return res.status(404).json({
@@ -74,11 +75,12 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
       });
     }
 
+    DI.itemRepository.removeAndFlush(item);
     board.items.remove(item);
 
-    res.status(204);
-    return res.send(`Deleted item ${item.name} from board ${
-      board.name} and ID ${board.id}`);
+    return res.status(204).json({
+      message: 'Item deleted',
+    });
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
@@ -90,7 +92,6 @@ export const deleteBoard = async (req: Request, res: Response) => {
   const id: number = +req.params.id;
 
   try {
-    // find the board
     const board = await DI.boardRepository.findOne(id);
 
     if (!board) {
@@ -99,10 +100,15 @@ export const deleteBoard = async (req: Request, res: Response) => {
       });
     }
 
+    await board.items.init();
+
+    const items = board.items.getItems();
+    DI.itemRepository.removeAndFlush(items);
     DI.boardRepository.removeAndFlush(board);
 
-    res.status(204);
-    return res.send(`Deleted board ${board.name} with ID ${board.id}`);
+    return res.status(204).json({
+      message: 'Board deleted',
+    });
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
