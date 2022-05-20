@@ -14,15 +14,16 @@ export default class Pipeline extends PipeItem {
     pressureClass: PressureClass,
     flange: string,
     lining: string,
+    type: string,
   ) {
-    super(tag, name, length, width, depth, diameter, pressureClass);
+    super(tag, name, length, width, depth, diameter, pressureClass, type);
     this.flange = flange;
     this.lining = lining;
   }
 
-  @Property()
-    flange?: string;
+  @Property({ nullable: true })
+    flange!: string;
 
-  @Property()
-    lining?: string;
+  @Property({ nullable: true })
+    lining!: string;
 }
