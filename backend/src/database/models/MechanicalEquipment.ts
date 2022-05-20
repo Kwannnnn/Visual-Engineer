@@ -12,7 +12,6 @@ export default abstract class MechanicalEquipment extends Item {
     width: number,
     depth: number,
     diameter: number,
-    type: string,
     emptyMass: number,
     head: number,
     filledMass: number,
@@ -28,7 +27,6 @@ export default abstract class MechanicalEquipment extends Item {
     this.grossVolume = grossVolume;
   }
 
-<<<<<<< HEAD
   @Property({ nullable: true, type: 'float' })
     emptyMass!: number;
 
@@ -43,20 +41,4 @@ export default abstract class MechanicalEquipment extends Item {
 
   @Property({ nullable: true, type: 'float' })
     grossVolume!: number;
-=======
-  @Property({ type: 'float' })
-    emptyMass?: number;
-
-  @Property({ type: 'float' })
-    head?: number;
-
-  @Property({ type: 'float' })
-    filledMass?: number;
-
-  @Property({ type: 'float' })
-    netVolume?: number;
-
-  @Property({ type: 'float' })
-    grossVolume?: number;
->>>>>>> 4760a9cbb83e5e1f250f2e8bc395a9a00a5d42b1
 }

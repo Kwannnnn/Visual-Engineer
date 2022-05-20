@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
 import { Item, Board } from '../../database/models';
-import ValidationError from '../../error/ValidationError';
 import { checkCommonItemAttributes, checkTypeSpecificAttributes, getClass } from './board.util';
 import {
   BoardObjectParams, BoardParams, FieldError, PatchBoardBody, PatchBoardObject,
@@ -73,7 +72,7 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
     await board.items.init();
 
     const items = board.items.getItems();
-    const item = items.find((Item) => Item.tag === tag);
+    const item = items.find((ItemIns) => ItemIns.tag === tag);
 
     if (!item) {
       return res.status(404).json({
@@ -225,7 +224,8 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
     const board = await DI.boardRepository.findOne(id);
 
     if (!board) {
-      throw new ValidationError(`Board with id ${id} not found`, 404);
+      res.status(400);
+      return res.json({ message: 'Board name is missing' });
     }
 
     checkCommonItemAttributes(req.body);
@@ -240,10 +240,8 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
     res.status(201);
     return res.json(item);
   } catch (e: any) {
-    if (e instanceof ValidationError) {
-      return res.status(e.statusCode).json({
-        message: e.message,
-      });
-    }
+    return res.status(e.statusCode).json({
+      message: e.message,
+    });
   }
 };
