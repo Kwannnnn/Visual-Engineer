@@ -14,7 +14,7 @@ describe('View example data', () => {
 
     it('Should expend and collapse on click', () => {
       cy.get('#listing-Items-subset')
-        .should('have.class', 'collapse');
+        .should('have.class', 'hidden');
 
       cy.get('#toolbox-list')
         .should('be.visible');
@@ -24,19 +24,19 @@ describe('View example data', () => {
         .click();
 
       cy.get('#listing-Items-subset')
-        .should('not.have.class', 'collapse');
+        .should('not.have.class', 'hidden');
 
       cy.get('#listing-Items-btn')
         .should('be.visible')
         .click();
 
       cy.get('#listing-Items-subset')
-        .should('have.class', 'collapse');
+        .should('have.class', 'hidden');
     });
 
     it('Should show two subsets after clicking on "Items"', () => {
       cy.get('#listing-Items-subset')
-        .should('have.class', 'collapse');
+        .should('have.class', 'hidden');
 
       cy.get('#toolbox-list')
         .should('be.visible');
@@ -46,7 +46,7 @@ describe('View example data', () => {
         .click();
 
       cy.get('#listing-Items-subset')
-        .should('not.have.class', 'collapse');
+        .should('not.have.class', 'hidden');
 
       cy.get('#listing-Items-btn')
         .should('be.visible')
