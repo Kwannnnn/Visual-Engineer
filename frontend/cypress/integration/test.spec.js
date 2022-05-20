@@ -7,17 +7,14 @@ describe('View example data', () => {
     it('Should have one top level group called "Items"', () => {
       cy.get('#toolbox-list')
         .should('be.visible')
-        .children().should('have.length', 1)
-        .children()
-        .invoke('text')
-        .then((text) => {
-          expect(text.trim().split(' ')[0]).equal('Items');
-        });
+        .children().should('have.length', 1);
+      cy.get('#toolbox-list').children('#listing-Items')
+        .should('contain', 'Items');
     });
 
     it('Should expend and collapse on click', () => {
       cy.get('#listing-Items-subset')
-        .should('have.class', 'hidden');
+        .should('have.class', 'collapse');
 
       cy.get('#toolbox-list')
         .should('be.visible');
@@ -27,19 +24,19 @@ describe('View example data', () => {
         .click();
 
       cy.get('#listing-Items-subset')
-        .should('not.have.class', 'hidden');
+        .should('not.have.class', 'collapse');
 
       cy.get('#listing-Items-btn')
         .should('be.visible')
         .click();
 
       cy.get('#listing-Items-subset')
-        .should('have.class', 'hidden');
+        .should('have.class', 'collapse');
     });
 
     it('Should show two subsets after clicking on "Items"', () => {
       cy.get('#listing-Items-subset')
-        .should('have.class', 'hidden');
+        .should('have.class', 'collapse');
 
       cy.get('#toolbox-list')
         .should('be.visible');
@@ -49,7 +46,7 @@ describe('View example data', () => {
         .click();
 
       cy.get('#listing-Items-subset')
-        .should('not.have.class', 'hidden');
+        .should('not.have.class', 'collapse');
 
       cy.get('#listing-Items-btn')
         .should('be.visible')
