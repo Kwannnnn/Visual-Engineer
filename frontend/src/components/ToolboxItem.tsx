@@ -8,7 +8,7 @@ interface Item {
 
 function ToolboxItem({ name }: Item) {
   return (
-    <div className="cursor-mov select-none">
+    <div className="cursor-move select-none">
       <FontAwesomeIcon icon={faCube} />
       {` ${name}`}
     </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconDefinition, faPlusSquare, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { IconDefinition, faAngleRight, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import ReactNodeBuilder from '../util/ReactNodeBuilder';
 import ToolboxItem from './ToolboxItem';
 
@@ -25,15 +25,15 @@ function ToolboxList(prop: {listing: Listing[]}) {
 
   prop.listing.forEach((listing) => {
     const [visible, setVisibility] = useState<boolean>(false);
-    const [image, setIcon] = useState<IconDefinition>(faPlusSquare);
+    const [image, setIcon] = useState<IconDefinition>(faAngleRight);
 
     const toggleVisibility = () => {
       if (visible) {
         setVisibility(false);
-        setIcon(faPlusSquare);
+        setIcon(faAngleRight);
       } else {
         setVisibility(true);
-        setIcon(faPlus);
+        setIcon(faAngleDown);
       }
     };
     if (listing.group) {
@@ -48,20 +48,22 @@ function ToolboxList(prop: {listing: Listing[]}) {
 
       listBuilder.append(
         <div id={`listing-${listing.group}`}>
-          <span
-            className="hover:opacity-50 transition-all cursor-pointe select-none"
+          <div
+            className="hover:opacity-50 transition-all cursor-pointe select-none flex justify-between"
             role="button"
             tabIndex={0}
             onClick={() => toggleVisibility()}
             onKeyDown={undefined}
             id={`listing-${listing.group}-btn`}
           >
+            <p className="font-bold">{` ${listing.group}`}</p>
             <FontAwesomeIcon icon={image} />
-            {` ${listing.group}`}
-          </span>
-          <div className={visible ? '' : 'hidden'} id={`listing-${listing.group}-subset`}>
+          </div>
+          <div className={`transition ${visible ? '' : 'hidden'}`} id={`listing-${listing.group}-subset`}>
             {subsetBuilder.build()}
-            {itemBuilder.build()}
+            <div className="mb-3">
+              {itemBuilder.build()}
+            </div>
           </div>
         </div>
       );
