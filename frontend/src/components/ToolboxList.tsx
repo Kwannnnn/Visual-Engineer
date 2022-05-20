@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconDefinition, faAngleRight, faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import ReactNodeBuilder from '../util/ReactNodeBuilder';
 import ToolboxItem from './ToolboxItem';
+import 'tw-elements';
 
 interface Listing {
     group?: string,
@@ -24,18 +25,16 @@ function ToolboxList(prop: {listing: Listing[]}) {
   }
 
   prop.listing.forEach((listing) => {
-    const [visible, setVisibility] = useState<boolean>(false);
-    const [image, setIcon] = useState<IconDefinition>(faAngleRight);
+    const [rotation, setIconRotation] = useState<string>('');
 
-    const toggleVisibility = () => {
-      if (visible) {
-        setVisibility(false);
-        setIcon(faAngleRight);
+    const toggleIconRotation = () => {
+      if (rotation === 'rotate-90') {
+        setIconRotation('');
       } else {
-        setVisibility(true);
-        setIcon(faAngleDown);
+        setIconRotation('rotate-90');
       }
     };
+
     if (listing.group) {
       if (listing.subsets) {
         subsetBuilder.append(<ToolboxList listing={listing.subsets} />);
@@ -52,18 +51,22 @@ function ToolboxList(prop: {listing: Listing[]}) {
             className="hover:opacity-50 transition-all cursor-pointe select-none flex justify-between"
             role="button"
             tabIndex={0}
-            onClick={() => toggleVisibility()}
+            onClick={() => toggleIconRotation()}
             onKeyDown={undefined}
-            id={`listing-${listing.group}-btn`}
+            id={`listing-${listing.group.replace(' ', '_')}-btn`}
+            data-bs-toggle="collapse"
+            aria-expanded="false"
+            aria-controls={`listing-${listing.group.replace(' ', '_')}-subset`}
+            data-bs-target={`#listing-${listing.group.replace(' ', '_')}-subset`}
           >
-            <p className="font-bold">{` ${listing.group}`}</p>
-            <FontAwesomeIcon icon={image} />
-          </div>
-          <div className={`transition ${visible ? '' : 'hidden'}`} id={`listing-${listing.group}-subset`}>
-            {subsetBuilder.build()}
-            <div className="mb-3">
-              {itemBuilder.build()}
+            <p className="font-bold">{listing.group}</p>
+            <div className="align-middle">
+              <FontAwesomeIcon icon={faAngleRight} className={`transition-all duration-300 ${rotation}`} />
             </div>
+          </div>
+          <div className="mb-2 collapse" id={`listing-${listing.group.replace(' ', '_')}-subset`}>
+            {subsetBuilder.build()}
+            {itemBuilder.build()}
           </div>
         </div>
       );
