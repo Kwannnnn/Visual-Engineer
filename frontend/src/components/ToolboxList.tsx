@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import ReactNodeBuilder from '../util/ReactNodeBuilder';
 import ToolboxItem from './ToolboxItem';
-import 'tw-elements';
 
 interface Listing {
     group?: string,
@@ -26,12 +25,15 @@ function ToolboxList(prop: {listing: Listing[]}) {
 
   prop.listing.forEach((listing) => {
     const [rotation, setIconRotation] = useState<string>('');
+    const [visible, toggleVisibility] = useState<boolean>(false);
 
     const toggleIconRotation = () => {
-      if (rotation === 'rotate-90') {
+      if (visible) {
         setIconRotation('');
+        toggleVisibility(false);
       } else {
         setIconRotation('rotate-90');
+        toggleVisibility(true);
       }
     };
 
@@ -54,17 +56,13 @@ function ToolboxList(prop: {listing: Listing[]}) {
             onClick={() => toggleIconRotation()}
             onKeyDown={undefined}
             id={`listing-${listing.group.replace(' ', '_')}-btn`}
-            data-bs-toggle="collapse"
-            aria-expanded="false"
-            aria-controls={`listing-${listing.group.replace(' ', '_')}-subset`}
-            data-bs-target={`#listing-${listing.group.replace(' ', '_')}-subset`}
           >
             <p className="font-bold">{listing.group}</p>
             <div className="align-middle">
               <FontAwesomeIcon icon={faAngleRight} className={`transition-all duration-300 ${rotation}`} />
             </div>
           </div>
-          <div className="mb-2 collapse" id={`listing-${listing.group.replace(' ', '_')}-subset`}>
+          <div className={`mb-2 ${visible ? '' : 'hidden'}`} id={`listing-${listing.group.replace(' ', '_')}-subset`}>
             {subsetBuilder.build()}
             {itemBuilder.build()}
           </div>
