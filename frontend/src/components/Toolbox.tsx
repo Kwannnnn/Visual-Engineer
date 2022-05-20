@@ -7,34 +7,34 @@ interface ToolboxProps {
 
 const apiSampleData = [
   {
-    group: 'items',
+    group: 'Items',
     subsets: [
       {
-        group: 'pipes',
+        group: 'Pipes',
         items: [
           {
-            name: 'plastic pipe',
+            name: 'Plastic pipe',
           },
           {
-            name: 'iron pipe',
+            name: 'Iron pipe',
           }
         ],
         subsets: [
           {
-            group: 'long pipes',
+            group: 'Square pipes',
             items: [
               {
-                name: 'plastic long pipe',
+                name: 'Copper square pipe',
               },
               {
-                name: 'iron long pipe',
+                name: 'Aluminum square pipe',
               }
             ],
           }
         ],
       },
       {
-        group: 'cleaners',
+        group: 'Cleaners',
         items: [
           {
             name: '2A cleaner',
@@ -51,7 +51,9 @@ const apiSampleData = [
 function Toolbox({ className }: ToolboxProps) {
   return (
     <aside className={`bg-yellow-500 overflow-y-auto ${className}`}>
-      <ToolboxList listing={apiSampleData} />
+      <div id="toolbox-list">
+        <ToolboxList listing={apiSampleData} />
+      </div>
     </aside>
   );
 }

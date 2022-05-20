@@ -20,9 +20,7 @@ class ReactNodeBuilder {
     let result;
 
     if (this.node.data) {
-      result = (
-        <div>{this.node.data}</div>
-      );
+      result = (this.node.data);
     } else result = '';
     this.node.data = undefined;
     return result;

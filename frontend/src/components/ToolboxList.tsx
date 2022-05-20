@@ -47,18 +47,19 @@ function ToolboxList(prop: {listing: Listing[]}) {
       }
 
       listBuilder.append(
-        <div>
+        <div id={`listing-${listing.group}`}>
           <span
             className="hover:opacity-50 transition-all cursor-pointe select-none"
             role="button"
             tabIndex={0}
             onClick={() => toggleVisibility()}
             onKeyDown={undefined}
+            id={`listing-${listing.group}-btn`}
           >
             <FontAwesomeIcon icon={image} />
             {` ${listing.group}`}
           </span>
-          <div className={visible ? '' : 'hidden'}>
+          <div className={visible ? '' : 'hidden'} id={`listing-${listing.group}-subset`}>
             {subsetBuilder.build()}
             {itemBuilder.build()}
           </div>
