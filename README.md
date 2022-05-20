@@ -20,6 +20,8 @@ With a database configured and available, the schema can be updated using: `npm 
 
 > The `npm run db:drop` command can be used to drop the local schema
 
+Various other npm scripts are available for common local database opeerations, like `npm run db:fresh` and `npm run db:seed`. These scripts re-initialize a fresh database, and run the seeders, respectively.
+
 ### Running
 
 To run the backed in development mode (with auto-reloading), use `npm run dev`.
