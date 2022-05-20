@@ -78,9 +78,7 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
     DI.itemRepository.removeAndFlush(item);
     board.items.remove(item);
 
-    return res.status(204).json({
-      message: 'Item deleted',
-    });
+    return res.status(204).send();
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
@@ -106,9 +104,7 @@ export const deleteBoard = async (req: Request, res: Response) => {
     DI.itemRepository.removeAndFlush(items);
     DI.boardRepository.removeAndFlush(board);
 
-    return res.status(204).json({
-      message: 'Board deleted',
-    });
+    return res.status(204).send();
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
