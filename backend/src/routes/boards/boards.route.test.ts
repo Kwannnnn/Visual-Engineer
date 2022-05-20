@@ -5,7 +5,6 @@ import setup from '../../index';
 import DI from '../../DI';
 import DatabaseSeeder from '../../database/seeders/DatabaseSeeder';
 import { sampleBoards } from '../../database/seeders/BoardSeeder';
-import { sampleBoardObjects } from '../../database/seeders/ObjectSeeder';
 
 let app: Express.Application;
 
@@ -152,7 +151,7 @@ describe('PATCH Board endpoints', () => {
   describe('PATCH api/v1/boards/:id/objects/:objectId', () => {
     test('should return the updated object', async () => {
       const board1 = sampleBoards[0];
-      const object1 = sampleBoardObjects[0];
+      const object1 = sampleBoards[0].items[0];
 
       const response = await request(app)
         .patch(`/api/v1/boards/${board1.id}/objects/${object1.tag}`)
@@ -184,7 +183,7 @@ describe('PATCH Board endpoints', () => {
 
     test('should return 400 when an invalid field is updated', async () => {
       const board1 = sampleBoards[0];
-      const object1 = sampleBoardObjects[0];
+      const object1 = sampleBoards[0].items[0];
 
       const response = await request(app)
         .patch(`/api/v1/boards/${board1.id}/objects/${object1.tag}`)
@@ -208,7 +207,7 @@ describe('PATCH Board endpoints', () => {
 
     test('should return 400 when an illegal field is updated (flange, for a pump object type)', async () => {
       const board1 = sampleBoards[0];
-      const pumpObject = sampleBoardObjects[1];
+      const pumpObject = sampleBoards[0].items[1];
 
       const response = await request(app)
         .patch(`/api/v1/boards/${board1.id}/objects/${pumpObject.tag}`)
