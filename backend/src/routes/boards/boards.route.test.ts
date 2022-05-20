@@ -5,6 +5,7 @@ import setup from '../../index';
 import DI from '../../DI';
 import DatabaseSeeder from '../../database/seeders/DatabaseSeeder';
 import { sampleBoards } from '../../database/seeders/BoardSeeder';
+import { sampleBoardObjects } from '../../database/seeders/ObjectSeeder';
 
 let app: Express.Application;
 
@@ -127,26 +128,16 @@ describe('POST Board endpoints', () => {
 describe('PATCH Board endpoints', () => {
   describe('PATCH api/v1/boards/1', () => {
     test('should return the updated board', async () => {
-      // FIXME: This request is just here to create a board
-      await request(app)
-        .post('/api/v1/boards')
-        .send({
-          name: 'board1',
-        });
+      const board1 = sampleBoards[0];
 
       const response = await request(app)
-        .patch('/api/v1/boards/2')
+        .patch(`/api/v1/boards/${board1.id}`)
         .send({
           name: 'my board',
         });
 
       expect(response.statusCode).toEqual(200);
-      expect(response.body).toEqual(
-        {
-          id: 2,
-          name: 'my board',
-        },
-      );
+      expect(response.body.name).toEqual('my board');
     });
 
     test('should return 404 when a nonexistent board ID is used', async () => {
@@ -160,29 +151,17 @@ describe('PATCH Board endpoints', () => {
 
   describe('PATCH api/v1/boards/:id/objects/:objectId', () => {
     test('should return the updated object', async () => {
-      // FIXME: This request is just here to create an item in the board
-      await request(app)
-        .post('/api/v1/boards/2/objects')
-        .send({
-          ...exampleItem,
-          tag: 'p1',
-        });
+      const board1 = sampleBoards[0];
+      const object1 = sampleBoardObjects[0];
 
       const response = await request(app)
-        .patch('/api/v1/boards/2/objects/p1')
+        .patch(`/api/v1/boards/${board1.id}/objects/${object1.tag}`)
         .send({
           length: 5,
         });
 
       expect(response.statusCode).toEqual(200);
-      expect(response.body).toEqual(
-        {
-          ...exampleItem,
-          tag: 'p1',
-          length: 5,
-          board: 2,
-        },
-      );
+      expect(response.body.length).toEqual(5);
     });
 
     test('should return 404 when board with id does not exist', async () => {
@@ -194,16 +173,21 @@ describe('PATCH Board endpoints', () => {
     });
 
     test('should return 404 when the object does not exist', async () => {
+      const board1 = sampleBoards[0];
+
       const response = await request(app)
-        .post('/api/v1/boards/2/objects/sometag')
+        .patch(`/api/v1/boards/${board1.id}/objects/sometag`)
         .send({});
 
       expect(response.statusCode).toEqual(404);
     });
 
     test('should return 400 when an invalid field is updated', async () => {
+      const board1 = sampleBoards[0];
+      const object1 = sampleBoardObjects[0];
+
       const response = await request(app)
-        .patch('/api/v1/boards/2/objects/p1')
+        .patch(`/api/v1/boards/${board1.id}/objects/${object1.tag}`)
         .send({
           tag: 'new-p1-tag',
         });
@@ -222,9 +206,12 @@ describe('PATCH Board endpoints', () => {
       );
     });
 
-    test('should return 400 when an illegal field is updated (for a pump object type)', async () => {
+    test('should return 400 when an illegal field is updated (flange, for a pump object type)', async () => {
+      const board1 = sampleBoards[0];
+      const pumpObject = sampleBoardObjects[1];
+
       const response = await request(app)
-        .patch('/api/v1/boards/2/objects/p1')
+        .patch(`/api/v1/boards/${board1.id}/objects/${pumpObject.tag}`)
         .send({
           flange: 'some-flange',
         });
