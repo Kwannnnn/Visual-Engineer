@@ -141,9 +141,9 @@ router.patch(
  * @apiName PostBoard
  * @apiGroup Board
  *
- * @apiBody {Object} attributes Object containing attributes of the board to be added
+ * @apiBody {String} name Name of the board to be added
  *
- * @apiSuccess (Success 201) {Object} object representing the newly added board
+ * @apiSuccess (Success 200) {Board} board A resource response containing a board.
  * @apiSuccessExample Success-Response:
  * * HTTP/1.1 201 CREATED
  *       {
@@ -151,10 +151,17 @@ router.patch(
  *          "items": [],
  *          "name": "new board",
  *       }
- *  @apiErrorExample Error-Response:
+ * @apiError BoardNameMissing: The <code>name</code> field of the request body is missing.
+ * @apiError BoardNotFound: Board with identifier <code>id</code> does not exist.
+ *  @apiErrorExample BoardNameMissing:
  *     HTTP/1.1 400 Bad Request
  *     {
  *       "message": "Board name missing"
+ *     }
+ * @apiErrorExample BoardNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
  *     }
  */
 router.post('/', boardController.postBoard);
@@ -169,7 +176,23 @@ router.post('/', boardController.postBoard);
  * @apiGroup Board
  *
  * @apiParam {Number} id Board identifier
- * @apiBody {Object} attributes Object containing attributes of the object to be added
+ * @apiBody {String} tag Unique tag of the object
+ * @apiBody {String} name Name of the object
+ * @apiBody {Float} length Length of the object
+ * @apiBody {Float} width Width of the object
+ * @apiBody {Float} depth Depth of the object
+ * @apiBody {Float} diameter Diameter of the object
+ * @apiBody {String} type Type of the object
+ * @apiBody {String} flange Flange property if object is of type 'Pipeline'
+ * @apiBody {String} lining Lining property if object is of type 'Pipeline'
+ * @apiBody {Float} emptyMass Empty mass property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} head Head property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} filledMass Filled mass property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} netVolume Net volume property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} grossVolume Gross volume property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} preliminaryPower Preliminary power property
+ *                  if object is of type 'RotatingEquipment'
+ * @apiBody {Float} finalPower Final power property if object is of type 'RotatingEquipment'
  *
  * @apiSuccess (Success 201) {Object} object representing the newly added object
  * @apiSuccessExample Success-Response:
@@ -194,10 +217,17 @@ router.post('/', boardController.postBoard);
  *              "name": "asd"
  *          }
  *      }
- *  @apiErrorExample Error-Response:
+ * @apiError ItemAttributeMissing: The request body is missing a required attribute.
+ * @apiError BoardNotFound: Board with identifier <code>id</code> does not exist.
+ *  @apiErrorExample ItemAttributeMissing:
  *     HTTP/1.1 400 Bad Request
  *     {
  *       "message": "One or more Item attributes are missing"
+ *     }
+ *  @apiErrorExample BoardNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
  *     }
  */
 router.post('/:id/objects', boardController.postObjectToBoard);
