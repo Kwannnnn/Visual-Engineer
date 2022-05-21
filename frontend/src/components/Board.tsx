@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
 import BoardItem from './BoardItem';
+import DropPlaceholder from './DropPlaceholder';
 
 interface BoardProps {
   className?: string;
@@ -46,16 +47,17 @@ function Board({ className }: BoardProps) {
     setBoard((boardArray) => [...boardArray, item]);
   };
 
-  const [, drop] = useDrop(() => ({
+  const [{ canDrop }, drop] = useDrop(() => ({
     accept: 'item',
     drop: (item: { tag: string; name: string }) => addItemToBoard(item.name),
     collect: (monitor) => ({
+      canDrop: monitor.canDrop(),
       isOver: monitor.isOver(),
     }),
   }));
 
   return (
-    <main ref={drop} className={`overflow-auto ${className}`}>
+    <main className={`overflow-auto ${className}`}>
       <div className="flex flex-col">
         {board?.map((item) => (
           <BoardItem
@@ -66,6 +68,7 @@ function Board({ className }: BoardProps) {
           />
         ))}
       </div>
+      <DropPlaceholder innerRef={drop} canDrop={canDrop} />
     </main>
   );
 }
