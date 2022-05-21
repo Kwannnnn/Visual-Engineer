@@ -73,7 +73,7 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
     await board.items.init();
 
     const items = board.items.getItems();
-    const item = items.find((Item) => Item.tag === tag);
+    const item = items.find((ItemIns) => ItemIns.tag === tag);
 
     if (!item) {
       return res.status(404).json({
@@ -85,7 +85,6 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
     board.items.remove(item);
 
     return res.status(204).send();
-
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
