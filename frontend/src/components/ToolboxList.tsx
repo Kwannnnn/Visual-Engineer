@@ -59,7 +59,7 @@ function ToolboxList(prop: {listing: Listing[]}) {
           >
             <p className="font-bold">{listing.group}</p>
             <div className="align-middle">
-              <FontAwesomeIcon icon={faAngleRight} className={`transition-all duration-300 ${rotation}`} />
+              <FontAwesomeIcon icon={faAngleRight} className={`transition-all duration-300 ml-2 ${rotation}`} />
             </div>
           </div>
           <div className={`mb-2 ${visible ? '' : 'hidden'}`} id={`listing-${listing.group.replace(' ', '_')}-subset`}>
