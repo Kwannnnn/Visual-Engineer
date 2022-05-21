@@ -18,7 +18,6 @@ export default class Board {
   @Property({ nullable: false })
     name!: string;
 
-  // FIXME
   @OneToMany('Item', 'board')
     items = new Collection<Item>(this);
 }
