@@ -20,7 +20,7 @@ function Board({ className }: BoardProps) {
     setBoard((boardArray) => [...boardArray, item]);
   };
 
-  const [{ isOver }, drop] = useDrop(() => ({
+  const [, drop] = useDrop(() => ({
     accept: 'item',
     drop: (item: typeof Item) => addItemToBoard(item.name),
     collect: (monitor) => ({

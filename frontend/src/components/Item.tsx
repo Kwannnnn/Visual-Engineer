@@ -8,7 +8,7 @@ interface ItemProps {
 }
 
 function Item({ className, tag, name }: ItemProps) {
-  const [{ isDragging }, drag] = useDrag({
+  const [, drag] = useDrag({
     type: 'item',
     item: { tag, name },
     collect: (monitor) => ({
