@@ -37,7 +37,11 @@ function Board({ className }: BoardProps) {
   const [board, setBoard] = useState<{ tag: string; name: string }[]>([]);
 
   const addItemToBoard = (itemName: string) => {
-    const item = items.find((i) => i.name === itemName)!;
+    const item = items.find((i) => i.name === itemName);
+
+    if (item === undefined) {
+      return;
+    }
 
     setBoard((boardArray) => [...boardArray, item]);
   };
