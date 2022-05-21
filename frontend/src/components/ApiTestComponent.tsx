@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { getAllBoards, getBoardById, getBoardObjects } from '../utils/apis';
+import { Link } from 'react-router-dom';
+import {
+  getAllBoards, getBoardById, getBoardObjects,
+  createBoard, createBoardObject, updateBoard, updateBoardObject,
+  deleteBoard, deleteBoardObject
+} from '../apis/utiliti-functions';
 
 interface BoardProps {
   className?: string;
@@ -19,8 +24,10 @@ function Api({ className }: BoardProps) {
               <table>
                 <thead>
                   <tr>
-                    <th>ID</th>
-                    <th>Name</th>
+                    <th key="board-id">ID</th>
+                    <th key="board-name">Name</th>
+                    <th key="board-delte">DEL</th>
+                    <th key="board-update">UP</th>
                   </tr>
                 </thead>
                 {boards
@@ -28,8 +35,26 @@ function Api({ className }: BoardProps) {
                 <tbody>
                   {boards.map((data) => (
                     <tr>
-                      <td>{data.id}</td>
-                      <td>{data.name}</td>
+                      <td key={data.id}>{data.id}</td>
+                      <td key={data.name}>{data.name}</td>
+                      <td>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            deleteBoard(data.id);
+                          }}
+                        >del
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            updateBoard(data.id);
+                          }}
+                        >up
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -38,13 +63,51 @@ function Api({ className }: BoardProps) {
             </div>
           </div>
           <br />
-          <h1>getBoardById:</h1>
+          <h1>getBoardById(1):</h1>
           <div>
-            ID: {board.id} / Name: {board.name}
+            ID: {board.boardId} / Name: {board.name}
           </div>
           <br />
           <h1>getBoardObjects</h1>
-          <div>{boardObjects}</div>
+          <table>
+            <thead>
+              <tr>
+                <th key="item-id">ID</th>
+                <th key="item-name">Name</th>
+                <th key="item-delte">DEL</th>
+                <th key="item-update">UP</th>
+              </tr>
+            </thead>
+            {boardObjects
+                && (
+                <tbody>
+                  {boardObjects.map((data) => (
+                    <tr>
+                      <td key={data.tag}>{data.tag}</td>
+                      <td key={data.name}>{data.name}</td>
+                      <td>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            deleteBoardObject(data.board, data.tag);
+                          }}
+                        >del
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            updateBoardObject(data.board.id, data.tag);
+                          }}
+                        >up
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                )}
+          </table>
         </div>
       </header>
     </div>

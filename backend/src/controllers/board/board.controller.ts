@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
-import { Item, Board } from '../../database/models';
+import { Item, Board } from '../../database/models'
+import ValidationError from '../../error/ValidationError';
 import { checkCommonItemAttributes, checkTypeSpecificAttributes, getClass } from './board.util';
 import {
   BoardObjectParams, BoardParams, FieldError, PatchBoardBody, PatchBoardObject,
@@ -68,7 +69,7 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
         message: 'Board not found',
       });
     }
-
+    
     await board.items.init();
 
     const items = board.items.getItems();
@@ -80,9 +81,9 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
       });
     }
 
-    DI.itemRepository.removeAndFlush(item);
     board.items.remove(item);
-
+    DI.itemRepository.removeAndFlush(item);
+    
     return res.status(204).send();
   } catch (e: any) {
     return res.status(400).json({
@@ -224,8 +225,7 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
     const board = await DI.boardRepository.findOne(id);
 
     if (!board) {
-      res.status(400);
-      return res.json({ message: 'Board name is missing' });
+      throw new ValidationError(`Board with id ${id} not found`, 404);
     }
 
     checkCommonItemAttributes(req.body);
@@ -240,8 +240,15 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
     res.status(201);
     return res.json(item);
   } catch (e: any) {
-    return res.status(e.statusCode).json({
+    if (e instanceof ValidationError) {
+      return res.status(e.statusCode).json({
+        message: e.message,
+      });
+    }
+
+    return res.status(400).json({
       message: e.message,
     });
   }
 };
+
