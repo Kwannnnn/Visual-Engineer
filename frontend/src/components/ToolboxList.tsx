@@ -50,7 +50,7 @@ function ToolboxList(prop: {listing: Listing[]}) {
       listBuilder.append(
         <div id={`listing-${listing.group}`}>
           <div
-            className="hover:opacity-50 transition-all cursor-pointer select-none flex justify-between"
+            className="hover:opacity-60 p-1 transition-all cursor-pointer select-none flex justify-between hover:pl-2"
             role="button"
             tabIndex={0}
             onClick={() => toggleIconRotation()}
