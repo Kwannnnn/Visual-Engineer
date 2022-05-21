@@ -101,7 +101,7 @@ export const deleteBoard = async (req: Request, res: Response) => {
     await board.items.init();
 
     const items = board.items.getItems();
-    DI.itemRepository.removeAndFlush(items);
+    await DI.itemRepository.removeAndFlush(items);
     DI.boardRepository.removeAndFlush(board);
 
     return res.status(204).send();

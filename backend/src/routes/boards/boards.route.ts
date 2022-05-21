@@ -135,7 +135,7 @@ router.delete('/:id', boardController.deleteBoard);
  *       "message": "Board not found"
  *     }
  *
- * @apiError ItemNotFound Item with id <code>{id}</code> does not exist
+ * @apiError ItemNotFound Item with id <code>{tag}</code> does not exist
  * @apiErrorExample ItemNotFound:
  *     HTTP/1.1 404 Not Found
  *     {
