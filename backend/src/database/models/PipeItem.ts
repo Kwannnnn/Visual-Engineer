@@ -13,7 +13,6 @@ export default abstract class PipeItem extends Item {
     width: number,
     depth: number,
     diameter: number,
-    type: string,
     pressureClass: PressureClass,
     type: string,
   ) {
