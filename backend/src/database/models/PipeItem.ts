@@ -2,7 +2,9 @@ import { Entity, Enum } from '@mikro-orm/core';
 import PressureClass from './PressureClass.enum';
 import Item from './Item';
 
-@Entity({ discriminatorValue: 'pipeItem' })
+@Entity({
+  discriminatorValue: 'pipeItem',
+})
 export default abstract class PipeItem extends Item {
   constructor(
     tag: string,
@@ -11,13 +13,13 @@ export default abstract class PipeItem extends Item {
     width: number,
     depth: number,
     diameter: number,
-    type: string,
     pressureClass: PressureClass,
+    type: string,
   ) {
     super(tag, name, length, width, depth, diameter, type);
     this.pressureClass = pressureClass;
   }
 
   @Enum(() => PressureClass)
-    pressureClass?: PressureClass;
+    pressureClass!: PressureClass;
 }

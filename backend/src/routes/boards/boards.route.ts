@@ -88,4 +88,103 @@ router.get('/:id', boardController.getById);
  */
 router.get('/:id/objects', boardController.getBoardObjects);
 
+/**
+ * @api {post} /api/v1/boards Post a board
+ * @apiDescription Returns a resource response containing the newly posted board in the system.
+ * Returns a 400 error message if the board name is missing.
+ * @apiVersion 1.0.0
+ * @apiName PostBoard
+ * @apiGroup Board
+ *
+ * @apiBody {String} name Name of the board to be added
+ *
+ * @apiSuccess (Success 200) {Board} board A resource response containing a board.
+ * @apiSuccessExample Success-Response:
+ * * HTTP/1.1 201 CREATED
+ *       {
+ *          "id": 1,
+ *          "items": [],
+ *          "name": "new board",
+ *       }
+ * @apiError BoardNameMissing: The <code>name</code> field of the request body is missing.
+ * @apiError BoardNotFound: Board with identifier <code>id</code> does not exist.
+ *  @apiErrorExample BoardNameMissing:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "Board name missing"
+ *     }
+ * @apiErrorExample BoardNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
+ */
+router.post('/', boardController.postBoard);
+
+/**
+ * @api {post} /api/v1/boards/:id/objects Post an object to a specific board
+ * @apiDescription Posts an object to a board and returns the object.
+ * Returns a 404 error message if the board is not found.
+ * Returns a 400 error message if the required item attributes are missing.
+ * @apiVersion 1.0.0
+ * @apiName PostBoardObjects
+ * @apiGroup Board
+ *
+ * @apiParam {Number} id Board identifier
+ * @apiBody {String} tag Unique tag of the object
+ * @apiBody {String} name Name of the object
+ * @apiBody {Float} length Length of the object
+ * @apiBody {Float} width Width of the object
+ * @apiBody {Float} depth Depth of the object
+ * @apiBody {Float} diameter Diameter of the object
+ * @apiBody {String} type Type of the object
+ * @apiBody {String} flange Flange property if object is of type 'Pipeline'
+ * @apiBody {String} lining Lining property if object is of type 'Pipeline'
+ * @apiBody {Float} emptyMass Empty mass property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} head Head property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} filledMass Filled mass property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} netVolume Net volume property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} grossVolume Gross volume property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} preliminaryPower Preliminary power property
+ *                  if object is of type 'RotatingEquipment'
+ * @apiBody {Float} finalPower Final power property if object is of type 'RotatingEquipment'
+ *
+ * @apiSuccess (Success 201) {Object} object representing the newly added object
+ * @apiSuccessExample Success-Response:
+ * * HTTP/1.1 201 CREATED
+ *       {
+ *          "tag": "#583FA293",
+ *          "name": "Cleaner",
+ *          "length": 2.52,
+ *          "width": 2.35,
+ *          "depth": 1.47,
+ *          "diameter": 1.79,
+ *          "type": "pump",
+ *          "emptyMass": 69,
+ *          "head": 1,
+ *          "filledMass": 5.4,
+ *          "netVolume": 12.3,
+ *          "grossVolume": 23.7,
+ *          "preliminaryPower": 454,
+ *          "finalPower": 600,
+ *          "board": {
+ *              "id": 1,
+ *              "name": "asd"
+ *          }
+ *      }
+ * @apiError ItemAttributeMissing: The request body is missing a required attribute.
+ * @apiError BoardNotFound: Board with identifier <code>id</code> does not exist.
+ *  @apiErrorExample ItemAttributeMissing:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "One or more Item attributes are missing"
+ *     }
+ *  @apiErrorExample BoardNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
+ */
+router.post('/:id/objects', boardController.postObjectToBoard);
+
 export default router;

@@ -28,7 +28,7 @@ export default abstract class Item {
     this.type = type;
   }
 
-  @PrimaryKey()
+  @PrimaryKey({ nullable: false })
     tag!: string;
 
   @Property({ nullable: false })
