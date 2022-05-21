@@ -12,6 +12,7 @@ export default abstract class MechanicalEquipment extends Item {
     width: number,
     depth: number,
     diameter: number,
+    type: string,
     emptyMass: number,
     head: number,
     filledMass: number,

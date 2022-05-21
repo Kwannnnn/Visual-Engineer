@@ -20,6 +20,7 @@ export default class BlowerFactory extends Factory<Blower> {
       grossVolume: faker.datatype.float(),
       preliminaryPower: faker.datatype.float(),
       finalPower: faker.datatype.float(),
+      type: 'blower',
     };
   }
 }

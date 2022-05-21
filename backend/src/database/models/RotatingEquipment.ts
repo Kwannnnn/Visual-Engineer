@@ -12,6 +12,7 @@ export default abstract class RotatingEquipment extends MechanicalEquipment {
     width: number,
     depth: number,
     diameter: number,
+    type: string,
     emptyMass: number,
     head: number,
     filledMass: number,

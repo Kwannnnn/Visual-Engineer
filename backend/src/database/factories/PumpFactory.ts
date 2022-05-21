@@ -20,6 +20,7 @@ export default class PumpFactory extends Factory<Pump> {
       grossVolume: faker.datatype.float(),
       preliminaryPower: faker.datatype.float(),
       finalPower: faker.datatype.float(),
+      type: 'pump',
     };
   }
 }
