@@ -6,7 +6,7 @@
   "author": "dhi2v.e1",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/saxion.nl/hbo-ict/2.4-project/dhi2ve1.git"
+    "url": "https://gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1.git"
   },
   "dependencies": {
     "react": "^18.1.0",
