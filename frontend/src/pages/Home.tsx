@@ -7,6 +7,7 @@ import IBoard from '../typings/Board';
 
 function Home() {
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [boards, setBoards] = useState<IBoard[]>([
     { id: 1, name: 'PTPFu01' },
     { id: 2, name: 'PTPFu02' }
