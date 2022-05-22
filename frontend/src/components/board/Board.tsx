@@ -44,7 +44,7 @@ function Board({ className }: BoardProps) {
 
   return (
     <motion.main
-      className={`overflow-hidden bg-gray-200 relative flex justify-center items-center ${className}`}
+      className={`overflow-hidden bg-neutral-200 relative flex flex-1 justify-center items-center ${className}`}
       onWheel={handleScaleScroll}
       onPointerDown={startDrag}
       ref={constraintsRef}
