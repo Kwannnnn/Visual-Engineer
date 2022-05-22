@@ -1,5 +1,7 @@
 import { Router } from 'express';
+import { body } from 'express-validator';
 import { boardController } from '../../controllers';
+import validate from '../../middleware/validate';
 
 const router: Router = Router();
 
@@ -26,8 +28,7 @@ router.get('/', boardController.getAll);
 
 /**
  * @api {get} /api/v1/boards/:id Get a specific board by its identifier
- * @apiDescription Returns a resource response containing the specified board. Returns a 404 error
- * message if no such board is found.
+ * @apiDescription Returns a resource response containing the specified board.
  * @apiVersion 1.0.0
  * @apiName GetBoard
  * @apiGroup Board
@@ -41,6 +42,8 @@ router.get('/', boardController.getAll);
  *        "id": 1,
  *        "name": "PTPFu01",
  *     }
+ *
+ * @apiError BoardNotFound Board with id <code>{id}</code> does not exist
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 404 Not Found
  *     {
@@ -80,13 +83,61 @@ router.get('/:id', boardController.getById);
  *          "diameter": "37"
  *       }
  *     ]
- *  @apiErrorExample Error-Response:
- *     HTTP/1.1 404 Not Found
- *     {
- *       "message": "Board not found"
- *     }
+ * @apiUse BoardNotFoundError
  */
 router.get('/:id/objects', boardController.getBoardObjects);
+
+/**
+ * @api {patch} /api/v1/boards/:id Update a specific board by its identifier
+ * @apiDescription Updates the fields of a board,
+ * and returns a resource response containing the specified board.
+ * Returns a 404 error message if no such board is found.
+ * @apiVersion 1.0.0
+ * @apiName PatchBoard
+ * @apiGroup Board
+ *
+ * @apiParam {Integer} id Board identifier
+ *
+ * @apiSuccess (Success 200) {Board} board A resource response containing a board.
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *        "id": 1,
+ *        "name": "PTPFu02",
+ *     }
+ * @apiUse BoardNotFoundError
+ * @apiUse InvalidFields
+ */
+router.patch('/:id', validate([
+  body('name').optional(),
+]), boardController.patchById as any);
+
+/**
+ * @api {patch} /api/v1/boards/:id/objects/:objectId Update a specific object in a board
+ * @apiDescription Patches fields for a given object in a board.
+ * @apiVersion 1.0.0
+ * @apiName PatchBoardObject
+ * @apiGroup Board
+ *
+ * @apiParam {Integer} id Board identifier
+ * @apiParam {String} objectId Object tag
+ *
+ * @apiSuccess (Success 200) {Object} object The updated board object
+ * @apiSuccessExample Success-Response:
+*      HTTP/1.1 200 OK
+ *       {
+ *          "tag": "112-3sa2-da2",
+ *          "name": "Blower",
+ *          "length": "30",
+ *       }
+ * @apiUse BoardNotFoundError
+ * @apiUse ObjectNotFoundError
+ * @apiUse InvalidFields
+ */
+router.patch(
+  '/:id/objects/:objectId',
+  boardController.patchBoardObjects,
+);
 
 /**
  * @api {post} /api/v1/boards Post a board
@@ -187,4 +238,97 @@ router.post('/', boardController.postBoard);
  */
 router.post('/:id/objects', boardController.postObjectToBoard);
 
+/**
+ * @api {delete} /api/v1/boards/:id Delete a board
+ * @apiDescription Returns a successful deletion message or a 404
+ * error message if the board does not exist
+ * @apiVersion 1.0.0
+ * @apiName DeleteBoard
+ * @apiGroup Board
+ *
+ * @apiParam {Integer} id Board identifier
+ *
+ * @apiSuccessExample Success-Response:
+ *      HTTP/1.1 204 No Content
+ *
+ * @apiError BoardNotFound Board with id <code>{id}</code> does not exist
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
+ */
+router.delete('/:id', boardController.deleteBoard);
+
+/**
+ * @api {delete} /api/v1/boards/:id/objects/:tag Delete an item from a board
+ * @apiDescription Returns a successful deletion message or a 404
+ * error message if the board or item does not exist
+ * @apiVersion 1.0.0
+ * @apiName DeleteObjectFromBoard
+ * @apiGroup Board
+ *
+ * @apiParam {Integer} id Board identifier
+ *           {String} tag Item identifier
+ *
+ * @apiSuccessExample Success-Response:
+ *      HTTP/1.1 204 No Content
+ *
+ * @apiError BoardNotFound Board with id <code>{id}</code> does not exist
+ * @apiErrorExample BoardNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
+ *
+ * @apiError ItemNotFound Item with id <code>{tag}</code> does not exist
+ * @apiErrorExample ItemNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Item not found"
+ *     }
+ */
+router.delete('/:id/objects/:tag', boardController.deleteObjectFromBoard);
+
 export default router;
+
+// apidoc definitions
+
+/**
+* @apiDefine BoardNotFoundError
+* @apiVersion 1.0.0
+* @apiError BoardNotFound Returns a 404 error message if no such board is found
+* @apiErrorExample Error-Response-BoardNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
+* */
+
+/**
+* @apiDefine ObjectNotFoundError
+* @apiVersion 1.0.0
+* @apiError ObjectNotFound Returns a 404 error message if no such object is found
+* @apiErrorExample Error-Response-ObjectNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Object not found"
+ *     }
+* */
+
+/**
+* @apiDefine InvalidFields
+* @apiVersion 1.0.0
+* @apiError IllegalFields Returns an array of illegal field validation errors
+* @apiErrorExample Error-Response-IllegalFields:
+*     HTTP/1.1 400 Bad Request
+*     {
+*       "errors": [
+*          {
+*            "msg": "Illegal field",
+*            "param": "lining",
+*            "location": "body"
+*          }
+*        ]
+*     }
+* */
