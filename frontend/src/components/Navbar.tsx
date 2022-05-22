@@ -1,31 +1,53 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Outlet } from 'react-router-dom';
+import {
+  faSearch,
+  faFileCirclePlus,
+  faUserCircle,
+  faBars,
+  faTableColumns
+} from '@fortawesome/free-solid-svg-icons';
 import logo from '../assets/images/wb-logo.png';
 
 export default function Navbar() {
   return (
     <>
-      <div className="flex justify-between items-center bg-white p-6 border-b border-gray-300">
-        <header>
+      <div className="flex justify-between items-center bg-white p-5 border-b">
+        <button className="sm:hidden text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer" type="button">
+          <FontAwesomeIcon icon={faTableColumns} size="lg" />
+        </button>
+        <header className="mx-auto sm:mx-0">
           <img
             src={logo}
             alt="WB logo"
-            className="max-h-12"
+            className="max-h-6 sm:max-h-10"
           />
         </header>
-        <nav>
+        <button className="sm:hidden text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer" type="button">
+          <FontAwesomeIcon icon={faBars} size="lg" />
+        </button>
+        <nav className="hidden sm:block">
           <ul className="flex items-center space-x-5">
-            <li>Create</li>
             <li>
-              <form className="flex bg-gray-300 h-10 pl-3 rounded-2xl">
+              <button className="py-2 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-xl border border-gray-200 hover:bg-gray-100 hover:text-blue-700" type="button">
+                <FontAwesomeIcon icon={faFileCirclePlus} className="pr-2" />
+                New Project
+              </button>
+            </li>
+            <li>
+              <form className="flex items-center bg-gray-200 py-2 rounded-xl text-sm text-gray-400">
+                <FontAwesomeIcon icon={faSearch} className="pl-3 pr-2" />
                 <input
                   type="text"
                   placeholder="Search"
-                  className="bg-transparent outline-none text-gray-600"
+                  className="bg-transparent outline-none"
                 />
               </form>
             </li>
-            <li>User</li>
+            <li className="text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer">
+              <FontAwesomeIcon icon={faUserCircle} size="lg" />
+            </li>
           </ul>
         </nav>
       </div>
