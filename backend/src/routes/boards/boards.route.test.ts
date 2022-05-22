@@ -229,4 +229,50 @@ describe('PATCH Board endpoints', () => {
       );
     });
   });
+
+  describe('DELETE /boards/:id', () => {
+    describe('given the board exists', () => {
+      it('should return 204', async () => {
+        const board = sampleBoards[0];
+        const response = await request(app).delete(`/api/v1/boards/${board.id}`);
+        expect(response.status).toEqual(204);
+      });
+    });
+
+    describe('given the board does not exist', () => {
+      it('should return 404', async () => {
+        const response = await request(app).delete('/api/v1/boards/4000');
+        expect(response.status).toEqual(404);
+      });
+    });
+  });
+
+  describe('DELETE /boards/:id/objects/:tag', () => {
+    describe('given the board exists', () => {
+      describe('given the item exists', () => {
+        it('should return 204', async () => {
+          const board = sampleBoards[0];
+          const item = board.items.getItems()[0];
+          const response = await request(app).delete(`/api/v1/boards/${board.id}/objects/${item.tag}`);
+          expect(response.status).toEqual(204);
+        });
+      });
+
+      describe('given the item does not exists', () => {
+        it('should return a success message', async () => {
+          const board = sampleBoards[0];
+          await board.items.init();
+          const response = await request(app).delete(`/api/v1/boards/${board.id}/objects/blah123`);
+          expect(response.status).toEqual(404);
+        });
+      });
+    });
+
+    describe('given the board does not exist', () => {
+      it('should return 404', async () => {
+        const response = await request(app).delete('/api/v1/boards/4000/objects/blah123');
+        expect(response.status).toEqual(404);
+      });
+    });
+  });
 });

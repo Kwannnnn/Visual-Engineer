@@ -42,7 +42,13 @@ router.get('/', boardController.getAll);
  *        "id": 1,
  *        "name": "PTPFu01",
  *     }
- * @apiUse BoardNotFoundError
+ *
+ * @apiError BoardNotFound Board with id <code>{id}</code> does not exist
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
  */
 router.get('/:id', boardController.getById);
 
@@ -231,6 +237,58 @@ router.post('/', boardController.postBoard);
  *     }
  */
 router.post('/:id/objects', boardController.postObjectToBoard);
+
+/**
+ * @api {delete} /api/v1/boards/:id Delete a board
+ * @apiDescription Returns a successful deletion message or a 404
+ * error message if the board does not exist
+ * @apiVersion 1.0.0
+ * @apiName DeleteBoard
+ * @apiGroup Board
+ *
+ * @apiParam {Integer} id Board identifier
+ *
+ * @apiSuccessExample Success-Response:
+ *      HTTP/1.1 204 No Content
+ *
+ * @apiError BoardNotFound Board with id <code>{id}</code> does not exist
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
+ */
+router.delete('/:id', boardController.deleteBoard);
+
+/**
+ * @api {delete} /api/v1/boards/:id/objects/:tag Delete an item from a board
+ * @apiDescription Returns a successful deletion message or a 404
+ * error message if the board or item does not exist
+ * @apiVersion 1.0.0
+ * @apiName DeleteObjectFromBoard
+ * @apiGroup Board
+ *
+ * @apiParam {Integer} id Board identifier
+ *           {String} tag Item identifier
+ *
+ * @apiSuccessExample Success-Response:
+ *      HTTP/1.1 204 No Content
+ *
+ * @apiError BoardNotFound Board with id <code>{id}</code> does not exist
+ * @apiErrorExample BoardNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Board not found"
+ *     }
+ *
+ * @apiError ItemNotFound Item with id <code>{tag}</code> does not exist
+ * @apiErrorExample ItemNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Item not found"
+ *     }
+ */
+router.delete('/:id/objects/:tag', boardController.deleteObjectFromBoard);
 
 export default router;
 
