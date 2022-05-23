@@ -1,80 +1,59 @@
 import React from 'react';
+import { faX, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropertiesList from './PropertiesList';
 
 interface PropertiesSidebarProps {
-  className?: string
+  className?: string;
 }
 
+const sampleData = [
+  {
+    name: 'Tag',
+    value: 'SX69',
+  },
+  {
+    name: 'Length',
+    value: 'SX69',
+  },
+  {
+    name: 'Width',
+    value: '69',
+  },
+  {
+    name: 'Depth',
+    value: '99.6',
+  },
+  {
+    name: 'Diameter',
+    value: '6.69',
+  },
+  {
+    name: 'Type',
+    value: 'Pump',
+  }
+];
+
 function PropertiesSidebar({ className }: PropertiesSidebarProps) {
+  const type = sampleData.find((item) => item.name.toLowerCase() === 'type')?.value || 'Unknown';
+
   return (
-    <aside className={`bg-green-500 overflow-y-auto ${className}`}>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eget ex accumsan,
-        aliquet
-        quam vitae, pharetra lorem. Cras viverra dui non sem mattis fringilla. Vestibulum leo
-        libero,
-        molestie et bibendum vel, molestie non enim. Donec finibus elit facilisis metus iaculis,
-        eget
-        dapibus neque rhoncus. In risus risus, convallis id sapien eget, cursus convallis sapien. Ut
-        sit amet lacinia quam, nec molestie justo. Etiam feugiat varius convallis.
+    <aside className={`hidden sm:flex flex-col items-center w-full h-full bg-white overflow-y-auto py-2 border-2 rounded-sm relative ${className}`}>
+      <button id="close-sidebar-btn" className="text-gray-700 hover:bg-gray-200 px-2 py-1 cursor-pointer rounded-lg absolute top-1 right-1" type="button">
+        <FontAwesomeIcon icon={faX} />
+      </button>
 
-        Aliquam fermentum malesuada molestie. Sed erat nisl, placerat sit amet consectetur at,
-        rutrum
-        sed augue. Praesent nec mi bibendum, sagittis massa id, luctus eros. Vestibulum ante ipsum
-        primis in faucibus orci luctus et ultrices posuere cubilia curae; Cras elementum dignissim
-        elit quis eleifend. Praesent pellentesque diam blandit dolor consectetur eleifend. Etiam ac
-        facilisis sem, a eleifend nulla. Phasellus fringilla porta venenatis. Phasellus a tellus
-        nisi.
-        Pellentesque mi orci, blandit eu tristique et, malesuada rutrum justo. Integer a ex dapibus,
-        auctor libero sollicitudin, pretium turpis.
+      <h1 id="siderbar-item-type" className="text-lg font-semibold mb-6">{type}</h1>
 
-        Suspendisse sed feugiat odio, ut finibus erat. Aenean quis malesuada dolor. Quisque at
-        vestibulum diam. Mauris faucibus aliquet augue, non vehicula orci pretium sit amet. Sed
-        imperdiet ex felis, ac scelerisque diam gravida efficitur. In hac habitasse platea dictumst.
-        Fusce eget purus quis turpis congue hendrerit. Maecenas sapien erat, placerat
-        id vehicula qui
-        rutrum vitae sem. Sed malesuada, dui dignissim viverra ultrices, erat quam consequat arcu,
-        sit amet ultrices urna augue vel ipsum. Aliquam auctor eros dolor, id commodo turpis aliquet
-        vel. Phasellus ornare molestie lorem sed finibus. Quisque auctor nibh quis dui aliquam
-        feugiat.
-
-        Suspendisse sed feugiat odio, ut finibus erat. Aenean quis malesuada dolor. Quisque at
-        vestibulum diam. Mauris faucibus aliquet augue, non vehicula orci pretium sit amet. Sed
-        imperdiet ex felis, ac scelerisque diam gravida efficitur. In hac habitasse platea dictumst.
-        Fusce eget purus quis turpis congue hendrerit. Maecenas sapien erat, placerat
-        id vehicula qui
-        rutrum vitae sem. Sed malesuada, dui dignissim viverra ultrices, erat quam consequat arcu,
-        sit amet ultrices urna augue vel ipsum. Aliquam auctor eros dolor, id commodo turpis aliquet
-        vel. Phasellus ornare molestie lorem sed finibus. Quisque auctor nibh quis dui aliquam
-        feugiat.
-        Suspendisse sed feugiat odio, ut finibus erat. Aenean quis malesuada dolor. Quisque at
-        vestibulum diam. Mauris faucibus aliquet augue, non vehicula orci pretium sit amet. Sed
-        imperdiet ex felis, ac scelerisque diam gravida efficitur. In hac habitasse platea dictumst.
-        Fusce eget purus quis turpis congue hendrerit. Maecenas sapien erat, placerat
-        id vehicula qui
-        rutrum vitae sem. Sed malesuada, dui dignissim viverra ultrices, erat quam consequat arcu,
-        sit amet ultrices urna augue vel ipsum. Aliquam auctor eros dolor, id commodo turpis aliquet
-        vel. Phasellus ornare molestie lorem sed finibus. Quisque auctor nibh quis dui aliquam
-        feugiat.
-        Suspendisse sed feugiat odio, ut finibus erat. Aenean quis malesuada dolor. Quisque at
-        vestibulum diam. Mauris faucibus aliquet augue, non vehicula orci pretium sit amet. Sed
-        imperdiet ex felis, ac scelerisque diam gravida efficitur. In hac habitasse platea dictumst.
-        Fusce eget purus quis turpis congue hendrerit. Maecenas sapien erat, placerat
-        id vehicula qui
-        rutrum vitae sem. Sed malesuada, dui dignissim viverra ultrices, erat quam consequat arcu,
-        sit amet ultrices urna augue vel ipsum. Aliquam auctor eros dolor, id commodo turpis
-        vel. Phasellus ornare molestie lorem sed finibus. Quisque auctor nibh quis dui aliquam
-        feugiat.
-        Suspendisse sed feugiat odio, ut finibus erat. Aenean quis malesuada dolor. Quisque at
-        vestibulum diam. Mauris faucibus aliquet augue, non vehicula orci pretium sit amet. Sed
-        imperdiet ex felis, ac scelerisque diam gravida efficitur. In hac habitasse platea dictumst.
-        Fusce eget purus quis turpis congue hendrerit. Maecenas sapien erat, placerat
-        id vehicula qui
-        rutrum vitae sem. Sed malesuada, dui dignissim viverra ultrices, erat quam consequat arcu,
-        sit amet ultrices urna augue vel ipsum. Aliquam auctor eros dolor, id commodo turpis aliquet
-        vel. Phasellus ornare molestie lorem sed finibus. Quisque auctor nibh quis dui aliquam
-        feugiat.
-        feugiat.
-      </p>
+      <div id="sidebar-properties-list" className="w-5/6">
+        <PropertiesList listing={sampleData} />
+      </div>
+      <div className="flex flex-1 w-full justify-center">
+        <button id="delete-component-btn" className="rounded-xl w-5/6 border-2 border-red-600 hover:bg-red-100 text-red-600 hover:text-red-700 py-2 cursor-pointer mt-auto" type="button">
+          <FontAwesomeIcon icon={faTrash} />
+          <p className="hidden md:inline"> Delete</p>
+        </button>
+      </div>
     </aside>
   );
 }
