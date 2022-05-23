@@ -4,12 +4,12 @@ describe('View example data', () => {
   });
 
   describe('Toolbox list', () => {
-    it('Should have one top level group called "Items"', () => {
+    it('Should have one top level group called "Item"', () => {
       cy.get('#toolbox-list')
         .should('be.visible')
         .children().should('have.length', 1);
       cy.get('#toolbox-list').children('#listing-Items')
-        .should('contain', 'Items');
+        .should('contain', 'Item');
     });
 
     it('Should expend and collapse on click', () => {
