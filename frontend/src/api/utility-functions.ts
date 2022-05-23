@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-const url = 'http://localhost:3000/api/v1/';
+const url = `${process.env.API_URL}/v1/`;
 
 export function getAllBoards() {
   const [boards, setBoards] = useState<any[]>();
