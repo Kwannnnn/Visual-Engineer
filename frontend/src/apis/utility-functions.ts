@@ -14,33 +14,39 @@ export function getAllBoards() {
   return boards;
 }
 
-export function getBoardById(id: number) {
+export function getBoardById(id: number, errCallBack: (e: any) => void) {
   const [name, setName] = useState('');
   const [boardId, setId] = useState('');
   axios.get(`${url}boards/${id}`)
     .then((response) => {
       setName(response.data.name);
       setId(response.data.id);
+    }).catch((e) => {
+      errCallBack(e);
     });
   const board = { boardId, name };
   return board;
 }
 
-export function getBoardObjects(id: number) {
+export function getBoardObjects(id: number, errCallBack: (e: any) => void) {
   const [objects, setObjects] = useState<any[]>();
   useEffect(() => {
     axios.get(`${url}boards/${id}/objects`)
       .then((response) => {
         setObjects(response.data);
+      }).catch((e) => {
+        errCallBack(e);
       });
   }, []);
   return objects;
 }
 
-export function createBoard(id: number, name: string) {
+export function createBoard(id: number, name: string, errCallBack: (e: any) => void) {
   axios.post(`${url}boards/`, {
     id,
     name,
+  }).catch((e) => {
+    errCallBack(e);
   });
 }
 
@@ -55,7 +61,8 @@ export function createPipeline(
   type: string,
   pressureClass: string,
   flange: number,
-  lining: number
+  lining: number,
+  errCallBack: (e: any) => void
 ) {
   axios.post(`${url}boards/${boardId}/objects/`, {
     tag,
@@ -68,6 +75,8 @@ export function createPipeline(
     pressureClass,
     flange,
     lining,
+  }).catch((e) => {
+    errCallBack(e);
   });
 }
 
@@ -80,7 +89,8 @@ export function createPipeFitting(
   depth: number,
   diameter: number,
   type: string,
-  pressureClass: string
+  pressureClass: string,
+  errCallBack: (e: any) => void
 ) {
   axios.post(`${url}boards/${boardId}/objects/`, {
     tag,
@@ -91,6 +101,8 @@ export function createPipeFitting(
     diameter,
     type,
     pressureClass,
+  }).catch((e) => {
+    errCallBack(e);
   });
 }
 
@@ -107,7 +119,8 @@ export function createVessel(
   filledMass: number,
   head: number,
   netVolume: number,
-  grossVolume: number
+  grossVolume: number,
+  errCallBack: (e: any) => void
 ) {
   axios.post(`${url}boards/${boardId}/objects/`, {
     tag,
@@ -122,6 +135,8 @@ export function createVessel(
     head,
     netVolume,
     grossVolume,
+  }).catch((e) => {
+    errCallBack(e);
   });
 }
 
@@ -138,7 +153,8 @@ export function createTank(
   filledMass: number,
   head: number,
   netVolume: number,
-  grossVolume: number
+  grossVolume: number,
+  errCallBack: (e: any) => void
 ) {
   axios.post(`${url}boards/${boardId}/objects/`, {
     tag,
@@ -153,6 +169,8 @@ export function createTank(
     head,
     netVolume,
     grossVolume,
+  }).catch((e) => {
+    errCallBack(e);
   });
 }
 
@@ -166,7 +184,8 @@ export function createBlower(
   diameter: number,
   type: string,
   preliminaryPower: number,
-  finalPower: number
+  finalPower: number,
+  errCallBack: (e: any) => void
 ) {
   axios.post(`${url}boards/${boardId}/objects/`, {
     tag,
@@ -178,6 +197,8 @@ export function createBlower(
     type,
     preliminaryPower,
     finalPower,
+  }).catch((e) => {
+    errCallBack(e);
   });
 }
 
@@ -191,7 +212,8 @@ export function createPump(
   diameter: number,
   type: string,
   preliminaryPower: number,
-  finalPower: number
+  finalPower: number,
+  errCallBack: (e: any) => void
 ) {
   axios.post(`${url}boards/${boardId}/objects/`, {
     tag,
@@ -203,29 +225,41 @@ export function createPump(
     type,
     preliminaryPower,
     finalPower,
+  }).catch((e) => {
+    errCallBack(e);
   });
 }
 
-export function updateBoard(id: number, name: string) {
+export function updateBoard(id: number, name: string, errCallBack: (e: any) => void) {
   axios.patch(`${url}boards/${id}`, {
     name,
+  }).catch((e) => {
+    errCallBack(e);
   });
 }
 
-export function updateBoardObject(id: number, tag: string, property: string, value: string) {
+export function updateBoardObject(
+  id: number,
+  tag: string,
+  property: string,
+  value: string,
+  errCallBack: (e: any) => void
+) {
   axios.patch(`${url}boards/${id}/objects/${tag}`, {
-    property: value,
+    [property]: value,
+  }).catch((e) => {
+    errCallBack(e);
   });
 }
 
-export function deleteBoard(id: number) {
-  axios.delete(`${url}boards/${id}`);
-  // FIXME: research a neater way to reload the data
-  return window.location.reload();
+export function deleteBoard(id: number, errCallBack: (e: any) => void) {
+  axios.delete(`${url}boards/${id}`).catch((e) => {
+    errCallBack(e);
+  });
 }
 
-export function deleteBoardObject(id: number, tag:string) {
-  axios.delete(`${url}boards/${id}/objects/${tag}`);
-  // FIXME: research a neater way to reload the data
-  return window.location.reload();
+export function deleteBoardObject(id: number, tag:string, errCallBack: (e: any) => void) {
+  axios.delete(`${url}boards/${id}/objects/${tag}`).catch((e) => {
+    errCallBack(e);
+  });
 }
