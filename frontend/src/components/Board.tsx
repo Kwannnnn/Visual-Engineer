@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import update from 'immutability-helper';
 import BoardItem from './BoardItem';
@@ -53,6 +53,29 @@ function Board({ className }: BoardProps) {
     { tag: string; name: string; left: number; top: number }[]
   >([]);
 
+  const updateBoard = useCallback(
+    (item: any) => {
+      const foundItem = board.find((i) => i.tag === item.tag);
+
+      if (foundItem === undefined) {
+        board.push(item);
+      } else {
+        board.map((obj) => {
+          if (obj.tag === foundItem.tag) {
+            update(obj, {
+              $set: foundItem,
+            });
+          }
+
+          return board;
+        });
+      }
+
+      setBoard(board);
+    },
+    [board, setBoard]
+  );
+
   const [{ canDrop }, drop] = useDrop(
     () => ({
       accept: ItemTypes.ITEM,
@@ -79,7 +102,7 @@ function Board({ className }: BoardProps) {
             top: { $set: roundedTop },
           });
 
-          setBoard((boardArray) => [...boardArray, newItem]);
+          updateBoard(newItem);
         }
       },
     }),
