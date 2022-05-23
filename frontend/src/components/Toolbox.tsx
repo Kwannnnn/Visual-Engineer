@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Ref } from 'react';
 import ToolboxList from './ToolboxList';
 
 interface ToolboxProps {
@@ -48,9 +48,9 @@ const apiSampleData = [
   }
 ];
 
-function Toolbox({ className }: ToolboxProps) {
+function Toolbox({ className }: ToolboxProps, ref: Ref<HTMLElement>) {
   return (
-    <aside className={`bg-yellow-500 overflow-y-auto ${className}`}>
+    <aside ref={ref} className={`bg-yellow-500 overflow-y-auto ${className}`}>
       <div id="toolbox-list" className="p-3">
         <ToolboxList listing={apiSampleData} />
       </div>
@@ -58,4 +58,4 @@ function Toolbox({ className }: ToolboxProps) {
   );
 }
 
-export default Toolbox;
+export default React.forwardRef(Toolbox);
