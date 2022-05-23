@@ -39,7 +39,7 @@ function PropertiesSidebar({ className }: PropertiesSidebarProps) {
 
   return (
     <aside className={`hidden sm:flex flex-col items-center w-full h-full bg-white overflow-y-auto py-2 border-2 rounded-sm relative ${className}`}>
-      <button className="text-gray-700 hover:bg-gray-200 px-2 py-1 cursor-pointer rounded-lg absolute top-1 right-1" type="button">
+      <button id="close-sidebar-btn" className="text-gray-700 hover:bg-gray-200 px-2 py-1 cursor-pointer rounded-lg absolute top-1 right-1" type="button">
         <FontAwesomeIcon icon={faX} />
       </button>
 
@@ -49,7 +49,7 @@ function PropertiesSidebar({ className }: PropertiesSidebarProps) {
         <PropertiesList listing={sampleData} />
       </div>
       <div className="flex flex-1 w-full justify-center">
-        <button className="rounded-xl w-5/6 border-2 border-red-600 hover:bg-red-100 text-red-600 hover:text-red-700 py-2 cursor-pointer mt-auto" type="button">
+        <button id="delete-component-btn" className="rounded-xl w-5/6 border-2 border-red-600 hover:bg-red-100 text-red-600 hover:text-red-700 py-2 cursor-pointer mt-auto" type="button">
           <FontAwesomeIcon icon={faTrash} />
           <p className="hidden md:inline"> Delete</p>
         </button>
