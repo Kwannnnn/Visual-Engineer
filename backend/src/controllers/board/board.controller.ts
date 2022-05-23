@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
-import { Item, Board } from '../../database/models'
+import { Item, Board } from '../../database/models';
 import ValidationError from '../../error/ValidationError';
 import { checkCommonItemAttributes, checkTypeSpecificAttributes, getClass } from './board.util';
 import {
