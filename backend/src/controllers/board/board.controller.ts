@@ -69,7 +69,6 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
         message: 'Board not found',
       });
     }
-    
     await board.items.init();
 
     const items = board.items.getItems();
@@ -81,34 +80,8 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
       });
     }
 
-    board.items.remove(item);
     DI.itemRepository.removeAndFlush(item);
-    
-    return res.status(204).send();
-  } catch (e: any) {
-    return res.status(400).json({
-      message: e.message,
-    });
-  }
-};
-
-export const deleteBoard = async (req: Request, res: Response) => {
-  const id: number = +req.params.id;
-
-  try {
-    const board = await DI.boardRepository.findOne(id);
-
-    if (!board) {
-      return res.status(404).json({
-        message: 'Board not found',
-      });
-    }
-
-    await board.items.init();
-
-    const items = board.items.getItems();
-    DI.itemRepository.removeAndFlush(items);
-    DI.boardRepository.removeAndFlush(board);
+    board.items.remove(item);
 
     return res.status(204).send();
   } catch (e: any) {
@@ -137,6 +110,32 @@ export const patchById = async (req: TypedRequest<BoardParams, PatchBoardBody>, 
     await DI.boardRepository.persistAndFlush(board);
 
     return res.json(board);
+  } catch (e: any) {
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+
+export const deleteBoard = async (req: Request, res: Response) => {
+  const id: number = +req.params.id;
+
+  try {
+    const board = await DI.boardRepository.findOne(id);
+
+    if (!board) {
+      return res.status(404).json({
+        message: 'Board not found',
+      });
+    }
+
+    await board.items.init();
+
+    const items = board.items.getItems();
+    await DI.itemRepository.removeAndFlush(items);
+    DI.boardRepository.removeAndFlush(board);
+
+    return res.status(204).send();
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
@@ -251,4 +250,3 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
     });
   }
 };
-
