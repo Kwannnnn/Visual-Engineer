@@ -7,40 +7,30 @@ interface ToolboxProps {
 
 const apiSampleData = [
   {
-    group: 'Items',
+    group: 'Item',
     subsets: [
       {
-        group: 'Pipes',
+        group: 'Pipe Item',
         items: [
-          {
-            name: 'Plastic pipe',
-          },
-          {
-            name: 'Iron pipe',
-          }
-        ],
-        subsets: [
-          {
-            group: 'Square pipes',
-            items: [
-              {
-                name: 'Copper square pipe',
-              },
-              {
-                name: 'Aluminum square pipe',
-              }
-            ],
-          }
+          { name: 'Pipe Fitting' }
         ],
       },
       {
-        group: 'Cleaners',
-        items: [
+        group: 'Mechanical Equipment',
+        subsets: [
           {
-            name: '2A cleaner',
+            group: 'Rotating Equipment',
+            items: [
+              { name: 'Pump' },
+              { name: 'Blower' }
+            ],
           },
           {
-            name: 'F3 hot cleaner',
+            group: 'Static Equipment',
+            items: [
+              { name: 'Tank' },
+              { name: 'Vessel' }
+            ],
           }
         ],
       }
