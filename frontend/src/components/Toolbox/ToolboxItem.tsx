@@ -9,7 +9,7 @@ interface Item {
 
 function ToolboxItem({ name, className = '' }: Item) {
   return (
-    <div className={`cursor-move p-1 select-none transition-all hover:bg-slate-100 hover:rounded-r-lg hover:font-bold
+    <div className={`cursor-move p-1 text-sm select-none transition-all hover:bg-slate-100 hover:rounded-r-lg hover:font-bold
      ${className}`}
     >
       <FontAwesomeIcon icon={faCube} />
