@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { ISeedManager } from '@mikro-orm/core';
+import { v4 as uuidv4 } from 'uuid';
 import setup from '../../index';
 import DI from '../../DI';
 import DatabaseSeeder from '../../database/seeders/DatabaseSeeder';
@@ -8,7 +9,7 @@ import { sampleBoards } from '../../database/seeders/BoardSeeder';
 let app: Express.Application;
 
 const exampleItem = {
-  tag: '#583FA293D3',
+  tag: uuidv4(),
   name: 'Cleaner',
   length: 2.52,
   width: 2.35,
@@ -119,6 +120,159 @@ describe('POST Board endpoints', () => {
         });
 
       expect(response.statusCode).toEqual(400);
+    });
+  });
+});
+
+describe('PATCH Board endpoints', () => {
+  describe('PATCH api/v1/boards/1', () => {
+    test('should return the updated board', async () => {
+      const board1 = sampleBoards[0];
+
+      const response = await request(app)
+        .patch(`/api/v1/boards/${board1.id}`)
+        .send({
+          name: 'my board',
+        });
+
+      expect(response.statusCode).toEqual(200);
+      expect(response.body.name).toEqual('my board');
+    });
+
+    test('should return 404 when a nonexistent board ID is used', async () => {
+      const response = await request(app)
+        .patch('/api/v1/boards/77')
+        .send({
+        });
+      expect(response.statusCode).toEqual(404);
+    });
+  });
+
+  describe('PATCH api/v1/boards/:id/objects/:objectId', () => {
+    test('should return the updated object', async () => {
+      const board1 = sampleBoards[0];
+      const object1 = sampleBoards[0].items[0];
+
+      const response = await request(app)
+        .patch(`/api/v1/boards/${board1.id}/objects/${object1.tag}`)
+        .send({
+          length: 5,
+        });
+
+      expect(response.statusCode).toEqual(200);
+      expect(response.body.length).toEqual(5);
+    });
+
+    test('should return 404 when board with id does not exist', async () => {
+      const response = await request(app)
+        .post('/api/v1/boards/500/objects/p1')
+        .send({});
+
+      expect(response.statusCode).toEqual(404);
+    });
+
+    test('should return 404 when the object does not exist', async () => {
+      const board1 = sampleBoards[0];
+
+      const response = await request(app)
+        .patch(`/api/v1/boards/${board1.id}/objects/sometag`)
+        .send({});
+
+      expect(response.statusCode).toEqual(404);
+    });
+
+    test('should return 400 when an invalid field is updated', async () => {
+      const board1 = sampleBoards[0];
+      const object1 = sampleBoards[0].items[0];
+
+      const response = await request(app)
+        .patch(`/api/v1/boards/${board1.id}/objects/${object1.tag}`)
+        .send({
+          tag: 'new-p1-tag',
+        });
+
+      expect(response.statusCode).toEqual(400);
+      expect(response.body).toEqual(
+        {
+          errors: [
+            {
+              msg: 'Illegal field',
+              param: 'tag',
+              location: 'body',
+            },
+          ],
+        },
+      );
+    });
+
+    test('should return 400 when an illegal field is updated (flange, for a pump object type)', async () => {
+      const board1 = sampleBoards[0];
+      const pumpObject = sampleBoards[0].items[1];
+
+      const response = await request(app)
+        .patch(`/api/v1/boards/${board1.id}/objects/${pumpObject.tag}`)
+        .send({
+          flange: 'some-flange',
+        });
+
+      expect(response.statusCode).toEqual(400);
+      expect(response.body).toEqual(
+        {
+          errors: [
+            {
+              msg: 'Illegal field',
+              param: 'flange',
+              location: 'body',
+            },
+          ],
+        },
+      );
+    });
+  });
+
+  describe('DELETE /boards/:id', () => {
+    describe('given the board exists', () => {
+      it('should return 204', async () => {
+        const board = sampleBoards[0];
+        const response = await request(app).delete(`/api/v1/boards/${board.id}`);
+        expect(response.status).toEqual(204);
+      });
+    });
+
+    describe('given the board does not exist', () => {
+      it('should return 404', async () => {
+        const response = await request(app).delete('/api/v1/boards/4000');
+        expect(response.status).toEqual(404);
+      });
+    });
+  });
+
+  describe('DELETE /boards/:id/objects/:tag', () => {
+    describe('given the board exists', () => {
+      describe('given the item exists', () => {
+        it('should return 204', async () => {
+          const board = sampleBoards[0];
+          const item = board.items.getItems()[0];
+          const response = await request(app).delete(`/api/v1/boards/${board.id}/objects/${item.tag}`);
+          expect(response.status).toEqual(204);
+        });
+      });
+
+      describe('given the item does not exists', () => {
+        it('should return a success message', async () => {
+          const board = sampleBoards[0];
+          await board.items.init();
+          const response = await request(app).delete(`/api/v1/boards/${board.id}/objects/blah123`);
+          expect(response.status).toEqual(404);
+        });
+      });
+    });
+
+    describe('given the board does not exist', () => {
+      it('should return 404', async () => {
+        const response = await request(app).delete('/api/v1/boards/4000/objects/blah123');
+        expect(response.status).toEqual(404);
+      });
     });
   });
 });
