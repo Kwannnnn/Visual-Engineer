@@ -3,6 +3,7 @@ import { useDrop } from 'react-dnd';
 import update from 'immutability-helper';
 import BoardItem from './BoardItem';
 import DropPlaceholder from './DropPlaceholder';
+import ItemTypes from './ItemTypes';
 
 interface BoardProps {
   className?: string;
@@ -54,7 +55,7 @@ function Board({ className }: BoardProps) {
 
   const [{ canDrop }, drop] = useDrop(
     () => ({
-      accept: 'item',
+      accept: ItemTypes.ITEM,
       canDrop: () => true,
       collect: (monitor) => ({
         canDrop: monitor.canDrop(),

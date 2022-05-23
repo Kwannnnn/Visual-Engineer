@@ -2,6 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube } from '@fortawesome/free-solid-svg-icons';
 import { useDrag } from 'react-dnd';
+import ItemTypes from './ItemTypes';
 
 interface Item {
   className?: string;
@@ -10,7 +11,7 @@ interface Item {
 
 function ToolboxItem({ name, className = '' }: Item) {
   const [, drag] = useDrag({
-    type: 'item',
+    type: ItemTypes.ITEM,
     item: { name },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
