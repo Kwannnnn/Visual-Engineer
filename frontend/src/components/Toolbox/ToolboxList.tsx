@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import ReactNodeBuilder from '../util/ReactNodeBuilder';
+import ReactNodeBuilder from '../../util/ReactNodeBuilder';
 import ToolboxItem from './ToolboxItem';
 
 interface Listing {

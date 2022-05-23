@@ -1,7 +1,7 @@
 import React from 'react';
 import Board from '../components/Board';
 import PropertiesSidebar from '../components/PropertiesSidebar';
-import Toolbox from '../components/Toolbox';
+import Toolbox from '../components/Toolbox/Toolbox';
 
 function Home() {
   return (
