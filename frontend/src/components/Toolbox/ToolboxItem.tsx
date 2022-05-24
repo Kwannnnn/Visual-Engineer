@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube } from '@fortawesome/free-solid-svg-icons';
 import { useDrag } from 'react-dnd';
-import ItemTypes from './ItemTypes';
+import ItemTypes from '../board/ItemTypes';
 
 interface Item {
   className?: string;
@@ -19,7 +19,11 @@ function ToolboxItem({ name, className = '' }: Item) {
   });
 
   return (
-    <div ref={drag} className={`cursor-move select-none ${className}`}>
+    <div
+      ref={drag}
+      className={`cursor-move p-1 text-sm select-none transition-all hover:bg-slate-100 hover:rounded-r-lg hover:font-bold
+     ${className}`}
+    >
       <FontAwesomeIcon icon={faCube} />
       {` ${name}`}
     </div>

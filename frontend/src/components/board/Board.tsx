@@ -1,9 +1,12 @@
-import React, { Ref, useState } from 'react';
+import React, {
+  Ref, useState, useRef, WheelEventHandler, PointerEventHandler
+} from 'react';
 import { useDrop } from 'react-dnd';
 import update from 'immutability-helper';
-import BoardItem from './BoardItem';
+import { motion, useDragControls } from 'framer-motion';
 import DropPlaceholder from './DropPlaceholder';
 import ItemTypes from './ItemTypes';
+import BoardItem from './BoardItem';
 
 interface BoardProps {
   className?: string;
@@ -20,43 +23,70 @@ interface Item {
 const items: Item[] = [
   {
     tag: 'PPP-1234',
-    name: 'Plastic pipe',
+    name: 'Pipe Fitting',
     left: 0,
     top: 0,
   },
   {
     tag: 'PIP-2345',
-    name: 'Iron pipe',
+    name: 'Pump',
     left: 0,
     top: 0,
   },
   {
     tag: 'SCP-3456',
-    name: 'Copper square pipe',
+    name: 'Blower',
     left: 0,
     top: 0,
   },
   {
     tag: 'SAP-4567',
-    name: 'Aluminum square pipe',
+    name: 'Tank',
     left: 0,
     top: 0,
   },
   {
     tag: 'CAC-5678',
-    name: '2A cleaner',
-    left: 0,
-    top: 0,
-  },
-  {
-    tag: 'CHC-6789',
-    name: 'F3 hot cleaner',
+    name: 'Vessel',
     left: 0,
     top: 0,
   }
 ];
 
 function Board({ className, toolboxRef }: BoardProps) {
+  // Constant parameters
+  const SCROLL_DISTANCE = 700;
+  const SCALE_AMOUNT = 0.06;
+  const MIN_SCALE = 0.6;
+  const MAX_SCALE = 1.5;
+  const ASPECT_RATIO = 1.3;
+
+  const constraintsRef = useRef(null);
+  const boardRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState<number>(1);
+
+  const dragControls = useDragControls();
+
+  const startDrag: PointerEventHandler<HTMLDivElement> = (event) => {
+    dragControls.start(event, { snapToCursor: false });
+  };
+
+  const handleScaleScroll:WheelEventHandler<HTMLDivElement> = (e) => {
+    const positive = e.deltaY < 0;
+
+    const scaleModification = SCALE_AMOUNT * (positive ? 1 : -1);
+
+    let newScale = scale + scaleModification;
+
+    if (scale > MAX_SCALE) {
+      newScale = MAX_SCALE;
+    } else if (scale < MIN_SCALE) {
+      newScale = MIN_SCALE;
+    }
+
+    setScale(newScale);
+  };
+
   const [board, setBoard] = useState<Item[]>([]);
 
   const updateBoard = (item: Item) => {
@@ -107,8 +137,33 @@ function Board({ className, toolboxRef }: BoardProps) {
   );
 
   return (
-    <main className={`overflow-auto ${className}`}>
-      <div className="flex flex-col relative">
+    <motion.main
+      className={`overflow-hidden bg-neutral-200 relative flex flex-1 justify-center items-center ${className}`}
+      onWheel={handleScaleScroll}
+      onPointerDown={startDrag}
+      ref={constraintsRef}
+    >
+      <motion.div
+        ref={boardRef}
+        className="bg-white"
+        animate={{ scale }}
+        style={{
+          width: '85%',
+          aspectRatio: ASPECT_RATIO.toString(),
+        }}
+        drag
+        dragControls={dragControls}
+        dragElastic={0.2}
+        dragMomentum={false}
+        dragTransition={{ bounceStiffness: 1000 }}
+        dragConstraints={{
+          left: -SCROLL_DISTANCE * scale,
+          right: SCROLL_DISTANCE * scale,
+          bottom: SCROLL_DISTANCE * (scale / ASPECT_RATIO),
+          top: -SCROLL_DISTANCE * (scale / ASPECT_RATIO),
+        }}
+        whileHover={{ cursor: 'grab' }}
+      >
         {board?.map((item) => (
           <BoardItem
             key={item.tag}
@@ -119,9 +174,9 @@ function Board({ className, toolboxRef }: BoardProps) {
             left={item.left}
           />
         ))}
-      </div>
-      <DropPlaceholder innerRef={drop} />
-    </main>
+        <DropPlaceholder innerRef={drop} />
+      </motion.div>
+    </motion.main>
   );
 }
 
