@@ -7,7 +7,6 @@ import React, {
 import { useDrop } from 'react-dnd';
 import update from 'immutability-helper';
 import { motion, useDragControls } from 'framer-motion';
-import { stringify } from 'querystring';
 import DropPlaceholder from './DropPlaceholder';
 import ItemTypes from './ItemTypes';
 import BoardItem from './BoardItem';
