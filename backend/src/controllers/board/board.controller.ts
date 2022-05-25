@@ -69,7 +69,6 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
         message: 'Board not found',
       });
     }
-
     await board.items.init();
 
     const items = board.items.getItems();
