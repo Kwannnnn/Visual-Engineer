@@ -25,7 +25,7 @@ function DragLayer({ scale }: DragLayerProps) {
           <BoardItem
             tag={item.tag}
             name={item.name}
-            className="px-3 bg-gray-50 w-32 h-24 flex flex-col justify-center items-center"
+            className="px-3 bg-gray-50 w-32 h-24 flex flex-col justify-center items-center relative"
             scale={scale}
           />
         );

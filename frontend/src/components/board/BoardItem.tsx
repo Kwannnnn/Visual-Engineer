@@ -36,7 +36,9 @@ function BoardItem({
         id={tag}
         onMouseDown={() => (setCanDrag ? setCanDrag(false) : null)}
         className={`bg-slate-50 border-2 border-black absolute ${className}`}
-        style={{ top, left, transform: `scale(${scale})` }}
+        style={{
+          top, left, transform: `scale(${scale})`,
+        }}
       >
         <div>{tag}</div>
         <div>{name}</div>

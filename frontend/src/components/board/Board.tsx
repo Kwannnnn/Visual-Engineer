@@ -136,6 +136,9 @@ function Board({ className }: BoardProps) {
           let left = delta.x - boardRect.left;
           let top = delta.y - boardRect.top;
 
+          left /= scale;
+          top /= scale;
+
           const initialClientOffset = monitor.getInitialClientOffset();
           const initialSourceClientOffset = monitor.getInitialSourceClientOffset();
 
@@ -160,7 +163,7 @@ function Board({ className }: BoardProps) {
         }
       },
     }),
-    [board]
+    [board, scale]
   );
 
   return (
