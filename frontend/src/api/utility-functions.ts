@@ -22,7 +22,7 @@ export async function getBoardObjects(id: number) {
     .catch((err) => err.data);
 }
 
-export async function createBoard(properties: IBoard) {
+export async function createBoard(properties: Partial<IBoard>) {
   await axios.post(`${url}/boards/`, {
     ...properties,
   })
@@ -38,7 +38,7 @@ export async function createItem(boardId: number, properties: IObjectContext) {
     .catch((err) => err.data);
 }
 
-export async function updateBoard(id: number, properties: IObjectContext) {
+export async function updateBoard(id: number, properties: Partial<IBoard>) {
   await axios.patch(`${url}/boards/${id}`, {
     ...properties,
   })

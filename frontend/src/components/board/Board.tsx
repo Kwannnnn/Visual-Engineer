@@ -44,21 +44,6 @@ function Board({ className }: BoardProps) {
     setScale(newScale);
   };
 
-  useEffect(() => {
-    createItem(1, {
-      tag: 'njnerj2',
-      name: 'Cleaner',
-      length: 2.54,
-      width: 2.34,
-      depth: 1.22,
-      diameter: 12.2,
-      flange: 32,
-      lining: 23,
-      pressureClass: 'PN100',
-      type: 'pipeline',
-    });
-  }, []);
-
   return (
     <motion.main
       className={`overflow-hidden bg-neutral-200 relative flex flex-1 justify-center items-center ${className}`}
