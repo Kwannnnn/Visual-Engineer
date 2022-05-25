@@ -2,29 +2,28 @@ import axios from 'axios';
 import IBoard from '../typings/IBoard';
 import IObjectContext from '../typings/IObjectContext';
 
-// const url = `${process.env.REACT_APP_API_URL}/v1/`;
-const url = 'http://localhost:3000/api/v1/';
+const url = process.env.REACT_APP_API_URL;
 
 export async function getAllBoards() {
-  await axios.get(`${url}boards`)
+  await axios.get(`${url}/boards`)
     .then((response) => response.data)
     .catch((err) => err.data);
 }
 
 export async function getBoardById(id: number) {
-  await axios.get(`${url}boards/${id}`)
+  await axios.get(`${url}/boards/${id}`)
     .then((response) => response.data)
     .catch((err) => err.data);
 }
 
 export async function getBoardObjects(id: number) {
-  await axios.get(`${url}boards/${id}/objects`)
+  await axios.get(`${url}/boards/${id}/objects`)
     .then((response) => response.data)
     .catch((err) => err.data);
 }
 
 export async function createBoard(properties:Partial<IBoard>) {
-  await axios.post(`${url}boards/`, {
+  await axios.post(`${url}/boards/`, {
     ...properties,
   })
     .then((response) => response.data)
@@ -32,7 +31,7 @@ export async function createBoard(properties:Partial<IBoard>) {
 }
 
 export async function createItem(boardId: number, properties:Partial<IObjectContext>) {
-  await axios.post(`${url}boards/${boardId}/objects/`, {
+  await axios.post(`${url}/boards/${boardId}/objects/`, {
     ...properties,
   })
     .then((response) => response.data)
@@ -40,7 +39,7 @@ export async function createItem(boardId: number, properties:Partial<IObjectCont
 }
 
 export async function updateBoard(id: number, properties:Partial<IObjectContext>) {
-  await axios.patch(`${url}boards/${id}`, {
+  await axios.patch(`${url}/boards/${id}`, {
     ...properties,
   })
     .then((response) => response.data)
@@ -52,7 +51,7 @@ export async function updateBoardObject(
   itemTag: string,
   properties: Partial<IObjectContext>
 ) {
-  await axios.patch(`${url}boards/${boardId}/objects/${itemTag}`, {
+  await axios.patch(`${url}/boards/${boardId}/objects/${itemTag}`, {
     ...properties,
   })
     .then((response) => response.data)
@@ -60,13 +59,13 @@ export async function updateBoardObject(
 }
 
 export async function deleteBoard(id: number) {
-  await axios.delete(`${url}boards/${id}`)
+  await axios.delete(`${url}/boards/${id}`)
     .then((response) => response.data)
     .catch((err) => err.data);
 }
 
 export async function deleteBoardObject(id: number, tag:string) {
-  await axios.delete(`${url}boards/${id}/objects/${tag}`)
+  await axios.delete(`${url}/boards/${id}/objects/${tag}`)
     .then((response) => response.data)
     .catch((err) => err.data);
 }
