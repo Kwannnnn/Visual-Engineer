@@ -1,10 +1,8 @@
 import React, {
-  useEffect,
   PointerEventHandler,
   useRef, useState, WheelEventHandler
 } from 'react';
 import { motion, useDragControls } from 'framer-motion';
-import { createItem } from '../../api/utility-functions';
 
 interface BoardProps {
   className?: string;
