@@ -22,7 +22,7 @@ export async function getBoardObjects(id: number) {
     .catch((err) => err.data);
 }
 
-export async function createBoard(properties:Partial<IBoard>) {
+export async function createBoard(properties: IBoard) {
   await axios.post(`${url}/boards/`, {
     ...properties,
   })
@@ -30,7 +30,7 @@ export async function createBoard(properties:Partial<IBoard>) {
     .catch((err) => err.data);
 }
 
-export async function createItem(boardId: number, properties:Partial<IObjectContext>) {
+export async function createItem(boardId: number, properties: IObjectContext) {
   await axios.post(`${url}/boards/${boardId}/objects/`, {
     ...properties,
   })
@@ -38,7 +38,7 @@ export async function createItem(boardId: number, properties:Partial<IObjectCont
     .catch((err) => err.data);
 }
 
-export async function updateBoard(id: number, properties:Partial<IObjectContext>) {
+export async function updateBoard(id: number, properties: IObjectContext) {
   await axios.patch(`${url}/boards/${id}`, {
     ...properties,
   })
@@ -49,7 +49,7 @@ export async function updateBoard(id: number, properties:Partial<IObjectContext>
 export async function updateBoardObject(
   boardId: number,
   itemTag: string,
-  properties: Partial<IObjectContext>
+  properties: IObjectContext
 ) {
   await axios.patch(`${url}/boards/${boardId}/objects/${itemTag}`, {
     ...properties,
