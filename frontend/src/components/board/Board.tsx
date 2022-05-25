@@ -1,11 +1,13 @@
 import React, {
-  useState, useRef, WheelEventHandler, PointerEventHandler
+  useState,
+  useRef,
+  WheelEventHandler,
+  PointerEventHandler
 } from 'react';
 import { useDrop } from 'react-dnd';
 import update from 'immutability-helper';
-import {
-  motion, useDragControls
-} from 'framer-motion';
+import { motion, useDragControls } from 'framer-motion';
+import { stringify } from 'querystring';
 import DropPlaceholder from './DropPlaceholder';
 import ItemTypes from './ItemTypes';
 import BoardItem from './BoardItem';
@@ -74,7 +76,7 @@ function Board({ className }: BoardProps) {
     dragControls.start(event, { snapToCursor: false });
   };
 
-  const handleScaleScroll:WheelEventHandler<HTMLDivElement> = (e) => {
+  const handleScaleScroll: WheelEventHandler<HTMLDivElement> = (e) => {
     const positive = e.deltaY < 0;
 
     const scaleModification = SCALE_AMOUNT * (positive ? 1 : -1);
@@ -107,13 +109,20 @@ function Board({ className }: BoardProps) {
 
   const [, drop] = useDrop<Pick<Item, 'name'>>(
     () => ({
-      accept: ItemTypes.ITEM,
+      accept: [ItemTypes.ITEM, ItemTypes.BOARD_ITEM],
       collect: (monitor) => ({
         canDrop: monitor.canDrop(),
         isOver: monitor.isOver(),
       }),
       drop(item, monitor) {
-        const foundItem = items.find((i) => i.name === item.name);
+        const itemType = monitor.getItemType();
+
+        let foundItem;
+        if (itemType === ItemTypes.ITEM) {
+          foundItem = items.find((i) => i.name === item.name);
+        } else {
+          foundItem = board.find((i) => i.name === item.name);
+        }
 
         if (foundItem === undefined) {
           return;
@@ -123,8 +132,22 @@ function Board({ className }: BoardProps) {
 
         const boardRect = boardRef.current?.getBoundingClientRect();
         if (delta && boardRect) {
-          const left = (delta.x - boardRect.left);
-          const top = (delta.y - boardRect.top);
+          let left = delta.x - boardRect.left;
+          let top = delta.y - boardRect.top;
+
+          const initialClientOffset = monitor.getInitialClientOffset();
+          const initialSourceClientOffset = monitor.getInitialSourceClientOffset();
+
+          if (itemType === ItemTypes.BOARD_ITEM && initialClientOffset
+            && initialSourceClientOffset) {
+            const localOffset = {
+              x: initialClientOffset.x - initialSourceClientOffset.x,
+              y: initialClientOffset.y - initialSourceClientOffset.y,
+            };
+
+            left -= localOffset.x;
+            top -= localOffset.y;
+          }
 
           const newItem = update(foundItem, {
             left: { $set: left },
