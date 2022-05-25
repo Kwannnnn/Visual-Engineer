@@ -1,8 +1,10 @@
 import React, {
+  useEffect,
   PointerEventHandler,
   useRef, useState, WheelEventHandler
 } from 'react';
 import { motion, useDragControls } from 'framer-motion';
+import { createItem } from '../../api/utility-functions';
 
 interface BoardProps {
   className?: string;
@@ -41,6 +43,21 @@ function Board({ className }: BoardProps) {
 
     setScale(newScale);
   };
+
+  useEffect(() => {
+    createItem(1, {
+      tag: 'njnerj2',
+      name: 'Cleaner',
+      length: 2.54,
+      width: 2.34,
+      depth: 1.22,
+      diameter: 12.2,
+      flange: 32,
+      lining: 23,
+      pressureClass: 'PN100',
+      type: 'pipeline',
+    });
+  }, []);
 
   return (
     <motion.main

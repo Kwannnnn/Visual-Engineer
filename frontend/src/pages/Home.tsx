@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import TabBar from '../components/board/TabBar';
 import PropertiesSidebar from '../components/PropertiesSidebar';
 import Board from '../components/board/Board';
-import IBoard from '../typings/Board';
+import IBoard from '../typings/IBoard';
 import Toolbox from '../components/Toolbox/Toolbox';
 
 function Home() {
