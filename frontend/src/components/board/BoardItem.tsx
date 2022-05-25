@@ -8,10 +8,11 @@ interface BoardItemProps {
   name: string;
   top: number;
   left: number;
+  setCanDrag: (canDrag: boolean) => void;
 }
 
 function BoardItem({
-  className, tag, name, top, left,
+  className, tag, name, top, left, setCanDrag,
 }: BoardItemProps) {
   const [, drag] = useDrag({
     type: ItemTypes.ITEM,
@@ -22,7 +23,14 @@ function BoardItem({
   });
 
   return (
-    <div ref={drag} id={tag} className={`bg-slate-50 border-2 border-black absolute ${className}`} style={{ top, left }}>
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+    <div
+      ref={drag}
+      id={tag}
+      onMouseDown={() => setCanDrag(false)}
+      className={`bg-slate-50 border-2 border-black absolute ${className}`}
+      style={{ top, left }}
+    >
       <div>{tag}</div>
       <div>{name}</div>
     </div>

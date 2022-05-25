@@ -1,16 +1,17 @@
 import React, {
-  Ref, useState, useRef, WheelEventHandler, PointerEventHandler
+  useState, useRef, WheelEventHandler, PointerEventHandler
 } from 'react';
 import { useDrop } from 'react-dnd';
 import update from 'immutability-helper';
-import { motion, useDragControls } from 'framer-motion';
+import {
+  motion, useDragControls
+} from 'framer-motion';
 import DropPlaceholder from './DropPlaceholder';
 import ItemTypes from './ItemTypes';
 import BoardItem from './BoardItem';
 
 interface BoardProps {
   className?: string;
-  toolboxRef: Ref<HTMLElement>;
 }
 
 interface Item {
@@ -53,7 +54,7 @@ const items: Item[] = [
   }
 ];
 
-function Board({ className, toolboxRef }: BoardProps) {
+function Board({ className }: BoardProps) {
   // Constant parameters
   const SCROLL_DISTANCE = 700;
   const SCALE_AMOUNT = 0.06;
@@ -66,6 +67,8 @@ function Board({ className, toolboxRef }: BoardProps) {
   const [scale, setScale] = useState<number>(1);
 
   const dragControls = useDragControls();
+
+  const [canDrag, setCanDrag] = useState(true);
 
   const startDrag: PointerEventHandler<HTMLDivElement> = (event) => {
     dragControls.start(event, { snapToCursor: false });
@@ -117,23 +120,23 @@ function Board({ className, toolboxRef }: BoardProps) {
         }
 
         const delta = monitor.getClientOffset();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const toolboxWidth = (toolboxRef as any).current.clientWidth;
 
-        if (delta) {
-          const roundedLeft = Math.round(foundItem.left + delta.x) - toolboxWidth;
-          const roundedTop = Math.round(foundItem.top + delta.y) - 25;
+        const boardRect = boardRef.current?.getBoundingClientRect();
+        if (delta && boardRect) {
+          const left = (delta.x - boardRect.left);
+          const top = (delta.y - boardRect.top);
 
           const newItem = update(foundItem, {
-            left: { $set: roundedLeft },
-            top: { $set: roundedTop },
+            left: { $set: left },
+            top: { $set: top },
           });
 
           updateBoard(newItem);
+          setCanDrag(true);
         }
       },
     }),
-    [board, setBoard]
+    [board]
   );
 
   return (
@@ -145,13 +148,14 @@ function Board({ className, toolboxRef }: BoardProps) {
     >
       <motion.div
         ref={boardRef}
-        className="bg-white"
+        className="bg-white z-50 transform-gpu"
         animate={{ scale }}
         style={{
           width: '85%',
           aspectRatio: ASPECT_RATIO.toString(),
+          translateY: 0.1,
         }}
-        drag
+        drag={canDrag}
         dragControls={dragControls}
         dragElastic={0.2}
         dragMomentum={false}
@@ -172,6 +176,7 @@ function Board({ className, toolboxRef }: BoardProps) {
             className="px-3 bg-gray-50 w-32 h-24 flex flex-col justify-center items-center"
             top={item.top}
             left={item.left}
+            setCanDrag={setCanDrag}
           />
         ))}
         <DropPlaceholder innerRef={drop} />
