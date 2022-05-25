@@ -10,6 +10,7 @@ import { motion, useDragControls } from 'framer-motion';
 import DropPlaceholder from './DropPlaceholder';
 import ItemTypes from './ItemTypes';
 import BoardItem from './BoardItem';
+import DragLayer from './DragLayer';
 
 interface BoardProps {
   className?: string;
@@ -117,6 +118,7 @@ function Board({ className }: BoardProps) {
         const itemType = monitor.getItemType();
 
         let foundItem;
+
         if (itemType === ItemTypes.ITEM) {
           foundItem = items.find((i) => i.name === item.name);
         } else {
@@ -199,10 +201,12 @@ function Board({ className }: BoardProps) {
             top={item.top}
             left={item.left}
             setCanDrag={setCanDrag}
+            scale={1}
           />
         ))}
         <DropPlaceholder innerRef={drop} />
       </motion.div>
+      <DragLayer scale={scale} />
     </motion.main>
   );
 }
