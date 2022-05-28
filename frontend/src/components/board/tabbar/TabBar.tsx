@@ -1,5 +1,5 @@
 import React from 'react';
-import IBoard from '../../../typings/Board';
+import IBoard from '../../../typings/IBoard';
 import Tab from './Tab';
 
 interface TabBarProps {

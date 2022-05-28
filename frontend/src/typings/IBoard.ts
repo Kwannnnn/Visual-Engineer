@@ -1,6 +1,6 @@
 interface IBoard {
-    id:number;
+    id: number;
     name: string;
-  }
+}
 
 export default IBoard;

@@ -10,3 +10,5 @@
 **/cypress/screenshots/
 **/cypress/videos/
 **/cypress/results/
+
+.env

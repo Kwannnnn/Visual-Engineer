@@ -4,7 +4,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import {
   Board, PropertiesSidebar, TabBar, Toolbox
 } from '../components';
-import IBoard from '../typings/Board';
+import IBoard from '../typings/IBoard';
 
 function Home() {
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
