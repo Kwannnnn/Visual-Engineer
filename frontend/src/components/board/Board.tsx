@@ -92,11 +92,21 @@ function Board({ className }: BoardProps) {
     setScale(newScale);
   };
 
+  // set the initial state of the board as an empty array of Items
+  // and declare a setBoard function that updates the board when being called
   const [board, setBoard] = useState<Item[]>([]);
 
+  // updates the board's state everytime a new item is dropped
+  // or when an item is moved around the board
   const updateBoard = (item: Item) => {
+    // this loops through the existing items on the board
+    // by comparing the items' tags with the one's being
+    // dropped and passed as an argument;
+    // stores what is being returned in a new variable
     const foundItem = board.find((i) => i.tag === item.tag);
 
+    // if it's not an existing item, adds it to the board's items
+    // else, updates the item's position and sets the new state of the board
     if (foundItem === undefined) {
       board.push(item);
     } else {
@@ -107,6 +117,13 @@ function Board({ className }: BoardProps) {
     setBoard(board);
   };
 
+  // React DnD hook that sets the board as a drop target;
+  // it accepts two different types: a new item being dropped,
+  // and an existing item on the board, that changes its position;
+  // it returns the collected props of the item being dragged: canDrop and isOver,
+  // (which are not being used at the moment)
+  // and the drop reference that is being attached to the
+  // target, in this case, the DropPlaceholder component
   const [, drop] = useDrop<Pick<Item, 'name'>>(
     () => ({
       accept: [ItemTypes.ITEM, ItemTypes.BOARD_ITEM],
@@ -119,6 +136,8 @@ function Board({ className }: BoardProps) {
 
         let foundItem;
 
+        // gets the item from the hardcoded items list
+        // or from the ones on the board
         if (itemType === ItemTypes.ITEM) {
           foundItem = items.find((i) => i.name === item.name);
         } else {
@@ -129,19 +148,32 @@ function Board({ className }: BoardProps) {
           return;
         }
 
+        // the x,y position of the pointer when dropping an item
         const delta = monitor.getClientOffset();
 
+        // get the board element's properties, like size and position
         const boardRect = boardRef.current?.getBoundingClientRect();
+
         if (delta && boardRect) {
+          // subtract the top-left corner coordinates of the board
+          // from the pointer's last offset
           let left = delta.x - boardRect.left;
           let top = delta.y - boardRect.top;
 
+          // the resulted top, left values should be calculated
+          // relatively to the board's scale
           left /= scale;
           top /= scale;
 
+          // the x,y position of the pointer when clicking
+          // on the item that is going to be dragged
           const initialClientOffset = monitor.getInitialClientOffset();
+
+          // the item's top-left corner position
+          // when the dragging process starts
           const initialSourceClientOffset = monitor.getInitialSourceClientOffset();
 
+          // calculate the item's local position on the board
           if (itemType === ItemTypes.BOARD_ITEM && initialClientOffset
             && initialSourceClientOffset) {
             const localOffset = {
@@ -153,11 +185,13 @@ function Board({ className }: BoardProps) {
             top -= localOffset.y;
           }
 
+          // update the item's position with the newly calculated values
           const newItem = update(foundItem, {
             left: { $set: left },
             top: { $set: top },
           });
 
+          // set the state of the board with the updated item
           updateBoard(newItem);
           setCanDrag(true);
         }
