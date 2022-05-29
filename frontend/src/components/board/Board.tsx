@@ -4,7 +4,7 @@ import React, {
   WheelEventHandler,
   PointerEventHandler
 } from 'react';
-import { useDrop } from 'react-dnd';
+import { DropTargetMonitor, useDrop } from 'react-dnd';
 import update from 'immutability-helper';
 import { motion, useDragControls } from 'framer-motion';
 import DropPlaceholder from './DropPlaceholder';
@@ -117,6 +117,73 @@ function Board({ className }: BoardProps) {
     setBoard(board);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const getItemByType = (itemType: any, itemName: string) => {
+    let foundItem;
+
+    // gets the item from the hardcoded items list
+    // or from the ones on the board
+    if (itemType === ItemTypes.ITEM) {
+      foundItem = items.find((i) => i.name === itemName);
+    } else {
+      foundItem = board.find((i) => i.name === itemName);
+    }
+
+    return foundItem;
+  };
+
+  const updateItemOffsets = (foundItem: Item, monitor: DropTargetMonitor<Pick<Item, 'name'>>) => {
+    let newItem;
+
+    // the x,y position of the pointer when dropping an item
+    const delta = monitor.getClientOffset();
+
+    // get the board element's properties, like size and position
+    const boardRect = boardRef.current?.getBoundingClientRect();
+
+    if (delta && boardRect) {
+      // subtract the top-left corner coordinates of the board
+      // from the pointer's last offset
+      let left = delta.x - boardRect.left;
+      let top = delta.y - boardRect.top;
+
+      // the resulted top, left values should be calculated
+      // relatively to the board's scale
+      left /= scale;
+      top /= scale;
+
+      // the x,y position of the pointer when clicking
+      // on the item that is going to be dragged
+      const initialClientOffset = monitor.getInitialClientOffset();
+
+      // the item's top-left corner position
+      // when the dragging process starts
+      const initialSourceClientOffset = monitor.getInitialSourceClientOffset();
+
+      const itemType = monitor.getItemType();
+
+      // calculate the item's local position on the board
+      if (itemType === ItemTypes.BOARD_ITEM && initialClientOffset
+            && initialSourceClientOffset) {
+        const localOffset = {
+          x: initialClientOffset.x - initialSourceClientOffset.x,
+          y: initialClientOffset.y - initialSourceClientOffset.y,
+        };
+
+        left -= localOffset.x;
+        top -= localOffset.y;
+      }
+
+      // update the item's position with the newly calculated values
+      newItem = update(foundItem, {
+        left: { $set: left },
+        top: { $set: top },
+      });
+    }
+
+    return newItem;
+  };
+
   // React DnD hook that sets the board as a drop target;
   // it accepts two different types: a new item being dropped,
   // and an existing item on the board, that changes its position;
@@ -133,70 +200,23 @@ function Board({ className }: BoardProps) {
       }),
       drop(item, monitor) {
         const itemType = monitor.getItemType();
-
-        let foundItem;
-
-        // gets the item from the hardcoded items list
-        // or from the ones on the board
-        if (itemType === ItemTypes.ITEM) {
-          foundItem = items.find((i) => i.name === item.name);
-        } else {
-          foundItem = board.find((i) => i.name === item.name);
-        }
-
+        const itemName = item.name;
+        const foundItem = getItemByType(itemType, itemName);
         if (foundItem === undefined) {
           return;
         }
 
-        // the x,y position of the pointer when dropping an item
-        const delta = monitor.getClientOffset();
-
-        // get the board element's properties, like size and position
-        const boardRect = boardRef.current?.getBoundingClientRect();
-
-        if (delta && boardRect) {
-          // subtract the top-left corner coordinates of the board
-          // from the pointer's last offset
-          let left = delta.x - boardRect.left;
-          let top = delta.y - boardRect.top;
-
-          // the resulted top, left values should be calculated
-          // relatively to the board's scale
-          left /= scale;
-          top /= scale;
-
-          // the x,y position of the pointer when clicking
-          // on the item that is going to be dragged
-          const initialClientOffset = monitor.getInitialClientOffset();
-
-          // the item's top-left corner position
-          // when the dragging process starts
-          const initialSourceClientOffset = monitor.getInitialSourceClientOffset();
-
-          // calculate the item's local position on the board
-          if (itemType === ItemTypes.BOARD_ITEM && initialClientOffset
-            && initialSourceClientOffset) {
-            const localOffset = {
-              x: initialClientOffset.x - initialSourceClientOffset.x,
-              y: initialClientOffset.y - initialSourceClientOffset.y,
-            };
-
-            left -= localOffset.x;
-            top -= localOffset.y;
-          }
-
-          // update the item's position with the newly calculated values
-          const newItem = update(foundItem, {
-            left: { $set: left },
-            top: { $set: top },
-          });
-
-          // set the state of the board with the updated item
-          updateBoard(newItem);
-          setCanDrag(true);
+        const newItem = updateItemOffsets(foundItem, monitor);
+        if (newItem === undefined) {
+          return;
         }
+
+        // set the state of the board with the updated item
+        updateBoard(newItem);
+        setCanDrag(true);
       },
     }),
+
     [board, scale]
   );
 
