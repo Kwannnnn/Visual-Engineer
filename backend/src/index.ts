@@ -1,18 +1,32 @@
 import express, { Express } from 'express';
 import cors from 'cors';
-
-import indexRouter from './routes/index';
+import { MikroORM, RequestContext } from '@mikro-orm/core';
+import { Item, Board } from './database/models';
+import { indexRouter, objectsRouter, boardRouter } from './routes';
+import 'dotenv/config';
+import config from './mikro-orm.config';
+import DI from './DI';
 
 const app: Express = express();
-const PORT: number = parseInt(process.env.PORT as string, 10) || 3000;
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+async function setup() {
+  DI.orm = await MikroORM.init(config as any);
+  DI.em = DI.orm.em;
 
-// Routes
-app.use('/', indexRouter);
+  DI.itemRepository = DI.orm.em.getRepository(Item);
+  DI.boardRepository = DI.orm.em.getRepository(Board);
 
-app.listen(PORT, () => {
-  console.log(`Server is listening at on port ${PORT}`);
-});
+  app.use(cors());
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use((req, res, next) => RequestContext.create(DI.orm.em, next));
+
+  // Routes
+  app.use('/', indexRouter);
+  app.use('/api/v1/objects', objectsRouter);
+  app.use('/api/v1/boards', boardRouter);
+
+  return app;
+}
+
+export default setup;

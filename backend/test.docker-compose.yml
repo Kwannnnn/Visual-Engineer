@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  postgres:
+    image: 'postgres:latest'
+    container_name: ve-test-db
+    environment:
+      POSTGRES_USER: ve-test
+      POSTGRES_PASSWORD: ve-test
+      POSTGRES_DB: ve-test
+  backend:
+    image: registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/dhi2ve1/backend-test:latest
+    container_name: ve-test-backend
+    build:
+      context: .
+      dockerfile: test.Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgres://ve-test:ve-test@postgres:5432/ve-test
+      - JEST_JUNIT_OUTPUT_DIR=/tmp/jest
+    volumes:
+      - ./dist/jest:/tmp/jest

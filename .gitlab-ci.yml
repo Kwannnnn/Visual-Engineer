@@ -1,0 +1,144 @@
+image: node
+
+stages:
+  - install
+  - build
+  - lint
+  - test
+  - image
+
+cache:
+  paths:
+    - backend/node_modules/
+    - frontend/node_modules/
+  when: on_success
+
+install:
+  stage: install
+  script:
+    - cd backend
+    - npm ci
+    - cd ../frontend
+    - npm ci
+
+# Backend
+
+backend:build:
+  stage: build
+  only:
+    changes:
+      - backend/**/*
+  script:
+    - cd backend
+    - npm run build
+  needs:
+    - install
+
+backend:lint:
+  stage: lint
+  only:
+    changes:
+      - backend/**/*
+  needs:
+    - install
+  script:
+    - cd backend
+    - npm run lint
+
+backend:apidoc:
+  stage: build
+  only:
+    changes:
+      - backend/**/*
+  needs:
+    - install
+  script:
+    - cd backend
+    - npm run apidoc
+  artifacts:
+    paths:
+      - backend/dist/docs/apidoc/
+
+backend:integration:
+  stage: test
+  only:
+    changes:
+      - backend/**/*
+  image: docker/compose:1.29.2
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+  script:
+    - cd backend
+    - docker-compose -f test.docker-compose.yml up --build --exit-code-from backend
+  cache: []
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - backend/dist/jest/junit.xml
+
+backend:image:
+  stage: image
+  cache: []
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/backend/ --dockerfile $CI_PROJECT_DIR/backend/Dockerfile --destination $CI_REGISTRY_IMAGE/backend:${CI_COMMIT_BRANCH}
+  only:
+    - main
+    - staging
+
+# Frontend
+
+frontend:build:
+  stage: build
+  only:
+    changes:
+      - frontend/**/*
+  script:
+    - cd frontend
+    - npm run build
+  needs:
+    - install
+
+frontend:cypress:
+  image: cypress/browsers:node16.13.2-chrome97-ff96
+  stage: test
+  only:
+    changes:
+      - frontend/**/*
+  needs:
+    - install
+  script:
+    - cd frontend
+    - npx cypress install
+    - npm run test:cypress
+
+sast:
+  stage: test
+  needs: []
+include:
+  - template: Security/SAST.gitlab-ci.yml
+
+sonarqube-check:
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar" # Defines the location of the analysis task cache
+    GIT_DEPTH: "0" # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script:
+    - sonar-scanner
+  allow_failure: true
+  only:
+    - staging
