@@ -6,7 +6,7 @@ export { default as PropertiesSidebar } from './propertiesSidebar/PropertiesSide
 export { default as Board } from './board/Board';
 export { default as BoardItem } from './board/BoardItem';
 export { default as DropPlaceholder } from './board/DropPlaceholder';
-export { default as ItemTypes } from './board/ItemTypes';
+export { default as ItemTypes } from './board/item/ItemTypes';
 export { default as Tab } from './board/tabbar/Tab';
 export { default as TabBar } from './board/tabbar/TabBar';
 export { default as Toolbox } from './toolbox/Toolbox';

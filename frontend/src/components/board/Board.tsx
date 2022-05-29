@@ -8,53 +8,15 @@ import { DropTargetMonitor, useDrop } from 'react-dnd';
 import update from 'immutability-helper';
 import { motion, useDragControls } from 'framer-motion';
 import DropPlaceholder from './DropPlaceholder';
-import ItemTypes from './ItemTypes';
+import ItemTypes from './item/ItemTypes';
 import BoardItem from './BoardItem';
 import DragLayer from './DragLayer';
+import Item from './item/Item';
+import Items from './item/ItemsList';
 
 interface BoardProps {
   className?: string;
 }
-
-interface Item {
-  tag: string;
-  name: string;
-  left: number;
-  top: number;
-}
-
-const items: Item[] = [
-  {
-    tag: 'PPP-1234',
-    name: 'Pipe Fitting',
-    left: 0,
-    top: 0,
-  },
-  {
-    tag: 'PIP-2345',
-    name: 'Pump',
-    left: 0,
-    top: 0,
-  },
-  {
-    tag: 'SCP-3456',
-    name: 'Blower',
-    left: 0,
-    top: 0,
-  },
-  {
-    tag: 'SAP-4567',
-    name: 'Tank',
-    left: 0,
-    top: 0,
-  },
-  {
-    tag: 'CAC-5678',
-    name: 'Vessel',
-    left: 0,
-    top: 0,
-  }
-];
 
 function Board({ className }: BoardProps) {
   // Constant parameters
@@ -124,7 +86,7 @@ function Board({ className }: BoardProps) {
     // gets the item from the hardcoded items list
     // or from the ones on the board
     if (itemType === ItemTypes.ITEM) {
-      foundItem = items.find((i) => i.name === itemName);
+      foundItem = Items.find((i) => i.name === itemName);
     } else {
       foundItem = board.find((i) => i.name === itemName);
     }

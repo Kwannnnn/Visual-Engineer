@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDragLayer } from 'react-dnd';
-import ItemTypes from './ItemTypes';
+import ItemTypes from './item/ItemTypes';
 import BoardItem from './BoardItem';
 
 interface DragLayerProps {

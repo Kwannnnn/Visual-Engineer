@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube } from '@fortawesome/free-solid-svg-icons';
 import { useDrag } from 'react-dnd';
-import ItemTypes from '../board/ItemTypes';
+import ItemTypes from '../board/item/ItemTypes';
 
 interface Item {
   className?: string;
