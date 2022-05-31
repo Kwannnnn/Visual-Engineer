@@ -81,7 +81,7 @@ function ToolboxList(prop: {listing: Listing[], subsetNbr: number}) {
               <FontAwesomeIcon icon={faAngleRight} className={`transition-all duration-300 ml-2 ${rotation}`} />
             </div>
           </div>
-          <div className={`mb-2 ${visible ? '' : 'hidden'}`} id={`listing-${listing.group.replace(' ', '_')}-subset`}>
+          <div className={`mb-2 ${visible ? 'hidden' : ''}`} id={`listing-${listing.group.replace(' ', '_')}-subset`}>
             {subsetBuilder.build()}
             {itemBuilder.build()}
           </div>
