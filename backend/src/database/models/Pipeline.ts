@@ -15,8 +15,10 @@ export default class Pipeline extends PipeItem {
     flange: string,
     lining: string,
     type: string,
+    x: number,
+    y: number,
   ) {
-    super(tag, name, length, width, depth, diameter, pressureClass, type);
+    super(tag, name, length, width, depth, diameter, pressureClass, type, x, y);
     this.flange = flange;
     this.lining = lining;
   }
