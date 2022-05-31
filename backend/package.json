@@ -1,6 +1,6 @@
 {
   "name": "@visual-engineer/backend",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A backend API for the Visual Editor application",
   "main": "src/index.ts",
   "author": "dhi2v.e1",
