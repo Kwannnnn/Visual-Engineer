@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
-import { Pipeline } from '../../database/models';
 import DI from '../../DI';
 import ValidationError from '../../error/ValidationError';
 import { GetTypePropertiesParams } from '../../routes/objects/v2/objects.types';
 import { TypedRequest } from '../../routes/util/typed-request';
-import { getPropertyType } from '../../util/properties';
 import getProperties from '../../util/properties/getProperties';
 import { getClass } from '../board/board.util';
 
