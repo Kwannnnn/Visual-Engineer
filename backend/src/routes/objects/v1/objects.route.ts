@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { objectController } from '../../controllers';
+import { objectController } from '../../../controllers';
 
 const objectsRouter: Router = Router();
 

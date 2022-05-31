@@ -1,8 +1,11 @@
-import express, { Express } from 'express';
+import 'reflect-metadata';
+import express, { Express, Router } from 'express';
 import cors from 'cors';
 import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { Item, Board } from './database/models';
-import { indexRouter, objectsRouter, boardRouter } from './routes';
+import {
+  indexRouter, objectsRouterV1, boardRouter, objectsRouterV2,
+} from './routes';
 import 'dotenv/config';
 import config from './mikro-orm.config';
 import DI from './DI';
@@ -23,8 +26,18 @@ async function setup() {
 
   // Routes
   app.use('/', indexRouter);
-  app.use('/api/v1/objects', objectsRouter);
-  app.use('/api/v1/boards', boardRouter);
+
+  const v1 = Router();
+  const v2 = Router();
+
+  v1.use('/objects', objectsRouterV1);
+  v1.use('/boards', boardRouter);
+
+  v2.use('/objects', objectsRouterV1);
+  v2.use('/objects', objectsRouterV2);
+
+  app.use('/api/v1', v1);
+  app.use('/api/v2', v2);
 
   return app;
 }

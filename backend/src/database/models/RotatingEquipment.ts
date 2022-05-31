@@ -1,4 +1,5 @@
 import { Entity, Property } from '@mikro-orm/core';
+import { ObjectProperty, PropertyType } from '../../util/properties';
 import MechanicalEquipment from './MechanicalEquipment';
 
 @Entity({
@@ -28,8 +29,10 @@ export default abstract class RotatingEquipment extends MechanicalEquipment {
   }
 
   @Property({ nullable: true, type: 'float' })
+  @ObjectProperty(PropertyType.NUMBER)
     preliminaryPower!: number;
 
   @Property({ nullable: true, type: 'float' })
+  @ObjectProperty(PropertyType.STRING)
     finalPower!: number;
 }

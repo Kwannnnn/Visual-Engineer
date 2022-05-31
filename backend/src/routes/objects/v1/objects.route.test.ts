@@ -1,9 +1,9 @@
 import request from 'supertest';
 import { ISeedManager } from '@mikro-orm/core';
-import setup from '../../index';
-import DI from '../../DI';
-import DatabaseSeeder from '../../database/seeders/DatabaseSeeder';
-import { sampleBoardObjects } from '../../database/seeders/ObjectSeeder';
+import setup from '../../../index';
+import DI from '../../../DI';
+import DatabaseSeeder from '../../../database/seeders/DatabaseSeeder';
+import { sampleBoardObjects } from '../../../database/seeders/ObjectSeeder';
 
 let app: Express.Application;
 

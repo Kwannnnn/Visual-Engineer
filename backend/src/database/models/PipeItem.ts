@@ -1,6 +1,7 @@
 import { Entity, Enum } from '@mikro-orm/core';
 import PressureClass from './PressureClass.enum';
 import Item from './Item';
+import { ObjectProperty, PropertyType } from '../../util/properties';
 
 @Entity({
   discriminatorValue: 'pipeItem',
@@ -21,5 +22,6 @@ export default abstract class PipeItem extends Item {
   }
 
   @Enum(() => PressureClass)
+  @ObjectProperty(PropertyType.STRING)
     pressureClass!: PressureClass;
 }
