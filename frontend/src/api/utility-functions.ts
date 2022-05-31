@@ -69,3 +69,11 @@ export async function deleteBoardObject(id: number, tag:string) {
     .then((response) => response.data)
     .catch((err) => err.data);
 }
+
+export async function getObjectTypes() {
+  const result = await axios.get(`${url}/objects/types`)
+    .then((response) => response.data)
+    .catch((err) => err.data);
+
+  return result;
+}
