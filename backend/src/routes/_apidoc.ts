@@ -1,15 +1,11 @@
-import { Router } from 'express';
-import { objectController } from '../../controllers';
-
-const objectsRouter: Router = Router();
+// Historical Apidoc definitions
 
 /**
  * @api {get} /api/v1/objects Get all objects
  * @apiDescription Returns a resource response containing all fields for every object in the system.
- * @apiVersion 2.0.0
+ * @apiVersion 1.0.0
  * @apiName GetObjects
  * @apiGroup Object
- * @apiDeprecated use (#Board:GetBoardObjects)
  * @apiSuccess (Success 200) {Object[]} objects List of object items
  * @apiSuccessExample Success-Response:
  * HTTP/1.1 200 OK
@@ -32,14 +28,12 @@ const objectsRouter: Router = Router();
  *       }
  *     ]
  */
-objectsRouter.get('/', objectController.getAll);
 
 /**
  * @api {get} /api/v1/objects/:tag Get a specific object by its identifier
  * @apiDescription Returns a resource response containing the specified object. Returns a 404 error
  * message if no such object is found.
- * @apiVersion 2.0.0
- * @apiDeprecated use (#Board:GetBoardObjects) to fetch all board items instead
+ * @apiVersion 1.0.0
  * @apiName GetObject
  * @apiGroup Object
  * @apiParam {String} tag Object identifier
@@ -60,6 +54,3 @@ objectsRouter.get('/', objectController.getAll);
  *       "message": "Item not found"
  *     }
  */
-objectsRouter.get('/:tag', objectController.getByTag);
-
-export default objectsRouter;
