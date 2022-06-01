@@ -15,6 +15,8 @@ export default class PipeFittingFactory extends Factory<PipeFitting> {
       depth: faker.datatype.float(),
       diameter: faker.datatype.float(),
       pressureClass: PressureClass.PN10,
+      x: faker.datatype.float(),
+      y: faker.datatype.float(),
       type: 'pipeFitting',
     };
   }
