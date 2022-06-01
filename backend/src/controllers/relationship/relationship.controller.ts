@@ -47,7 +47,6 @@ export const deleteRelationship = async (req: Request, res: Response) => {
     }
 
     await DI.itemRepository.removeAndFlush(pipeline);
-    await DI.relationshipRepository.removeAndFlush(relationship);
 
     return res.status(204).send();
   } catch (e: any) {
