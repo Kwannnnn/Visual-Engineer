@@ -14,7 +14,8 @@ import ReactFlow, {
   useEdgesState,
   ReactFlowInstance,
   Connection,
-  NodeTypes
+  NodeTypes,
+  Background
 } from 'react-flow-renderer';
 import ItemNode from './ItemNode';
 
@@ -109,6 +110,7 @@ function NewBoard(props: NewBoardProps) {
       >
         <MiniMap />
         <Controls />
+        <Background />
       </ReactFlow>
     </div>
   );
