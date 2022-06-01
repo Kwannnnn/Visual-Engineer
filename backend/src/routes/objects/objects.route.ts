@@ -38,7 +38,7 @@ objectsRouter.get('/', objectController.getAll);
  * @api {get} /api/v1/objects/types Get all object types
  * @apiDescription Returns a resource response containing all object types in the system and their
  *                 hierachy.
- * @apiVersion 1.0.0
+ * @apiVersion 2.0.0
  * @apiName GetObjectTypes
  * @apiGroup Object
  *
