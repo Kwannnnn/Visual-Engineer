@@ -1,8 +1,10 @@
 import express, { Express } from 'express';
 import cors from 'cors';
 import { MikroORM, RequestContext } from '@mikro-orm/core';
-import { Item, Board } from './database/models';
-import { indexRouter, objectsRouter, boardRouter } from './routes';
+import { Item, Board, Relationship } from './database/models';
+import {
+  indexRouter, objectsRouter, boardRouter, relationshipRouter,
+} from './routes';
 import 'dotenv/config';
 import config from './mikro-orm.config';
 import DI from './DI';
@@ -15,6 +17,7 @@ async function setup() {
 
   DI.itemRepository = DI.orm.em.getRepository(Item);
   DI.boardRepository = DI.orm.em.getRepository(Board);
+  DI.relationshipRepository = DI.orm.em.getRepository(Relationship);
 
   app.use(cors());
   app.use(express.json());
@@ -25,6 +28,7 @@ async function setup() {
   app.use('/', indexRouter);
   app.use('/api/v1/objects', objectsRouter);
   app.use('/api/v1/boards', boardRouter);
+  app.use('/api/v1/relationships', relationshipRouter);
 
   return app;
 }
