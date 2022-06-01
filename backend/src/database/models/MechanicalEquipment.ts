@@ -1,4 +1,5 @@
 import { Entity, Property } from '@mikro-orm/core';
+import { ObjectProperty, PropertyType } from '../../util/properties';
 import Item from './Item';
 
 @Entity({
@@ -18,8 +19,10 @@ export default abstract class MechanicalEquipment extends Item {
     netVolume: number,
     grossVolume: number,
     type: string,
+    x: number,
+    y: number,
   ) {
-    super(tag, name, length, width, depth, diameter, type);
+    super(tag, name, length, width, depth, diameter, type, x, y);
     this.emptyMass = emptyMass;
     this.head = head;
     this.filledMass = filledMass;
@@ -28,17 +31,22 @@ export default abstract class MechanicalEquipment extends Item {
   }
 
   @Property({ nullable: true, type: 'float' })
+  @ObjectProperty(PropertyType.NUMBER)
     emptyMass!: number;
 
   @Property({ nullable: true, type: 'float' })
+  @ObjectProperty(PropertyType.NUMBER)
     head!: number;
 
   @Property({ nullable: true, type: 'float' })
+  @ObjectProperty(PropertyType.NUMBER)
     filledMass!: number;
 
   @Property({ nullable: true, type: 'float' })
+  @ObjectProperty(PropertyType.NUMBER)
     netVolume!: number;
 
   @Property({ nullable: true, type: 'float' })
+  @ObjectProperty(PropertyType.NUMBER)
     grossVolume!: number;
 }

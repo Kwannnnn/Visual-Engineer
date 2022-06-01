@@ -69,10 +69,12 @@ router.get('/:id', boardController.getById);
  *       {
  *          "tag": "112-3sa2-da2",
  *          "name": "Blower",
- *          "length": "69",
- *          "width": "69",
- *          "depth": "69",
- *          "diameter": "69"
+ *          "length": "4",
+ *          "width": "5.3",
+ *          "depth": "2.3",
+ *          "diameter": "2",
+ *          "x": "12.3",
+ *          "y": "4.45"
  *       },
  *       {
  *          "tag": "113-7d87-aa2",
@@ -80,7 +82,9 @@ router.get('/:id', boardController.getById);
  *          "length": "37",
  *          "width": "37",
  *          "depth": "37",
- *          "diameter": "37"
+ *          "diameter": "37",
+ *          "x": "4.2",
+ *          "y": "7.5"
  *       }
  *     ]
  * @apiUse BoardNotFoundError
@@ -269,7 +273,7 @@ router.delete('/:id', boardController.deleteBoard);
  * @apiGroup Board
  *
  * @apiParam {Integer} id Board identifier
- *           {String} tag Item identifier
+ * @apiParam {String} tag Item identifier
  *
  * @apiSuccessExample Success-Response:
  *      HTTP/1.1 204 No Content

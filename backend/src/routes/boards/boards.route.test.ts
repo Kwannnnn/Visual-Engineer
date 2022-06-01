@@ -22,6 +22,8 @@ const exampleItem = {
   grossVolume: 23.7,
   preliminaryPower: 454,
   finalPower: 600,
+  x: 12.4,
+  y: 45.5,
   type: 'pump',
 };
 
