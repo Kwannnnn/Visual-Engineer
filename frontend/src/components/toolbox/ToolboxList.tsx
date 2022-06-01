@@ -20,10 +20,6 @@ function ToolboxList(prop: {listing: Listing[], subsetNbr: number}) {
   const subsetBuilder = new ReactNodeBuilder();
   const itemBuilder = new ReactNodeBuilder();
 
-  if (!prop.listing || prop.listing === null || prop.listing.length < 1) {
-    return <>ERROR: Items could not be rendered</>;
-  }
-
   const subset = prop.subsetNbr > 3 ? 3 : prop.subsetNbr;
 
   prop.listing.forEach((listing) => {
