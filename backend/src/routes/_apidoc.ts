@@ -72,7 +72,7 @@
  *       ]
  *     }]
  */
-objectsRouter.get('/types', objectController.getObjectTypes);
+// objectsRouter.get('/types', objectController.getObjectTypes);
 
 /**
  * @api {get} /api/v1/objects/:tag Get a specific object by its identifier
