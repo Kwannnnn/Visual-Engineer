@@ -1,4 +1,6 @@
 import { Entity, Property } from '@mikro-orm/core';
+import { ObjectProperty } from '../../util/properties';
+import PropertyType from '../../util/properties/PropertyType';
 import PipeItem from './PipeItem';
 import PressureClass from './PressureClass.enum';
 
@@ -23,9 +25,11 @@ export default class Pipeline extends PipeItem {
     this.lining = lining;
   }
 
+  @ObjectProperty(PropertyType.STRING)
   @Property({ nullable: true })
     flange!: string;
 
+  @ObjectProperty(PropertyType.STRING)
   @Property({ nullable: true })
     lining!: string;
 }

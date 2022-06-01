@@ -273,7 +273,7 @@ router.delete('/:id', boardController.deleteBoard);
  * @apiGroup Board
  *
  * @apiParam {Integer} id Board identifier
- *           {String} tag Item identifier
+ * @apiParam {String} tag Item identifier
  *
  * @apiSuccessExample Success-Response:
  *      HTTP/1.1 204 No Content
