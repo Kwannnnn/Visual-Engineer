@@ -15,8 +15,10 @@ export default abstract class PipeItem extends Item {
     diameter: number,
     pressureClass: PressureClass,
     type: string,
+    x: number,
+    y: number,
   ) {
-    super(tag, name, length, width, depth, diameter, type);
+    super(tag, name, length, width, depth, diameter, type, x, y);
     this.pressureClass = pressureClass;
   }
 

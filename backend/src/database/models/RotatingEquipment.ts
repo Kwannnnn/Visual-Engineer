@@ -20,9 +20,11 @@ export default abstract class RotatingEquipment extends MechanicalEquipment {
     preliminaryPower: number,
     finalPower: number,
     type: string,
+    x: number,
+    y: number,
   ) {
     // eslint-disable-next-line max-len
-    super(tag, name, length, width, depth, diameter, emptyMass, head, filledMass, netVolume, grossVolume, type);
+    super(tag, name, length, width, depth, diameter, emptyMass, head, filledMass, netVolume, grossVolume, type, x, y);
     this.preliminaryPower = preliminaryPower;
     this.finalPower = finalPower;
   }

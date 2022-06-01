@@ -17,10 +17,10 @@ const objectsRouter: Router = Router();
  *       {
  *          "tag": "112-3sa2-da2",
  *          "name": "Blower",
- *          "length": "69",
- *          "width": "69",
- *          "depth": "69",
- *          "diameter": "69"
+ *          "length": "2.3",
+ *          "width": "1.3",
+ *          "depth": "0.5",
+ *          "diameter": "1.2"
  *       },
  *       {
  *          "tag": "113-7d87-aa2",
@@ -50,10 +50,10 @@ objectsRouter.get('/', objectController.getAll);
  *     {
  *        "tag": "112-3sa2-da2",
  *        "name": "Blower",
- *        "length": "69",
- *        "width": "69",
- *        "depth": "69",
- *        "diameter": "69"
+ *        "length": "12",
+ *        "width": "1.2",
+ *        "depth": "3.2",
+ *        "diameter": "2"
  *     }
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 404 Not Found
