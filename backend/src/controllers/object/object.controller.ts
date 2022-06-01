@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
-import types from './constants';
+import types from './objectTypes.json';
 
 export const getAll = async (req: Request, res: Response) => {
   const items = await DI.itemRepository.findAll();
@@ -28,5 +28,5 @@ export const getByTag = async (req: Request, res: Response) => {
 };
 
 export const getObjectTypes = async (req: Request, res: Response) => {
-  res.json(types);
+  res.send(types);
 };
