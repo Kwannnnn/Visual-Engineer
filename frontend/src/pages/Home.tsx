@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ReactFlowProvider } from 'react-flow-renderer';
+import { ReactFlowProvider, Node } from 'react-flow-renderer';
 import {
   PropertiesSidebar, TabBar, Toolbox
 } from '../components';
@@ -8,14 +8,24 @@ import IBoard from '../typings/IBoard';
 import { getBoardObjects } from '../api/utility-functions';
 
 function Home() {
-  const [initialNodes, setInitialNodes] = useState([]);
+  const [initialNodes, setInitialNodes] = useState<Node[]>([]);
   useEffect(() => {
     getBoardObjects(1)
       .then((response) => {
-        setInitialNodes(response);
+        // eslint-disable-next-line max-len
+        response.forEach((item: { tag: string; type: string; name: string; x: number; y: number; }) => {
+          const node:Node = {
+            id: item.tag,
+            type: 'itemNode',
+            data: { label: item.type },
+            position: { x: item.x, y: item.y },
+          };
+          setInitialNodes((n) => n.concat(node));
+        });
       })
       .catch((error) => {
-        alert(error);
+        // TODO: Implement error handling
+        console.error(error);
       });
   }, []);
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
