@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import {
   PropertiesSidebar, TabBar, Toolbox
 } from '../components';
 import NewBoard from '../components/board/NewBoard';
 import IBoard from '../typings/IBoard';
+import { getBoardObjects } from '../api/utility-functions';
 
 function Home() {
+  const [initialNodes, setInitialNodes] = useState([]);
+  useEffect(() => {
+    getBoardObjects(1)
+      .then((response) => {
+        setInitialNodes(response);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }, []);
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [boards, setBoards] = useState<IBoard[]>([
@@ -27,7 +38,7 @@ function Home() {
           />
           <div className="col-span-7 flex flex-col">
             <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
-            <NewBoard />
+            <NewBoard initialNodes={initialNodes} />
           </div>
           <PropertiesSidebar className="md:col-span-3" />
         </div>
