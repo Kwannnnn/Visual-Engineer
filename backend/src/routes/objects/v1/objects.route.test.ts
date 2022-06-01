@@ -48,12 +48,4 @@ describe('/objects', () => {
       });
     });
   });
-
-  describe('GET /objects/types', () => {
-    it('should return all object types', async () => {
-      const response = await request(app).get('/api/v1/objects/types');
-      expect(response.statusCode).toEqual(200);
-      expect(response.body).toHaveLength(1);
-    });
-  });
 });
