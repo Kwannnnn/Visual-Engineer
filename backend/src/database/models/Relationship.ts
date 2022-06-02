@@ -1,10 +1,8 @@
 import {
   Entity, OneToOne, PrimaryKeyType,
 } from '@mikro-orm/core';
-/* eslint-disable */
 import Item from './Item';
 import Pipeline from './Pipeline';
-/* eslint-enable */
 
 @Entity()
 export default class Relationship {
