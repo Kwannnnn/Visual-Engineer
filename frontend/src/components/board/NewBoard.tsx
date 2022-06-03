@@ -78,7 +78,10 @@ function NewBoard(props: NewBoardProps) {
         id: getId(),
         type: NODE_TYPE,
         position,
-        data: { label: name },
+        data: {
+          label: name,
+          dataCY: getId(),
+        },
       };
 
       setNodes((nodesState) => nodesState.concat(newNode));
@@ -87,7 +90,7 @@ function NewBoard(props: NewBoardProps) {
   );
 
   return (
-    <div className="w-full h-full" ref={reactFlowWrapper}>
+    <div className="w-full h-full" data-cy="board" ref={reactFlowWrapper}>
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}

@@ -3,14 +3,17 @@ import { Handle, Position } from 'react-flow-renderer';
 
 interface ItemNodeProps {
   className?: string;
-  data: {label: string};
+  data: {
+    label: string;
+    dataCY: string;
+  };
 }
 
 function ItemNode(props: ItemNodeProps) {
   const {
-    className, data,
+    className = '', data,
   } = props;
-  const { label } = data;
+  const { label, dataCY } = data;
 
   return (
     <>
@@ -25,6 +28,7 @@ function ItemNode(props: ItemNodeProps) {
         id={`left${label}}`}
       />
       <div
+        data-cy={dataCY}
         className={`bg-slate-50 border-2 px-12 py-8 border-black ${className}`}
       >
 
