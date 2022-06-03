@@ -31,10 +31,15 @@ describe('GET Relationship endpoints', () => {
   describe('GET /relationships/:pipelineTag', () => {
     describe('given the relationship exists', () => {
       it('should return an existing relationship', async () => {
-        const { pipeline, firstItem, secondItem } = sampleRelationships[0];
-        const response = await request(app).get(`/api/v2/relationships/${pipeline.tag}`);
+        const relationship = sampleRelationships[0];
+        const response = await request(app).get(`/api/v2/relationships/${relationship.pipeline.tag}`);
         expect(response.status).toEqual(200);
-        expect(response.body).toEqual({ pipeline, firstItem, secondItem });
+        const exrsp = {
+          firstItem: relationship.firstItem.tag,
+          pipeline: relationship.pipeline.tag,
+          secondItem: relationship.secondItem.tag,
+        };
+        expect(response.body).toEqual(exrsp);
       });
     });
 

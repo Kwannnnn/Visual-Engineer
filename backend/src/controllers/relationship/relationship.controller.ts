@@ -3,7 +3,6 @@ import DI from '../../DI';
 
 export const getAllRelationships = async (req: Request, res: Response) => {
   const relationships = await DI.relationshipRepository.findAll();
-  console.log(relationships.length);
   res.json(relationships);
 };
 
@@ -11,8 +10,7 @@ export const getOneRelationship = async (req: Request, res: Response) => {
   const { pipelineTag } = req.params;
 
   try {
-    const relationship = await DI.relationshipRepository.find(pipelineTag);
-    console.log(relationship);
+    const relationship = await DI.relationshipRepository.findOne(pipelineTag);
 
     if (!relationship) {
       return res.status(404).json({
@@ -30,19 +28,16 @@ export const getOneRelationship = async (req: Request, res: Response) => {
 
 export const deleteRelationship = async (req: Request, res: Response) => {
   const { pipelineTag } = req.params;
-  console.log(pipelineTag);
 
   try {
-    const pipeline: any = await DI.itemRepository.find(pipelineTag);
-    console.log(pipeline);
+    const pipeline: any = await DI.itemRepository.findOne(pipelineTag);
     if (!pipeline) {
       return res.status(404).json({
         message: 'Pipeline not found',
       });
     }
 
-    const relationship = await DI.relationshipRepository.find(pipelineTag);
-    console.log(relationship);
+    const relationship = await DI.relationshipRepository.findOne(pipelineTag);
     if (!relationship) {
       return res.status(404).json({
         message: 'Relationship not found',

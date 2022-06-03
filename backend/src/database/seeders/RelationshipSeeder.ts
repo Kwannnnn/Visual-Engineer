@@ -1,25 +1,19 @@
 /* eslint-disable class-methods-use-this */
-import type { EntityManager } from '@mikro-orm/core';
+import type { EntityManager, Dictionary } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
-import { BlowerFactory, PipelineFactory, PumpFactory } from '../factories';
-import {
-  Pipeline, Pump, Blower, Relationship,
-} from '../models';
+import { Relationship } from '../models';
 
 export const sampleRelationships: Relationship[] = [];
 export default class RelationshipSeeder extends Seeder {
-  async run(em: EntityManager): Promise<void> {
+  async run(em: EntityManager, context: Dictionary): Promise<void> {
     // Make sure to empty the array every time the seeder is used
     sampleRelationships.length = 0;
 
-    // Add a pipeline and two other items
-    const pipeline: Pipeline = new PipelineFactory(em).makeOne({ board: 1 });
-    const firstItem: Pump = new PumpFactory(em).makeOne({ board: 1 });
-    const secondItem: Blower = new BlowerFactory(em).makeOne({ board: 1 });
-
-    const relationship: Relationship = {
-      pipeline, firstItem, secondItem,
-    };
+    const relationship = em.create(Relationship, {
+      pipeline: context.sampleBoards[0].items[0],
+      firstItem: context.sampleBoards[0].items[1],
+      secondItem: context.sampleBoards[0].items[2],
+    });
 
     sampleRelationships.push(relationship);
   }
