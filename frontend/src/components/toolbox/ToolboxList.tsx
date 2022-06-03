@@ -67,21 +67,21 @@ function ToolboxList(prop: {listing: Listing[], subsetNbr: number}) {
       }
 
       listBuilder.append(
-        <div id={`listing-${listing.group}`}>
+        <div data-cy={`listing-${listing.group}`}>
           <div
             className={`hover:opacity-60 p-1 transition-all cursor-pointer select-none flex justify-between hover:pl-2 ${size}`}
             role="button"
             tabIndex={0}
             onClick={() => toggleIconRotation()}
             onKeyDown={undefined}
-            id={`listing-${listing.group.replace(' ', '_')}-btn`}
+            data-cy={`listing-${listing.group.replace(' ', '_')}-btn`}
           >
             <p className={`${subset === 3 ? 'font-medium' : 'font-bold'}`}>{listing.group}</p>
             <div className="align-middle">
               <FontAwesomeIcon icon={faAngleRight} className={`transition-all duration-300 ml-2 ${rotation}`} />
             </div>
           </div>
-          <div className={`mb-2 ${visible ? 'hidden' : ''}`} id={`listing-${listing.group.replace(' ', '_')}-subset`}>
+          <div className={`mb-2 ${visible ? 'hidden' : ''}`} data-cy={`listing-${listing.group.replace(' ', '_')}-subset`}>
             {subsetBuilder.build()}
             {itemBuilder.build()}
           </div>
