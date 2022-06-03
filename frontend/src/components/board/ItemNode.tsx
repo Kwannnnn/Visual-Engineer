@@ -20,12 +20,14 @@ function ItemNode(props: ItemNodeProps) {
       <Handle
         type="target"
         position={Position.Top}
-        id={`top${label}}`}
+        id={`top-${dataCY}`}
+        data-cy={`top-${dataCY}`}
       />
       <Handle
         type="target"
         position={Position.Left}
-        id={`left${label}}`}
+        id={`left-${dataCY}`}
+        data-cy={`left-${dataCY}`}
       />
       <div
         data-cy={dataCY}
@@ -37,12 +39,14 @@ function ItemNode(props: ItemNodeProps) {
       <Handle
         type="source"
         position={Position.Bottom}
-        id={`bottom${label}}`}
+        id={`bottom-${dataCY}`}
+        data-cy={`bottom-${dataCY}`}
       />
       <Handle
         type="source"
         position={Position.Right}
-        id={`right${label}}`}
+        id={`right-${dataCY}`}
+        data-cy={`right-${dataCY}`}
       />
     </>
   );
