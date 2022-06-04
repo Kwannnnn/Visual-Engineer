@@ -10,23 +10,23 @@ interface PropertiesSidebarProps {
 const sampleData = [
   {
     name: 'Tag',
-    value: 'SX69',
+    value: 'PIP-2345',
   },
   {
     name: 'Length',
-    value: 'SX69',
+    value: '16.9',
   },
   {
     name: 'Width',
-    value: '69',
+    value: '10.3',
   },
   {
     name: 'Depth',
-    value: '99.6',
+    value: '7.24',
   },
   {
     name: 'Diameter',
-    value: '6.69',
+    value: '4.55',
   },
   {
     name: 'Type',
