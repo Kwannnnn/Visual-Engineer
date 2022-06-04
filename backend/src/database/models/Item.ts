@@ -1,5 +1,6 @@
+/* eslint-disable max-classes-per-file */
 import {
-  Property, PrimaryKey, ManyToOne, Entity,
+  Property, PrimaryKey, ManyToOne, Entity, OneToMany, Collection, OneToOne, PrimaryKeyType,
 } from '@mikro-orm/core';
 import { ObjectProperty, PropertyType } from '../../util/properties';
 // eslint-disable-next-line
@@ -67,4 +68,31 @@ export default abstract class Item {
 
   @ManyToOne('Board')
     board!: Board;
+
+  @OneToMany({ type: 'Relationship', mappedBy: 'firstItem' })
+    relationship = new Collection<Relationship>(this);
+}
+
+@Entity()
+export class Relationship {
+  constructor(
+    pipeline: Item,
+    firstItem: Item,
+    secondItem: Item,
+  ) {
+    this.pipeline = pipeline;
+    this.firstItem = firstItem;
+    this.secondItem = secondItem;
+  }
+
+  @OneToOne({ primary: true })
+    pipeline!: Item;
+
+  [PrimaryKeyType]?: string;
+
+  @ManyToOne()
+    firstItem!: Item;
+
+  @ManyToOne()
+    secondItem!: Item;
 }

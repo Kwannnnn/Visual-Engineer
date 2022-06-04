@@ -37,6 +37,7 @@ describe('/objects', () => {
         expect(response.body).toEqual({
           ...otherProps,
           board: board.id,
+          relationship: undefined,
         });
       });
     });
