@@ -3,28 +3,34 @@ import { Handle, Position } from 'react-flow-renderer';
 
 interface ItemNodeProps {
   className?: string;
-  data: {label: string};
+  data: {
+    label: string;
+    dataCY: string;
+  };
 }
 
 function ItemNode(props: ItemNodeProps) {
   const {
-    className, data,
+    className = '', data,
   } = props;
-  const { label } = data;
+  const { label, dataCY } = data;
 
   return (
     <>
       <Handle
         type="target"
         position={Position.Top}
-        id={`top${label}}`}
+        id={`top-${dataCY}`}
+        data-cy={`top-${dataCY}`}
       />
       <Handle
         type="target"
         position={Position.Left}
-        id={`left${label}}`}
+        id={`left-${dataCY}`}
+        data-cy={`left-${dataCY}`}
       />
       <div
+        data-cy={dataCY}
         className={`bg-slate-50 border-2 px-12 py-8 border-black ${className}`}
       >
 
@@ -33,12 +39,14 @@ function ItemNode(props: ItemNodeProps) {
       <Handle
         type="source"
         position={Position.Bottom}
-        id={`bottom${label}}`}
+        id={`bottom-${dataCY}`}
+        data-cy={`bottom-${dataCY}`}
       />
       <Handle
         type="source"
         position={Position.Right}
-        id={`right${label}}`}
+        id={`right-${dataCY}`}
+        data-cy={`right-${dataCY}`}
       />
     </>
   );

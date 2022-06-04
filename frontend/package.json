@@ -55,10 +55,9 @@
   "scripts": {
     "start": "cross-env PORT=8080 react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
     "test:cypress": "npx start-server-and-test start http://localhost:8080 'npx cypress run'",
-    "eslint": "npx eslint src --ext .ts,.tsx",
-    "eslint:fix": "npx eslint src --ext .ts,.tsx --fix",
+    "lint": "npx eslint src --ext .ts,.tsx",
+    "lint:fix": "npx eslint src --ext .ts,.tsx --fix",
     "eject": "react-scripts eject"
   },
   "browserslist": {

@@ -21,6 +21,7 @@ function ToolboxItem({ name, className = '' }: Item) {
       className={`cursor-move p-1 text-sm select-none transition-all hover:bg-slate-100 hover:rounded-r-lg hover:font-bold
      ${className}`}
       draggable
+      data-cy={`toolbox-item-${name.replace(' ', '_')}`}
     >
       <FontAwesomeIcon icon={faCube} />
       {` ${name}`}

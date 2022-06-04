@@ -41,7 +41,7 @@ const apiSampleData = [
 function Toolbox({ className }: ToolboxProps) {
   return (
     <aside className={`overflow-y-auto ${className}`}>
-      <div id="toolbox-list" className="p-3">
+      <div data-cy="toolbox-list" className="p-3">
         <ToolboxList listing={apiSampleData} subsetNbr={1} />
       </div>
     </aside>
