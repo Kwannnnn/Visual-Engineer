@@ -9,7 +9,7 @@ interface ToolboxProps {
 function Toolbox({ className, types }: ToolboxProps) {
   return (
     <aside className={`overflow-y-auto ${className}`}>
-      <div id="toolbox-list" className="p-3">
+      <div data-cy="toolbox-list" className="p-3">
         <ToolboxList listing={types} subsetNbr={1} />
       </div>
     </aside>

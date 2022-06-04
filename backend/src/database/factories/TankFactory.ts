@@ -2,7 +2,7 @@
 import { Factory, Faker } from '@mikro-orm/seeder';
 import { Tank } from '../models';
 
-export default class VesselFactory extends Factory<Tank> {
+export default class TankFactory extends Factory<Tank> {
   model = Tank;
 
   definition(faker: Faker): Partial<Tank> {

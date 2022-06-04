@@ -1,5 +1,5 @@
 export { default as Blower } from './Blower';
-export { default as Item } from './Item';
+export { default as Item, Relationship } from './Item';
 export { default as MechanicalEquipment } from './MechanicalEquipment';
 export { default as PipeFitting } from './PipeFitting';
 export { default as PipeItem } from './PipeItem';
