@@ -116,6 +116,9 @@ frontend:cypress:
   needs:
     - install
   script:
+    - cd backend
+    - npm run dev
+    - cd ../frontend
     - cd frontend
     - npx cypress install
     - npm run test:cypress
