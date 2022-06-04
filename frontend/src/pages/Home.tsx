@@ -1,12 +1,32 @@
-import React, { useState } from 'react';
-import { ReactFlowProvider } from 'react-flow-renderer';
+import React, { useState, useEffect } from 'react';
+import { ReactFlowProvider, Node } from 'react-flow-renderer';
 import {
   PropertiesSidebar, TabBar, Toolbox
 } from '../components';
 import NewBoard from '../components/board/NewBoard';
 import IBoard from '../typings/IBoard';
+import { getBoardObjects } from '../api/utility-functions';
 
 function Home() {
+  const [initialNodes, setInitialNodes] = useState<Node[]>([]);
+  useEffect(() => {
+    getBoardObjects(1)
+      .then((response) => {
+        // eslint-disable-next-line max-len
+        response.forEach((item: { tag: string; type: string; name: string; x: number; y: number; }) => {
+          const node:Node = {
+            id: item.tag,
+            type: 'itemNode',
+            data: { label: item.type },
+            position: { x: item.x, y: item.y },
+          };
+          setInitialNodes((n) => n.concat(node));
+        });
+      })
+      .catch(() => {
+        setInitialNodes([]);
+      });
+  }, []);
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [boards, setBoards] = useState<IBoard[]>([
@@ -27,7 +47,7 @@ function Home() {
           />
           <div className="col-span-7 flex flex-col">
             <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
-            <NewBoard />
+            <NewBoard initialNodes={initialNodes} />
           </div>
           <PropertiesSidebar className="md:col-span-3" />
         </div>
