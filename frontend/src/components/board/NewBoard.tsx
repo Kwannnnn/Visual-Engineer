@@ -1,7 +1,8 @@
 import React, {
   useState,
   useCallback,
-  useRef
+  useRef,
+  useEffect
 } from 'react';
 import ReactFlow, {
   MiniMap,
@@ -13,7 +14,8 @@ import ReactFlow, {
   useEdgesState,
   ReactFlowInstance,
   Connection,
-  NodeTypes
+  NodeTypes,
+  Background
 } from 'react-flow-renderer';
 import ItemNode from './ItemNode';
 
@@ -39,13 +41,20 @@ const getId = () => {
 
 function NewBoard(props: NewBoardProps) {
   const { initialNodes, initialEdges } = props;
+
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
   // State containing the nodes of the board
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes ?? []);
+
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+
   // State containing the edges of the board
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges ?? []);
   // State containing the React Flow Instance
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance>();
+
+  useEffect(() => {
+    setNodes(initialNodes ?? []);
+  }, [initialNodes]);
 
   // Whenever a edge gets created update the edges state
   // eslint-disable-next-line max-len
@@ -104,6 +113,7 @@ function NewBoard(props: NewBoardProps) {
       >
         <MiniMap />
         <Controls />
+        <Background />
       </ReactFlow>
     </div>
   );
