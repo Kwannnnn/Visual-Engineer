@@ -1,12 +1,20 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
+import { TypedRequest } from '../../routes/util/typed-request';
+import { RelationshipParams } from '../../routes/relationships/relationships.types';
 
-export const getAllRelationships = async (req: Request, res: Response) => {
+export const getAllRelationships = async (
+  req: Request,
+  res: Response,
+) => {
   const relationships = await DI.relationshipRepository.findAll();
   res.json(relationships);
 };
 
-export const getOneRelationship = async (req: Request, res: Response) => {
+export const getOneRelationship = async (
+  req: TypedRequest<RelationshipParams, any>,
+  res: Response,
+) => {
   const { pipelineTag } = req.params;
 
   try {
@@ -26,7 +34,10 @@ export const getOneRelationship = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteRelationship = async (req: Request, res: Response) => {
+export const deleteRelationship = async (
+  req: TypedRequest<RelationshipParams, any>,
+  res: Response,
+) => {
   const { pipelineTag } = req.params;
 
   try {

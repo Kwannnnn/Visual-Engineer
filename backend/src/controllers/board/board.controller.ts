@@ -117,7 +117,7 @@ export const patchById = async (req: TypedRequest<BoardParams, PatchBoardBody>, 
   }
 };
 
-export const deleteBoard = async (req: Request, res: Response) => {
+export const deleteBoard = async (req: TypedRequest<BoardParams, any>, res: Response) => {
   const id: number = +req.params.id;
 
   try {
