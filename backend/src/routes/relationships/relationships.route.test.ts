@@ -4,6 +4,7 @@ import setup from '../../index';
 import DI from '../../DI';
 import DatabaseSeeder from '../../database/seeders/DatabaseSeeder';
 import { sampleRelationships } from '../../database/seeders/RelationshipSeeder';
+import { sampleBoards } from '../../database/seeders/BoardSeeder';
 
 let app: Express.Application;
 
@@ -58,6 +59,10 @@ describe('DELETE /relationships/:pipelineTag', () => {
       const relationship = sampleRelationships[0];
       const response = await request(app).delete(`/api/v2/relationships/${relationship.pipeline.tag}`);
       expect(response.status).toEqual(204);
+      const { id } = sampleBoards[0];
+      const check = await request(app).get(`/api/v1/boards/${id}/objects`);
+      expect(check.status).toEqual(200);
+      expect(check.body).toHaveLength(2);
     });
   });
 
