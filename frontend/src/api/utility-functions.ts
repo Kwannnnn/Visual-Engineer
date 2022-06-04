@@ -3,7 +3,7 @@ import IBoard from '../typings/IBoard';
 import IObjectContext from '../typings/IObjectContext';
 
 const url = process.env.REACT_APP_API_V1_URL;
-const urlV2 = "http://localhost:3000/api/v2";
+const urlV2 = 'http://localhost:3000/api/v2';
 
 export async function getAllBoards() {
   await axios.get(`${url}/boards`)
