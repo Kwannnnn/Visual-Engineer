@@ -5,7 +5,7 @@ import {
 } from '../components';
 import NewBoard from '../components/board/NewBoard';
 import IBoard from '../typings/IBoard';
-import { getBoardObjects } from '../api/utility-functions';
+import { getBoardObjects, getObjectTypes } from '../api/utility-functions';
 
 function Home() {
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
@@ -34,6 +34,18 @@ function Home() {
     { id: 2, name: 'PTPFu02' }
   ]);
 
+  const [types, setTypes] = useState<[]>([]);
+
+  useEffect(() => {
+    getObjectTypes()
+      .then((res) => {
+        setTypes(res);
+      })
+      .catch(() => {
+        setTypes([]);
+      });
+  });
+
   const handleTab = (id: number) => {
     setCurrentBoardId(id);
   };
@@ -44,6 +56,7 @@ function Home() {
         <div className="grid md:grid-cols-12 h-full grid-rows-12">
           <Toolbox
             className="md:col-span-2 md:w-auto w-screen max-h-32 md:max-h-full border-b-4 md:border-r-4"
+            types={types}
           />
           <div className="col-span-7 flex flex-col">
             <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
