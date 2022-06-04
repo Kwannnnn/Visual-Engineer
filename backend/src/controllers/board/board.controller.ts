@@ -57,34 +57,51 @@ export const getBoardObjects = async (req: TypedRequest<BoardParams, any>, res: 
   }
 };
 
-export const deleteObjectFromBoard = async (req: Request, res: Response) => {
-  const id: number = +req.params.id;
-  const { tag } = req.params;
+export const postBoard = async (req: Request, res: Response) => {
+  if (!req.body.name) {
+    res.status(400);
+    return res.json({ message: 'Board name is missing' });
+  }
 
   try {
+    const board = DI.em.create(Board, req.body);
+    await DI.boardRepository.persist(board).flush();
+
+    return res.status(201).json(board);
+  } catch (e: any) {
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+
+export const postObjectToBoard = async (req: Request, res: Response) => {
+  try {
+    const id: number = +req.params.id;
     const board = await DI.boardRepository.findOne(id);
 
     if (!board) {
-      return res.status(404).json({
-        message: 'Board not found',
-      });
-    }
-    await board.items.init();
-
-    const items = board.items.getItems();
-    const item = items.find((ItemIns) => ItemIns.tag === tag);
-
-    if (!item) {
-      return res.status(404).json({
-        message: 'Item not found',
-      });
+      throw new ValidationError(`Board with id ${id} not found`, 404);
     }
 
-    DI.itemRepository.removeAndFlush(item);
-    board.items.remove(item);
+    checkCommonItemAttributes(req.body);
+    checkTypeSpecificAttributes(req.body);
 
-    return res.status(204).send();
+    const itemClass = getClass(req.body.type);
+    const item: Item = DI.em.create(itemClass, req.body);
+
+    board.items.add(item);
+    await DI.em.flush();
+
+    res.status(201);
+    return res.json(item);
   } catch (e: any) {
+    if (e instanceof ValidationError) {
+      return res.status(e.statusCode).json({
+        message: e.message,
+      });
+    }
+
     return res.status(400).json({
       message: e.message,
     });
@@ -110,32 +127,6 @@ export const patchById = async (req: TypedRequest<BoardParams, PatchBoardBody>, 
     await DI.boardRepository.persistAndFlush(board);
 
     return res.json(board);
-  } catch (e: any) {
-    return res.status(400).json({
-      message: e.message,
-    });
-  }
-};
-
-export const deleteBoard = async (req: TypedRequest<BoardParams, any>, res: Response) => {
-  const id: number = +req.params.id;
-
-  try {
-    const board = await DI.boardRepository.findOne(id);
-
-    if (!board) {
-      return res.status(404).json({
-        message: 'Board not found',
-      });
-    }
-
-    await board.items.init();
-
-    const items = board.items.getItems();
-    await DI.itemRepository.removeAndFlush(items);
-    DI.boardRepository.removeAndFlush(board);
-
-    return res.status(204).send();
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
@@ -200,17 +191,25 @@ export const patchBoardObjects = async (
   }
 };
 
-export const postBoard = async (req: Request, res: Response) => {
-  if (!req.body.name) {
-    res.status(400);
-    return res.json({ message: 'Board name is missing' });
-  }
+export const deleteBoard = async (req: TypedRequest<BoardParams, any>, res: Response) => {
+  const id: number = +req.params.id;
 
   try {
-    const board = DI.em.create(Board, req.body);
-    await DI.boardRepository.persist(board).flush();
+    const board = await DI.boardRepository.findOne(id);
 
-    return res.status(201).json(board);
+    if (!board) {
+      return res.status(404).json({
+        message: 'Board not found',
+      });
+    }
+
+    await board.items.init();
+
+    const items = board.items.getItems();
+    await DI.itemRepository.removeAndFlush(items);
+    DI.boardRepository.removeAndFlush(board);
+
+    return res.status(204).send();
   } catch (e: any) {
     return res.status(400).json({
       message: e.message,
@@ -218,33 +217,34 @@ export const postBoard = async (req: Request, res: Response) => {
   }
 };
 
-export const postObjectToBoard = async (req: Request, res: Response) => {
+export const deleteObjectFromBoard = async (req: Request, res: Response) => {
+  const id: number = +req.params.id;
+  const { tag } = req.params;
+
   try {
-    const id: number = +req.params.id;
     const board = await DI.boardRepository.findOne(id);
 
     if (!board) {
-      throw new ValidationError(`Board with id ${id} not found`, 404);
+      return res.status(404).json({
+        message: 'Board not found',
+      });
     }
+    await board.items.init();
 
-    checkCommonItemAttributes(req.body);
-    checkTypeSpecificAttributes(req.body);
+    const items = board.items.getItems();
+    const item = items.find((ItemIns) => ItemIns.tag === tag);
 
-    const itemClass = getClass(req.body.type);
-    const item: Item = DI.em.create(itemClass, req.body);
-
-    board.items.add(item);
-    await DI.em.flush();
-
-    res.status(201);
-    return res.json(item);
-  } catch (e: any) {
-    if (e instanceof ValidationError) {
-      return res.status(e.statusCode).json({
-        message: e.message,
+    if (!item) {
+      return res.status(404).json({
+        message: 'Item not found',
       });
     }
 
+    DI.itemRepository.removeAndFlush(item);
+    board.items.remove(item);
+
+    return res.status(204).send();
+  } catch (e: any) {
     return res.status(400).json({
       message: e.message,
     });
