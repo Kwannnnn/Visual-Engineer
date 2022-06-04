@@ -24,8 +24,7 @@ function Home() {
         });
       })
       .catch((error) => {
-        // TODO: Implement error handling
-        console.error(error);
+        setInitialNodes([]);
       });
   }, []);
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
