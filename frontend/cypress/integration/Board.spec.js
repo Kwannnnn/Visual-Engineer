@@ -20,7 +20,7 @@ describe('Board', () => {
   describe('When "Vessel" is dragged and dropped from the Toolbox', () => {
     const dataTransfer = new DataTransfer();
 
-    it('it should render on the Board', () => {
+    it('should render on the Board', () => {
       getVessel();
       getBoard();
 
@@ -52,7 +52,7 @@ describe('Board', () => {
   describe('When "Vessel" and "PipeLine" are connected', () => {
     const dataTransfer = new DataTransfer();
 
-    it('an edge should appear', () => {
+    it('should render an edge on the board', () => {
       getVessel(); // Get a reference to the Vessel sidebar item
       getPipeFitting(); // Get a reference to the PipeFitting sidebar item
       getBoard(); // Get a reference to the Board
