@@ -41,8 +41,8 @@ function Home() {
       .then((res) => {
         setTypes(res);
       })
-      .catch((e) => {
-        console.log(e.message);
+      .catch(() => {
+        setTypes([]);
       });
   });
 

@@ -2,7 +2,8 @@ import axios from 'axios';
 import IBoard from '../typings/IBoard';
 import IObjectContext from '../typings/IObjectContext';
 
-const url = process.env.REACT_APP_API_URL;
+const url = process.env.REACT_APP_API_V1_URL;
+const urlV2 = "http://localhost:3000/api/v2";
 
 export async function getAllBoards() {
   await axios.get(`${url}/boards`)
@@ -71,7 +72,7 @@ export async function deleteBoardObject(id: number, tag:string) {
 }
 
 export async function getObjectTypes() {
-  const result = await axios.get(`${url}/objects/types`)
+  const result = await axios.get(`${urlV2}/objects/types`)
     .then((response) => response.data)
     .catch((err) => err.data);
 
