@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { ReactFlowProvider } from 'react-flow-renderer';
 import {
-  Board, PropertiesSidebar, TabBar, Toolbox
+  PropertiesSidebar, TabBar, Toolbox
 } from '../components';
+import NewBoard from '../components/board/NewBoard';
 import IBoard from '../typings/IBoard';
 
 function Home() {
@@ -19,7 +19,7 @@ function Home() {
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <ReactFlowProvider>
       <div className="flex-1 min-h-0">
         <div className="grid md:grid-cols-12 h-full grid-rows-12">
           <Toolbox
@@ -27,12 +27,12 @@ function Home() {
           />
           <div className="col-span-7 flex flex-col">
             <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
-            <Board />
+            <NewBoard />
           </div>
           <PropertiesSidebar className="md:col-span-3" />
         </div>
       </div>
-    </DndProvider>
+    </ReactFlowProvider>
   );
 }
 
