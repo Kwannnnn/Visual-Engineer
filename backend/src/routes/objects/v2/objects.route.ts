@@ -56,4 +56,49 @@ const objectsRouter: Router = Router();
  */
 objectsRouter.get('/types/:type/properties', objectController.getTypeProperties);
 
+/**
+ * @api {get} /api/v1/objects/types Get all object types
+ * @apiDescription Returns a resource response containing all object types in the system and their
+ *                 hierachy.
+ * @apiVersion 2.0.0
+ * @apiName GetObjectTypes
+ * @apiGroup Object
+ *
+ * @apiSuccess (Success 200) {Object[]} types JSON objects with object types arranged in a
+ *                                            hierachical manner
+ * @apiSuccessExample Success-Response:
+ * HTTP/1.1 200 OK
+ *     [{
+ *       "group": "Item",
+ *       "subsets": [
+ *         {
+ *           "group": "Pipe Item",
+ *           "items": [
+ *             { "name": "Pipe Fitting" }
+ *           ],
+ *         },
+ *         {
+ *           "group": "Mechanical Equipment",
+ *           "subsets": [
+ *             {
+ *               "group": "Rotating Equipment",
+ *               "items": [
+ *                 { "name": "Pump" },
+ *                 { "name": "Blower" }
+ *               ],
+ *             },
+ *             {
+ *               "group": "Static Equipment",
+ *               "items": [
+ *                 { "name": "Tank" },
+ *                 { "name": "Vessel" }
+ *               ],
+ *             }
+ *           ],
+ *         }
+ *       ]
+ *     }]
+ */
+objectsRouter.get('/types', objectController.getObjectTypes);
+
 export default objectsRouter;

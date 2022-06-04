@@ -31,12 +31,12 @@ async function setup() {
   const v1 = Router();
   const v2 = Router();
 
-  v1.use('/objects', objectsRouterV1);
-  v1.use('/boards', boardRouter);
-
-  v2.use('/objects', objectsRouterV1);
   v2.use('/objects', objectsRouterV2);
   v2.use('/relationships', relationshipRouter);
+  v2.use('/objects', objectsRouterV1);
+
+  v1.use('/objects', objectsRouterV1);
+  v1.use('/boards', boardRouter);
 
   app.use('/api/v1', v1);
   app.use('/api/v2', v2);

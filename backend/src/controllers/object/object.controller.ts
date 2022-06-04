@@ -5,6 +5,7 @@ import { GetTypePropertiesParams } from '../../routes/objects/v2/objects.types';
 import { TypedRequest } from '../../routes/util/typed-request';
 import getProperties from '../../util/properties/getProperties';
 import { getClass } from '../board/board.util';
+import types from './objectTypes.json';
 
 export const getAll = async (req: Request, res: Response) => {
   const items = await DI.itemRepository.findAll();
@@ -54,4 +55,8 @@ export const getTypeProperties = async (
       message: e.message,
     });
   }
+};
+
+export const getObjectTypes = async (req: Request, res: Response) => {
+  res.send(types);
 };
