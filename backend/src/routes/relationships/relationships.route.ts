@@ -47,6 +47,13 @@ relationshipRouter.get('/', relationshipController.getAllRelationships);
  *      "firstItem": "345-hg2-wru3"
  *      "secondItem": "321-ji0q-112"
  *    }
+ *
+ * @apiError RelationshipNotFound Relationship with tag <code>{pipelineTag}</code> does not exist
+ * @apiErrorExample RelationshipNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Relationship not found"
+ *     }
  */
 relationshipRouter.get('/:pipelineTag', relationshipController.getOneRelationship);
 
@@ -63,14 +70,14 @@ relationshipRouter.get('/:pipelineTag', relationshipController.getOneRelationshi
  * @apiSuccessExample Success-Response:
  *      HTTP/1.1 204 No Content
  *
- * @apiError PipelineNotFound Pipeline with id <code>{id}</code> does not exist
+ * @apiError PipelineNotFound Pipeline with tag <code>{pipelineTag}</code> does not exist
  * @apiErrorExample ItemNotFound:
  *     HTTP/1.1 404 Not Found
  *     {
  *       "message": "Pipeline not found"
  *     }
  *
- * @apiError RelationshipNotFound Relationship with id <code>{tag}</code> does not exist
+ * @apiError RelationshipNotFound Relationship with tag <code>{pipelineTag}</code> does not exist
  * @apiErrorExample RelationshipNotFound:
  *     HTTP/1.1 404 Not Found
  *     {

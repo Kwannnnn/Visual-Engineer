@@ -54,7 +54,7 @@ describe('GET Relationship endpoints', () => {
 
 describe('DELETE /relationships/:pipelineTag', () => {
   describe('given the relationship exists', () => {
-    it('should return 204', async () => {
+    it('should return 204 and tthe other items should still exist', async () => {
       const relationship = sampleRelationships[0];
       const response = await request(app).delete(`/api/v2/relationships/${relationship.pipeline.tag}`);
       expect(response.status).toEqual(204);
