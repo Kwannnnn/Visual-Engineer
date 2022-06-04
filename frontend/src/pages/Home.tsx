@@ -23,7 +23,7 @@ function Home() {
           setInitialNodes((n) => n.concat(node));
         });
       })
-      .catch((error) => {
+      .catch(() => {
         setInitialNodes([]);
       });
   }, []);
