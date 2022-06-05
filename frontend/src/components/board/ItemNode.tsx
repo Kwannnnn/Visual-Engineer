@@ -21,12 +21,24 @@ function ItemNode(props: ItemNodeProps) {
         position={Position.Top}
         id={`top-${dataCY}`}
         data-cy={`top-${dataCY}`}
+        className="hover:border-4 hover:border-gray-300"
+        style={{
+          height: 14,
+          width: 14,
+          top: -7,
+        }}
       />
       <Handle
         type="target"
         position={Position.Left}
         id={`left-${dataCY}`}
         data-cy={`left-${dataCY}`}
+        className="hover:border-4 hover:border-gray-300"
+        style={{
+          height: 14,
+          width: 14,
+          left: -7,
+        }}
       />
       <div
         data-cy={dataCY}
@@ -40,12 +52,24 @@ function ItemNode(props: ItemNodeProps) {
         position={Position.Bottom}
         id={`bottom-${dataCY}`}
         data-cy={`bottom-${dataCY}`}
+        className="hover:border-4 hover:border-gray-300"
+        style={{
+          height: 14,
+          width: 14,
+          bottom: -7,
+        }}
       />
       <Handle
         type="source"
         position={Position.Right}
         id={`right-${dataCY}`}
         data-cy={`right-${dataCY}`}
+        className="hover:border-4 hover:border-gray-300"
+        style={{
+          height: 14,
+          width: 14,
+          right: -7,
+        }}
       />
     </>
   );
