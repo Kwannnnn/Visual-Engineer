@@ -53,6 +53,96 @@ describe('GET Relationship endpoints', () => {
   });
 });
 
+describe('POST Relationship endpoints', () => {
+  describe('POST api/v2/relationships', () => {
+    test('should return the posted relationship', async () => {
+      const pipeline = sampleBoards[0].items[4].tag;
+      const firstItem = sampleBoards[0].items[3].tag;
+      const secondItem = sampleBoards[0].items[5].tag;
+
+      const response = await request(app)
+        .post('/api/v2/relationships')
+        .send({
+          pipeline,
+          firstItem,
+          secondItem,
+        });
+
+      expect(response.statusCode).toEqual(201);
+    });
+
+    test('should return 400 when the pipeline tag is missing', async () => {
+      const firstItem = sampleBoards[0].items[3].tag;
+      const secondItem = sampleBoards[0].items[5].tag;
+
+      const response = await request(app)
+        .post('/api/v2/relationships')
+        .send({
+          firstItem,
+          secondItem,
+        });
+      expect(response.statusCode).toEqual(400);
+    });
+
+    test('should return 400 when one or both of the to-be-connected items are missing', async () => {
+      const pipeline = sampleBoards[0].items[4].tag;
+      const secondItem = sampleBoards[0].items[5].tag;
+
+      const response = await request(app)
+        .post('/api/v2/relationships')
+        .send({
+          pipeline,
+          secondItem,
+        });
+      expect(response.statusCode).toEqual(400);
+    });
+
+    test('should return 404 when one of the provided items does not exist', async () => {
+      const pipeline = sampleBoards[0].items[4].tag;
+      const secondItem = sampleBoards[0].items[5].tag;
+
+      const response = await request(app)
+        .post('/api/v2/relationships')
+        .send({
+          pipeline,
+          firstItem: '122-12sa-gi2',
+          secondItem,
+        });
+      expect(response.statusCode).toEqual(400);
+    });
+
+    test('should return 400 when the provided pipeline is not an item of type Pipeline', async () => {
+      const pipeline = sampleBoards[0].items[1].tag;
+      const firstItem = sampleBoards[0].items[5].tag;
+      const secondItem = sampleBoards[0].items[3].tag;
+
+      const response = await request(app)
+        .post('/api/v2/relationships')
+        .send({
+          pipeline,
+          firstItem,
+          secondItem,
+        });
+      expect(response.statusCode).toEqual(400);
+    });
+
+    test('should return 400 when the provided items cannot be associated', async () => {
+      const pipeline = sampleBoards[0].items[4].tag;
+      const firstItem = sampleBoards[0].items[2].tag;
+      const secondItem = sampleBoards[0].items[5].tag;
+
+      const response = await request(app)
+        .post('/api/v2/relationships')
+        .send({
+          pipeline,
+          firstItem,
+          secondItem,
+        });
+      expect(response.statusCode).toEqual(400);
+    });
+  });
+});
+
 describe('DELETE /relationships/:pipelineTag', () => {
   describe('given the relationship exists', () => {
     it('should return 204 and the other items should still exist', async () => {
