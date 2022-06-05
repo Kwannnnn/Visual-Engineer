@@ -1,5 +1,6 @@
 beforeEach(() => {
   cy.visit('http://localhost:8080');
+  cy.viewport(1440, 900);
 });
 
 const getBoard = () => cy.get('[data-cy=board]')
@@ -10,10 +11,10 @@ const getBoard = () => cy.get('[data-cy=board]')
   .first() // react-flow__nodes
   .as('board');
 
-const getVessel = () => cy.get('[data-cy=toolbox-item-Vessel]')
+const getVessel = () => cy.get('[data-cy=toolbox-item-vessel]')
   .as('vessel');
 
-const getPipeFitting = () => cy.get('[data-cy=toolbox-item-Pipe_Fitting]')
+const getPipeFitting = () => cy.get('[data-cy=toolbox-item-pipeFitting]')
   .as('pipeFitting');
 
 describe('Board', () => {

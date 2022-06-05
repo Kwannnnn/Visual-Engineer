@@ -1,5 +1,6 @@
 beforeEach(() => {
   cy.visit('http://localhost:8080');
+  cy.viewport(1440, 900);
 });
 
 describe('Toolbox Sidebar', () => {
@@ -10,20 +11,20 @@ describe('Toolbox Sidebar', () => {
 
     it('should render all possible items', () => {
       cy.get('[data-cy=toolbox-list]').should('exist');
-      cy.get('[data-cy=toolbox-item-Pipe_Fitting]').should('exist');
-      cy.get('[data-cy=toolbox-item-Pump]').should('exist');
-      cy.get('[data-cy=toolbox-item-Blower]').should('exist');
-      cy.get('[data-cy=toolbox-item-Tank]').should('exist');
-      cy.get('[data-cy=toolbox-item-Vessel]').should('exist');
+      cy.get('[data-cy=toolbox-item-pipeFitting]').should('exist');
+      cy.get('[data-cy=toolbox-item-pump]').should('exist');
+      cy.get('[data-cy=toolbox-item-blower]').should('exist');
+      cy.get('[data-cy=toolbox-item-tank]').should('exist');
+      cy.get('[data-cy=toolbox-item-vessel]').should('exist');
     });
 
     it('should match the content of all possible items', () => {
       cy.get('[data-cy=toolbox-list]').should('exist');
-      cy.get('[data-cy=toolbox-item-Pipe_Fitting]').should('contain', 'Pipe Fitting');
-      cy.get('[data-cy=toolbox-item-Pump]').should('contain', 'Pump');
-      cy.get('[data-cy=toolbox-item-Blower]').should('contain', 'Blower');
-      cy.get('[data-cy=toolbox-item-Tank]').should('contain', 'Tank');
-      cy.get('[data-cy=toolbox-item-Vessel]').should('contain', 'Vessel');
+      cy.get('[data-cy=toolbox-item-pipeFitting]').should('contain', 'Pipe Fitting');
+      cy.get('[data-cy=toolbox-item-pump]').should('contain', 'Pump');
+      cy.get('[data-cy=toolbox-item-blower]').should('contain', 'Blower');
+      cy.get('[data-cy=toolbox-item-tank]').should('contain', 'Tank');
+      cy.get('[data-cy=toolbox-item-vessel]').should('contain', 'Vessel');
     });
   });
 
