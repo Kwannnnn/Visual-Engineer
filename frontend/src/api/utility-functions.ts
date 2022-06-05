@@ -33,7 +33,7 @@ export async function createBoard(properties: Partial<IBoard>) {
     .catch((err) => err.data);
 }
 
-export async function createItem(boardId: number, properties: IObjectContext) {
+export async function createItem(boardId: number, properties: Partial<IObjectContext>) {
   await axios.post(`${url}/boards/${boardId}/objects/`, {
     ...properties,
   })
