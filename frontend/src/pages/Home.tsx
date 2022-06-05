@@ -24,7 +24,7 @@ function Home() {
 
   const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
-  const getPropertiesCallback = useCallback(async () => getTypeProperties(currentNode?.data.label), [currentNode]);
+  const getPropertiesCallback = useCallback(async () => getTypeProperties(currentNode?.data.type), [currentNode]);
 
   const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);

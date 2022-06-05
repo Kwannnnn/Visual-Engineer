@@ -89,7 +89,7 @@ function NewBoard(props: NewBoardProps) {
         type: NODE_TYPE,
         position,
         data: {
-          label: name,
+          type: name,
           dataCY: getId(),
         },
       };

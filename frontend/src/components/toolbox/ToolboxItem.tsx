@@ -9,7 +9,7 @@ interface Item {
 }
 
 function ToolboxItem({ type, displayName, className = '' }: Item) {
-  const onDragStart = (event: React.DragEvent, label: string) => {
+  const onDragStart = (event: React.DragEvent, name: string) => {
     if (!event.dataTransfer) return;
     event.dataTransfer.setData('application/reactflow', type);
     // eslint-disable-next-line no-param-reassign
