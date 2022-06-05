@@ -72,7 +72,7 @@ describe('GET Board endpoints', () => {
         const { id } = sampleBoards[0];
         const response = await request(app).get(`/api/v1/boards/${id}/objects`);
         expect(response.status).toEqual(200);
-        expect(response.body).toHaveLength(3);
+        expect(response.body).toHaveLength(6);
       });
     });
   });
@@ -227,7 +227,7 @@ describe('PATCH Board endpoints', () => {
 
     test('should return 400 when an illegal field is updated (flange, for a pump object type)', async () => {
       const board1 = sampleBoards[0];
-      const pumpObject = sampleBoards[0].items[1];
+      const pumpObject = sampleBoards[0].items[2];
 
       const response = await request(app)
         .patch(`/api/v1/boards/${board1.id}/objects/${pumpObject.tag}`)
@@ -277,7 +277,7 @@ describe('PATCH Board endpoints', () => {
           expect(response.status).toEqual(204);
           const check = await request(app).get(`/api/v1/boards/${board.id}/objects`);
           expect(check.status).toEqual(200);
-          expect(check.body).toHaveLength(2);
+          expect(check.body).toHaveLength(5);
         });
       });
 

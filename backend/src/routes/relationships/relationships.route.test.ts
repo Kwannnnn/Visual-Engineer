@@ -62,7 +62,7 @@ describe('DELETE /relationships/:pipelineTag', () => {
       const { id } = sampleBoards[0];
       const check = await request(app).get(`/api/v1/boards/${id}/objects`);
       expect(check.status).toEqual(200);
-      expect(check.body).toHaveLength(2);
+      expect(check.body).toHaveLength(5);
     });
   });
 

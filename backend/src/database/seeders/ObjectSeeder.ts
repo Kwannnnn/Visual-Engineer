@@ -2,7 +2,7 @@
 import type { Dictionary, EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
 import {
-  BlowerFactory, PipeFittingFactory, PipelineFactory, PumpFactory,
+  BlowerFactory, PipeFittingFactory, PipelineFactory, PumpFactory, TankFactory,
 } from '../factories';
 import { Item } from '../models';
 
@@ -17,10 +17,11 @@ export default class ObjectSeeder extends Seeder {
 
     // Add 3 sample items to the exported array
     sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId }));
-    sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId }));
     sampleBoardObjects.push(new PumpFactory(em).makeOne({ board: sampleBoardId }));
     sampleBoardObjects.push(new BlowerFactory(em).makeOne({ board: sampleBoardId }));
     sampleBoardObjects.push(new PipeFittingFactory(em).makeOne({ board: sampleBoardId }));
+    sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId }));
+    sampleBoardObjects.push(new TankFactory(em).makeOne({ board: sampleBoardId }));
 
     // Assign the newly created items to the sample board
     sampleBoardObjects.forEach((object) => sampleBoardItems.add(object));
