@@ -1,50 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ReactFlowProvider, Node } from 'react-flow-renderer';
 import {
   PropertiesSidebar, TabBar, Toolbox
 } from '../components';
 import NewBoard from '../components/board/NewBoard';
 import IBoard from '../typings/IBoard';
+import useAPIUtil from '../util/hooks/useAPIUtil';
 import { getBoardObjects, getObjectTypes } from '../api/utility-functions';
+import transformObjectToNode from '../util/transformObjectToNode';
 
 function Home() {
-  const [initialNodes, setInitialNodes] = useState<Node[]>([]);
-  useEffect(() => {
-    getBoardObjects(1)
-      .then((response) => {
-        // eslint-disable-next-line max-len
-        response.forEach((item: { tag: string; type: string; name: string; x: number; y: number; }) => {
-          const node:Node = {
-            id: item.tag,
-            type: 'itemNode',
-            data: { label: item.type },
-            position: { x: item.x, y: item.y },
-          };
-          setInitialNodes((n) => n.concat(node));
-        });
-      })
-      .catch(() => {
-        setInitialNodes([]);
-      });
-  }, []);
-  const [currentBoardId, setCurrentBoardId] = useState<number>(1);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [boards, setBoards] = useState<IBoard[]>([
     { id: 1, name: 'PTPFu01' },
     { id: 2, name: 'PTPFu02' }
   ]);
-
+  const [currentBoardId, setCurrentBoardId] = useState<number>(1);
+  const [initialNodes, setInitialNodes] = useState<Node[]>([]);
   const [types, setTypes] = useState<[]>([]);
 
+  const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
+  const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
+
+  const { data: boardObjects } = useAPIUtil(getBoardObjectsCallback);
+  const { data: objectTypes } = useAPIUtil(getObjectTypesCallback);
+
   useEffect(() => {
-    getObjectTypes()
-      .then((res) => {
-        setTypes(res);
-      })
-      .catch(() => {
-        setTypes([]);
-      });
-  });
+    const nodes = transformObjectToNode(boardObjects);
+    setInitialNodes(nodes);
+  }, [boardObjects]);
+
+  useEffect(() => {
+    setTypes(objectTypes);
+  }, [objectTypes]);
 
   const handleTab = (id: number) => {
     setCurrentBoardId(id);
