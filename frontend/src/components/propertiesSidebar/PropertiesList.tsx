@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface Listing {
+export interface Listing {
   name: string;
   type: string;
   value?: string; // or any?
@@ -13,10 +13,10 @@ interface PropertiesList {
 export default function PropertiesList(props: PropertiesList) {
   const { listing } = props;
   const propertiesList = listing.map((p, i) => (
-    <div className="flex flex-col" key={p.name}>
+    <div className="flex flex-col overflow-y-auto" key={p.name}>
       <label htmlFor={`sidebar-prop-${i}`}>
         {p.name}
-        <input type="text" id={`sidebar-prop-${i}`} className="rounded-xl w-full bg-gray-200 px-3 py-2" />
+        <input type={p.type} id={`sidebar-prop-${i}`} className="focus:outline-blue-400 focus:outline-offset-m2 rounded-xl w-full bg-gray-200 px-3 py-2" />
       </label>
     </div>
   ));

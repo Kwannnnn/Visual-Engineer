@@ -66,7 +66,7 @@ function Home() {
             <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
             <NewBoard initialNodes={initialNodes} onDropNodeHandler={handleDropNode} />
           </div>
-          <PropertiesSidebar className="md:col-span-3" initialProperties={initialProperties} />
+          <PropertiesSidebar className="md:col-span-3" initialProperties={initialProperties} objectType={currentNode?.data.label} />
         </div>
       </div>
     </ReactFlowProvider>
