@@ -13,7 +13,7 @@ export default function transformObjectToNode(objects: Partial<IObjectContext>[]
     const node: Node = {
       id: tag,
       type: 'itemNode',
-      data: { label: type, props: { ...object } },
+      data: { type, ...object },
       position: { x, y },
     };
     nodes.push(node);

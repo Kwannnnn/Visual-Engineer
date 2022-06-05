@@ -4,16 +4,15 @@ import { Handle, Position } from 'react-flow-renderer';
 interface ItemNodeProps {
   className?: string;
   data: {
-    label: string;
+    tag?: string;
+    type: string;
     dataCY: string;
   };
 }
 
 function ItemNode(props: ItemNodeProps) {
-  const {
-    className = '', data,
-  } = props;
-  const { label, dataCY } = data;
+  const { className = '', data } = props;
+  const { tag = '', type, dataCY } = data;
 
   return (
     <>
@@ -33,8 +32,8 @@ function ItemNode(props: ItemNodeProps) {
         data-cy={dataCY}
         className={`bg-slate-50 border-2 px-12 py-8 border-black ${className}`}
       >
-
-        <div>{label}</div>
+        <div>{tag}</div>
+        <div>{type}</div>
       </div>
       <Handle
         type="source"
