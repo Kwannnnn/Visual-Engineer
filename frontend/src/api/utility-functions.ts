@@ -80,3 +80,8 @@ export async function getObjectTypes() {
 
   return result;
 }
+
+export async function getTypeProperties(type: string) {
+  const result = await axios.get(`${urlV2}/objects/types/${type}/properties`);
+  return result.data;
+}
