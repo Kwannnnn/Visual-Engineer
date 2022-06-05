@@ -5,56 +5,42 @@ import PropertiesList from './PropertiesList';
 
 interface PropertiesSidebarProps {
   className?: string;
+  heading?: string;
   initialProperties?: any;
+  onClose: () => void;
 }
 
-const sampleData = [
-  {
-    name: 'Tag',
-    value: 'PIP-2345',
-  },
-  {
-    name: 'Length',
-    value: '16.9',
-  },
-  {
-    name: 'Width',
-    value: '10.3',
-  },
-  {
-    name: 'Depth',
-    value: '7.24',
-  },
-  {
-    name: 'Diameter',
-    value: '4.55',
-  },
-  {
-    name: 'Type',
-    value: 'Pump',
-  }
-];
-
 function PropertiesSidebar(props: PropertiesSidebarProps) {
-  const { className = '', initialProperties = [] } = props;
-  const type = sampleData.find((item) => item.name.toLowerCase() === 'type')?.value || 'Unknown';
+  const {
+    className = '', heading = '', initialProperties = [], onClose,
+  } = props;
 
   return (
-    <aside className={`hidden sm:flex flex-col items-center w-full h-full bg-white overflow-y-auto py-2 border-2 rounded-sm relative ${className}`}>
-      <button id="close-sidebar-btn" className="text-gray-700 hover:bg-gray-200 px-2 py-1 cursor-pointer rounded-lg absolute top-1 right-1" type="button">
-        <FontAwesomeIcon icon={faX} />
+    <aside className={`w-full h-full flex bg-white pt-3 pb-12 px-6 overflow-y-auto border-l-4 rounded-sm relative ${className}`}>
+      <button
+        id="close-sidebar-btn"
+        className="absolute top-3 right-3 text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-3 py-2 cursor-pointer"
+        type="button"
+        onClick={onClose}
+      >
+        <FontAwesomeIcon icon={faX} size="sm" />
       </button>
 
-      <h1 id="siderbar-item-type" className="text-lg font-semibold mb-6">{type}</h1>
+      <h2 id="siderbar-item-type" className="text-xl font-semibold mb-2">{heading}</h2>
 
-      <div id="sidebar-properties-list" className="w-5/6">
-        <PropertiesList listing={initialProperties} />
-      </div>
-      <div className="flex flex-1 w-full justify-center">
-        <button id="delete-component-btn" className="rounded-xl w-5/6 border-2 border-red-600 hover:bg-red-100 text-red-600 hover:text-red-700 py-2 cursor-pointer mt-auto" type="button">
+      <div className="flex space-x-2 w-full mb-8">
+        <button id="save-component-btn" className="rounded-xl p-2 shadow-sm hover:shadow-md border border-green-200 bg-green-50 hover:bg-green-100 text-green-700 hover:text-green-700 py-2 cursor-pointer mt-auto" type="button">
+          <FontAwesomeIcon icon={faTrash} />
+          <p className="hidden md:inline"> Save</p>
+        </button>
+        <button id="delete-component-btn" className="rounded-xl p-2 shadow-sm hover:shadow-md border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-700 py-2 cursor-pointer mt-auto" type="button">
           <FontAwesomeIcon icon={faTrash} />
           <p className="hidden md:inline"> Delete</p>
         </button>
+      </div>
+
+      <div id="sidebar-properties-list" className="w-full">
+        <PropertiesList listing={initialProperties} />
       </div>
     </aside>
   );

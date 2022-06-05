@@ -14,7 +14,7 @@ export default function Navbar() {
   return (
     <>
       <div className="flex justify-between items-center bg-white p-5 border-b">
-        <button className="sm:hidden text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer" type="button">
+        <button className="lg:hidden text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer" type="button">
           <FontAwesomeIcon icon={faTableColumns} size="lg" />
         </button>
         <header className="mx-auto sm:mx-0">
@@ -24,10 +24,10 @@ export default function Navbar() {
             className="max-h-6 sm:max-h-10"
           />
         </header>
-        <button className="sm:hidden text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer" type="button">
+        <button className="lg:hidden text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer" type="button">
           <FontAwesomeIcon icon={faBars} size="lg" />
         </button>
-        <nav className="hidden sm:block">
+        <nav className="hidden lg:block">
           <ul className="flex items-center space-x-5">
             <li>
               <button className="py-2 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-xl border border-gray-200 hover:bg-gray-100 hover:text-blue-700" type="button">

@@ -21,10 +21,21 @@ function Home() {
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
   const [initialProperties, setInitialProperties] = useState([]);
   const [types, setTypes] = useState<[]>([]);
+  const [toolboxIsOpen, setToolboxIsOpen] = useState(true);
 
   const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
   const getPropertiesCallback = useCallback(async () => getTypeProperties(currentNode?.data.type), [currentNode]);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const onNodesDeleteCallback = useCallback((nodes: Node[]) => {
+    nodes.forEach((node) => {
+      // TODO: Delete node from backend
+      if (node.data.id === currentNode?.data.id) {
+        setCurrentNode(null);
+      }
+    });
+  }, []);
 
   const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
@@ -54,19 +65,33 @@ function Home() {
     setCurrentNode(node);
   };
 
+  const toolboxDisplay = currentNode ? 'lg:col-span-12' : 'lg:col-span-17';
+  const propertiesDisplay = currentNode ? 'lg:block lg:col-span-5' : 'lg:hidden';
+
   return (
     <ReactFlowProvider>
       <div className="flex-1 min-h-0">
-        <div className="grid md:grid-cols-12 h-full grid-rows-12">
+        <div className="grid grid-cols-20 h-full">
           <Toolbox
-            className="md:col-span-2 md:w-auto w-screen max-h-32 md:max-h-full border-b-4 md:border-r-4"
+            isOpen={toolboxIsOpen}
+            className="hidden lg:block lg:min-w-sm lg:col-span-3"
             types={types}
           />
-          <div className="col-span-7 flex flex-col">
+          <div className={`col-span-20 ${toolboxDisplay} flex flex-col`}>
             <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
-            <NewBoard initialNodes={initialNodes} onDropNodeHandler={handleDropNode} />
+            <NewBoard
+              initialNodes={initialNodes}
+              onDropNodeHandler={handleDropNode}
+              onNodeClick={(node: Node) => setCurrentNode(node)}
+              onNodesDelete={(node: Node[]) => onNodesDeleteCallback(node)}
+            />
           </div>
-          <PropertiesSidebar className="md:col-span-3" initialProperties={initialProperties} />
+          <PropertiesSidebar
+            className={`hidden ${propertiesDisplay}`}
+            heading={currentNode?.data.type}
+            initialProperties={initialProperties}
+            onClose={() => setCurrentNode(null)}
+          />
         </div>
       </div>
     </ReactFlowProvider>
