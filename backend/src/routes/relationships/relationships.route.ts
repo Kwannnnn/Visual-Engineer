@@ -57,6 +57,8 @@ relationshipRouter.get('/', relationshipController.getAllRelationships);
  */
 relationshipRouter.get('/:pipelineTag', relationshipController.getOneRelationship);
 
+relationshipRouter.patch('/:pipelineTag', relationshipController.patchRelationship);
+
 /**
  * @api {delete} /api/v2/relationships/:pipelineTag Delete a relationship
  * @apiDescription Returns a successful deletion message or a 404
