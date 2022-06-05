@@ -5,6 +5,7 @@ import PropertiesList from './PropertiesList';
 
 interface PropertiesSidebarProps {
   className?: string;
+  initialProperties?: any;
 }
 
 const sampleData = [
@@ -34,7 +35,8 @@ const sampleData = [
   }
 ];
 
-function PropertiesSidebar({ className }: PropertiesSidebarProps) {
+function PropertiesSidebar(props: PropertiesSidebarProps) {
+  const { className = '', initialProperties = [] } = props;
   const type = sampleData.find((item) => item.name.toLowerCase() === 'type')?.value || 'Unknown';
 
   return (
@@ -46,7 +48,7 @@ function PropertiesSidebar({ className }: PropertiesSidebarProps) {
       <h1 id="siderbar-item-type" className="text-lg font-semibold mb-6">{type}</h1>
 
       <div id="sidebar-properties-list" className="w-5/6">
-        <PropertiesList listing={sampleData} />
+        <PropertiesList listing={initialProperties} />
       </div>
       <div className="flex flex-1 w-full justify-center">
         <button id="delete-component-btn" className="rounded-xl w-5/6 border-2 border-red-600 hover:bg-red-100 text-red-600 hover:text-red-700 py-2 cursor-pointer mt-auto" type="button">

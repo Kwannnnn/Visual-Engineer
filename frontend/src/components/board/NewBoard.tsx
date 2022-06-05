@@ -22,6 +22,7 @@ import ItemNode from './ItemNode';
 interface NewBoardProps {
   initialNodes?: Node[];
   initialEdges?: Edge[];
+  onDropNodeHandler?: (node: Node) => void;
 }
 
 // This string key must match the key in the nodeTypes object in order to render the correct
@@ -40,7 +41,7 @@ const getId = () => {
 };
 
 function NewBoard(props: NewBoardProps) {
-  const { initialNodes, initialEdges } = props;
+  const { initialNodes, initialEdges, onDropNodeHandler } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
   // State containing the nodes of the board
@@ -94,6 +95,7 @@ function NewBoard(props: NewBoardProps) {
       };
 
       setNodes((nodesState) => nodesState.concat(newNode));
+      if (onDropNodeHandler) onDropNodeHandler(newNode);
     },
     [reactFlowInstance]
   );

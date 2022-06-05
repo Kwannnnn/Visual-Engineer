@@ -6,8 +6,9 @@ import {
 import NewBoard from '../components/board/NewBoard';
 import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
-import { getBoardObjects, getObjectTypes } from '../api/utility-functions';
+import { getBoardObjects, getObjectTypes, getTypeProperties } from '../api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
+import IObjectContext from '../typings/IObjectContext';
 
 function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -16,26 +17,41 @@ function Home() {
     { id: 2, name: 'PTPFu02' }
   ]);
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
+  const [currentNode, setCurrentNode] = useState<Node | null>(null);
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
+  const [initialProperties, setInitialProperties] = useState([]);
   const [types, setTypes] = useState<[]>([]);
 
   const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
+  const getPropertiesCallback = useCallback(async () => getTypeProperties(currentNode?.data.label), [currentNode]);
 
-  const { data: boardObjects } = useAPIUtil(getBoardObjectsCallback);
-  const { data: objectTypes } = useAPIUtil(getObjectTypesCallback);
+  const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
+  const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
+  const { data: typeProperties } = useAPIUtil<any>(getPropertiesCallback);
 
   useEffect(() => {
+    if (!boardObjects) return;
     const nodes = transformObjectToNode(boardObjects);
     setInitialNodes(nodes);
   }, [boardObjects]);
 
   useEffect(() => {
+    if (!objectTypes) return;
     setTypes(objectTypes);
   }, [objectTypes]);
 
+  useEffect(() => {
+    if (!typeProperties) return;
+    setInitialProperties(typeProperties);
+  }, [typeProperties]);
+
   const handleTab = (id: number) => {
     setCurrentBoardId(id);
+  };
+
+  const handleDropNode = (node: Node) => {
+    setCurrentNode(node);
   };
 
   return (
@@ -48,9 +64,9 @@ function Home() {
           />
           <div className="col-span-7 flex flex-col">
             <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
-            <NewBoard initialNodes={initialNodes} />
+            <NewBoard initialNodes={initialNodes} onDropNodeHandler={handleDropNode} />
           </div>
-          <PropertiesSidebar className="md:col-span-3" />
+          <PropertiesSidebar className="md:col-span-3" initialProperties={initialProperties} />
         </div>
       </div>
     </ReactFlowProvider>
