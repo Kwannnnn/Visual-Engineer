@@ -1,7 +1,9 @@
 /* eslint-disable class-methods-use-this */
 import type { Dictionary, EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
-import { BlowerFactory, PipelineFactory, PumpFactory } from '../factories';
+import {
+  BlowerFactory, PipeFittingFactory, PipelineFactory, PumpFactory,
+} from '../factories';
 import { Item } from '../models';
 
 export const sampleBoardObjects: Item[] = [];
@@ -15,8 +17,10 @@ export default class ObjectSeeder extends Seeder {
 
     // Add 3 sample items to the exported array
     sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId }));
+    sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId }));
     sampleBoardObjects.push(new PumpFactory(em).makeOne({ board: sampleBoardId }));
     sampleBoardObjects.push(new BlowerFactory(em).makeOne({ board: sampleBoardId }));
+    sampleBoardObjects.push(new PipeFittingFactory(em).makeOne({ board: sampleBoardId }));
 
     // Assign the newly created items to the sample board
     sampleBoardObjects.forEach((object) => sampleBoardItems.add(object));
