@@ -108,7 +108,7 @@ describe('POST Relationship endpoints', () => {
           firstItem: '122-12sa-gi2',
           secondItem,
         });
-      expect(response.statusCode).toEqual(400);
+      expect(response.statusCode).toEqual(404);
     });
 
     test('should return 400 when the provided pipeline is not an item of type Pipeline', async () => {
@@ -130,6 +130,36 @@ describe('POST Relationship endpoints', () => {
       const pipeline = sampleBoards[0].items[4].tag;
       const firstItem = sampleBoards[0].items[2].tag;
       const secondItem = sampleBoards[0].items[5].tag;
+
+      const response = await request(app)
+        .post('/api/v2/relationships')
+        .send({
+          pipeline,
+          firstItem,
+          secondItem,
+        });
+      expect(response.statusCode).toEqual(400);
+    });
+
+    test('should return 400 when the two items to be connected are the same', async () => {
+      const pipeline = sampleBoards[0].items[4].tag;
+      const firstItem = sampleBoards[0].items[2].tag;
+      const secondItem = sampleBoards[0].items[2].tag;
+
+      const response = await request(app)
+        .post('/api/v2/relationships')
+        .send({
+          pipeline,
+          firstItem,
+          secondItem,
+        });
+      expect(response.statusCode).toEqual(400);
+    });
+
+    test('should return 400 when one or both the two items to be connected are of type Pipeline', async () => {
+      const pipeline = sampleBoards[0].items[4].tag;
+      const firstItem = sampleBoards[0].items[4].tag;
+      const secondItem = sampleBoards[0].items[2].tag;
 
       const response = await request(app)
         .post('/api/v2/relationships')
