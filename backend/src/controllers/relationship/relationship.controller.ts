@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import DI from '../../DI';
 import { TypedRequest } from '../../routes/util/typed-request';
 import { RelationshipParams, RelationshipBody } from '../../routes/relationships/relationships.types';
-import { PipeItem } from '../../database/models';
 import ValidationError from '../../error/ValidationError';
+import { validateRelationshipPatchBody, validateRelationshipItems } from './relationship.util';
 
 export const getAllRelationships = async (
   req: Request,
@@ -76,23 +76,18 @@ export const patchRelationship = async (
   try {
     const relationship = await DI.relationshipRepository.findOne(pipelineTag);
 
-    if (!relationship) { throw new ValidationError('Relationship not found', 400); }
-    if (!req.body || (!req.body.firstItem && !req.body.secondItem && !req.body.pipeline)) { throw new ValidationError('Mandatory fields in request body are missing', 400); }
-    if (!req.body.pipeline || pipelineTag !== req.body.pipeline) { throw new ValidationError('Pipeline tag in request body does not match', 400); }
-    if (req.body.firstItem === req.body.secondItem) { throw new ValidationError('First and second item cannot be the same', 400); }
+    validateRelationshipPatchBody(req, relationship, pipelineTag);
 
-    const firstItem = await DI.itemRepository.findOne({ tag: req.body.firstItem });
-    const secondItem = await DI.itemRepository.findOne({ tag: req.body.secondItem });
-    const pipeline = await DI.itemRepository.findOne({ tag: req.body.pipeline });
+    const firstItem = await DI.itemRepository.findOne({ tag: req.body!.firstItem });
+    const secondItem = await DI.itemRepository.findOne({ tag: req.body!.secondItem });
+    const pipeline = await DI.itemRepository.findOne({ tag: req.body!.pipeline });
 
-    if (secondItem instanceof PipeItem || firstItem instanceof PipeItem) { throw new ValidationError('Connected item cannot be a pipe item', 400); }
-    if (!pipeline) { throw new ValidationError('Pipeline not found', 400); }
-    if ((req.body.firstItem && !firstItem) || (req.body.secondItem && !secondItem)) { throw new ValidationError('Item by tag not found', 404); }
+    validateRelationshipItems(req, firstItem, secondItem, pipeline);
 
-    relationship.firstItem = firstItem || relationship.firstItem;
-    relationship.secondItem = secondItem || relationship.secondItem;
+    relationship!.firstItem = firstItem || relationship!.firstItem;
+    relationship!.secondItem = secondItem || relationship!.secondItem;
 
-    await DI.relationshipRepository.persistAndFlush(relationship);
+    await DI.relationshipRepository.persistAndFlush(relationship!);
 
     res.status(201);
     return res.json(relationship);
