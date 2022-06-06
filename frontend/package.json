@@ -55,10 +55,12 @@
   "scripts": {
     "start": "cross-env PORT=8080 react-scripts start",
     "build": "react-scripts build",
+    "eject": "react-scripts eject",
     "test:cypress": "npx start-server-and-test start http://localhost:8080 'npx cypress run'",
     "lint": "npx eslint src --ext .ts,.tsx",
     "lint:fix": "npx eslint src --ext .ts,.tsx --fix",
-    "eject": "react-scripts eject"
+    "docker:build": "docker build -t registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/frontend .",
+    "docker:run": "docker run -d -p 8080:8080 --name=visual-engineer-backend registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/frontend"
   },
   "browserslist": {
     "production": [
