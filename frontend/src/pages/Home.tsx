@@ -88,7 +88,7 @@ function Home() {
           </div>
           <PropertiesSidebar
             className={`hidden ${propertiesDisplay}`}
-            heading={currentNode?.data.type}
+            currentNode={currentNode}
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
           />
