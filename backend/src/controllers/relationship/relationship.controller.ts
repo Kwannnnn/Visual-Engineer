@@ -4,6 +4,7 @@ import { TypedRequest } from '../../routes/util/typed-request';
 import { RelationshipParams } from '../../routes/relationships/relationships.types';
 import { validateItems, validateRequest, checkItemsRelationship } from './relationship.util';
 import { Relationship } from '../../database/models';
+import ValidationError from '../../error/ValidationError';
 
 export const getAllRelationships = async (
   req: Request,
@@ -55,7 +56,12 @@ export const postRelationship = async (
 
     return res.status(201).json(relationship);
   } catch (e: any) {
-    return res.status(400).json({
+    if (e instanceof ValidationError) {
+      return res.status(e.statusCode).json({
+        message: e.message,
+      });
+    }
+    return res.status(500).json({
       message: e.message,
     });
   }
