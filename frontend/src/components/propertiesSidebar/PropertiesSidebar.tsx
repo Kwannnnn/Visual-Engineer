@@ -38,7 +38,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
 
   useEffect(() => {
     setPropValues(initialProperties);
-  });
+  }, [initialProperties]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newProps: Listing[] = [];
