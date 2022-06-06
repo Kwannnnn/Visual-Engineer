@@ -25,6 +25,14 @@ export function validateItems(pipeline: any, firstItem: any, secondItem: any): v
   if (pipeline.type !== 'pipeline') {
     throw new ValidationError('The connector must be of type Pipeline.', 400);
   }
+
+  if (firstItem === secondItem) {
+    throw new ValidationError('First and second item cannot be the same', 400);
+  }
+
+  if (firstItem.type === 'pipeline' || secondItem.type === 'pipeline') {
+    throw new ValidationError('Cannot connect a pipeline to a pipeline', 400);
+  }
 }
 
 function getClassName(type: string): string {
