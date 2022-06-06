@@ -113,7 +113,7 @@ relationshipRouter.get('/:pipelineTag', relationshipController.getOneRelationshi
  *
  * @apiError ItemNotFound New item to connect does not exist
  * @apiErrorExample ItemNotFound:
- *     HTTP/1.1 400 BAD REQUEST
+ *     HTTP/1.1 404 NOT FOUND
  *     {
  *       "message": "Item by tag not found"
  *     }
