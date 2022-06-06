@@ -1,4 +1,4 @@
-//FIXME: This class is no longer used
+// FIXME: This class is no longer used
 import React from 'react';
 import { Node } from 'react-flow-renderer';
 
