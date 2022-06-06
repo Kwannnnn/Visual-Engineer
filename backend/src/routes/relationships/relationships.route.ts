@@ -79,39 +79,53 @@ relationshipRouter.get('/:pipelineTag', relationshipController.getOneRelationshi
  *    }
  *
  * @apiError PipelineTagMissing The request body is missing the pipeline tag.
- * @apiError ItemMissing The request body is missing one or both to-be-connected items.
- * @apiError ItemNotFound Item with identifier <code>pipeline</code>,
- * <code>firstItem</code> or <code>secondItem</code> does not exist.
- * @apiError InvalidConnector The provided pipeline is not an item of type Pipeline.
- * @apiError InvalidRelationship The provided items cannot be associated.
  * @apiErrorExample PipelineTagMissing:
  *     HTTP/1.1 400 Bad Request
  *     {
  *       "message": "Pipeline tag is missing."
  *     }
  *
+ * @apiError ItemMissing The request body is missing one or both to-be-connected items.
  * @apiErrorExample ItemMissing:
  *     HTTP/1.1 400 Bad Request
  *     {
  *       "message": "Two items are needed to create a relationship."
  *     }
  *
- *  * @apiErrorExample ItemNotFound:
+ * @apiError ItemNotFound Item with identifier <code>pipeline</code>,
+ * <code>firstItem</code> or <code>secondItem</code> does not exist.
+ * @apiErrorExample ItemNotFound:
  *     HTTP/1.1 404 Not Found
  *     {
  *       "message": "Item not found"
  *     }
  *
- *  * @apiErrorExample InvalidConnector:
+ * @apiError InvalidConnector The provided pipeline is not an item of type Pipeline.
+ * @apiErrorExample InvalidConnector:
  *     HTTP/1.1 400 Bad Request
  *     {
  *       "message": "The connector must be of type Pipeline."
  *     }
  *
- *  @apiErrorExample InvalidConnector:
+ * @apiError InvalidRelationship The provided items cannot be associated.
+ * @apiErrorExample InvalidRelationship:
  *     HTTP/1.1 400 Bad Request
  *     {
  *       "message": "You cannot associate a Pump with a Blower."
+ *     }
+ *
+ * @apiError ConnectItemToItself Items to connect are the same
+ * @apiErrorExample ConnectItemToItself:
+ *     HTTP/1.1 400 BAD REQUEST
+ *     {
+ *       "message": "First and second item cannot be the same"
+ *     }
+ *
+ * @apiError ConnectPipeToPipe Cannot connect a pipeline to a pipeline
+ * @apiErrorExample ConnectPipeToPipe:
+ *     HTTP/1.1 400 BAD REQUEST
+ *     {
+ *       "message": "Connected item cannot be a pipe item"
  *     }
  */
 relationshipRouter.post('/', relationshipController.postRelationship);
