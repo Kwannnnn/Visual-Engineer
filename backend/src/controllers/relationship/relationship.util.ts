@@ -1,7 +1,7 @@
 import { Loaded } from '@mikro-orm/core';
 import ValidationError from '../../error/ValidationError';
 import { RelationshipBody, RelationshipParams } from '../../routes/relationships/relationships.types';
-import { Relationship, PipeItem, Item } from '../../database/models';
+import { Relationship, Item, Pipeline } from '../../database/models';
 import { TypedRequest } from '../../routes/util/typed-request';
 
 export function validateRelationshipPatchBody(
@@ -22,7 +22,7 @@ export function validateRelationshipItems(
   pipeline: Loaded<Item, never> | null,
 
 ): void {
-  if (secondItem instanceof PipeItem || firstItem instanceof PipeItem) { throw new ValidationError('Connected item cannot be a pipe item', 400); }
+  if (secondItem instanceof Pipeline || firstItem instanceof Pipeline) { throw new ValidationError('Connected item cannot be a pipe item', 400); }
   if (!pipeline) { throw new ValidationError('Pipeline not found', 400); }
   if ((req.body!.firstItem && !firstItem) || (req.body!.secondItem && !secondItem)) { throw new ValidationError('Item by tag not found', 404); }
 }
