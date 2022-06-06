@@ -3,6 +3,7 @@ import DI from '../../DI';
 import { TypedRequest } from '../../routes/util/typed-request';
 import { RelationshipParams, RelationshipBody } from '../../routes/relationships/relationships.types';
 import { PipeItem } from '../../database/models';
+import ValidationError from '../../error/ValidationError';
 
 export const getAllRelationships = async (
   req: Request,
@@ -75,51 +76,18 @@ export const patchRelationship = async (
   try {
     const relationship = await DI.relationshipRepository.findOne(pipelineTag);
 
-    if (!relationship) {
-      return res.status(404).json({
-        message: 'Relationship not found',
-      });
-    }
-
-    if (!req.body || (!req.body.firstItem && !req.body.secondItem && !req.body.pipeline)) {
-      return res.status(400).json({
-        message: 'Mandatory fields in request body are missing',
-      });
-    }
-
-    if (!req.body.pipeline || pipelineTag !== req.body.pipeline) {
-      return res.status(400).json({
-        message: 'Pipeline tag in request body does not match',
-      });
-    }
-
-    if (req.body.firstItem === req.body.secondItem) {
-      return res.status(400).json({
-        message: 'First and second item cannot be the same',
-      });
-    }
+    if (!relationship) { throw new ValidationError('Relationship not found', 400); }
+    if (!req.body || (!req.body.firstItem && !req.body.secondItem && !req.body.pipeline)) { throw new ValidationError('Mandatory fields in request body are missing', 400); }
+    if (!req.body.pipeline || pipelineTag !== req.body.pipeline) { throw new ValidationError('Pipeline tag in request body does not match', 400); }
+    if (req.body.firstItem === req.body.secondItem) { throw new ValidationError('First and second item cannot be the same', 400); }
 
     const firstItem = await DI.itemRepository.findOne({ tag: req.body.firstItem });
     const secondItem = await DI.itemRepository.findOne({ tag: req.body.secondItem });
     const pipeline = await DI.itemRepository.findOne({ tag: req.body.pipeline });
 
-    if (secondItem instanceof PipeItem || firstItem instanceof PipeItem) {
-      return res.status(400).json({
-        message: 'Connected item cannot be a pipe item',
-      });
-    }
-
-    if (!pipeline) {
-      return res.status(404).json({
-        message: 'Pipeline not found',
-      });
-    }
-
-    if ((req.body.firstItem && !firstItem) || (req.body.secondItem && !secondItem)) {
-      return res.status(404).json({
-        message: 'Item by tag not found',
-      });
-    }
+    if (secondItem instanceof PipeItem || firstItem instanceof PipeItem) { throw new ValidationError('Connected item cannot be a pipe item', 400); }
+    if (!pipeline) { throw new ValidationError('Pipeline not found', 400); }
+    if ((req.body.firstItem && !firstItem) || (req.body.secondItem && !secondItem)) { throw new ValidationError('Item by tag not found', 404); }
 
     relationship.firstItem = firstItem || relationship.firstItem;
     relationship.secondItem = secondItem || relationship.secondItem;
@@ -129,7 +97,12 @@ export const patchRelationship = async (
     res.status(201);
     return res.json(relationship);
   } catch (e: any) {
-    return res.status(400).json({
+    if (e instanceof ValidationError) {
+      return res.status(e.statusCode).json({
+        message: e.message,
+      });
+    }
+    return res.status(500).json({
       message: e.message,
     });
   }
