@@ -97,7 +97,7 @@ export const patchRelationship = async (
         message: e.message,
       });
     }
-    return res.status(500).json({
+    return res.status(400).json({
       message: e.message,
     });
   }
