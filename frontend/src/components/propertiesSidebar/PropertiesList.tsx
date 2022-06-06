@@ -1,25 +1,51 @@
+//FIXME: This class is no longer used
 import React from 'react';
+import { Node } from 'react-flow-renderer';
 
 export interface Listing {
-  name: string;
-  type: string;
-  value?: string; // or any?
+  name: string; // name of the property
+  type: string; // data type of the property
+  value?: string; // value of the property
 }
 
-interface PropertiesList {
+interface PropertiesListProps {
   listing: Listing[];
+  currentNode: Node | null;
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function PropertiesList(props: PropertiesList) {
-  const { listing } = props;
-  const propertiesList = listing.map((p, i) => (
-    <div className="flex flex-col overflow-y-auto" key={p.name}>
-      <label htmlFor={`sidebar-prop-${i}`}>
-        {p.name}
-        <input type={p.type} id={`sidebar-prop-${i}`} className="focus:outline-blue-400 focus:outline-offset-m2 rounded-xl w-full bg-blue-50 px-3 py-2 mt-1" />
-      </label>
-    </div>
-  ));
+function getPropertyValue(node: Node | null, propName: string) {
+  if (!node) return '';
 
-  return <form className="space-y-4">{propertiesList}</form>;
+  const propKey = Object.keys(node.data).find((key) => key === propName);
+  const value = propKey ? node.data[propKey] : '';
+
+  return value;
+}
+
+export default function PropertiesList(props: PropertiesListProps) {
+  const { listing, currentNode, handleChange } = props;
+  console.log(listing);
+
+  const propertiesList = listing.map((p, i) => {
+    p.value = getPropertyValue(currentNode, p.name);
+
+    return (
+      <div className="flex flex-col overflow-y-auto" key={p.name}>
+        <label htmlFor={`sidebar-prop-${i}`}>
+          {p.name}
+          <input
+            name={p.name}
+            type={p.type}
+            id={`sidebar-prop-${i}`}
+            value={p.value}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange(event)}
+            className="focus:outline-blue-400 focus:outline-offset-m2 rounded-xl w-full bg-blue-50 px-3 py-2 mt-1"
+          />
+        </label>
+      </div>
+    );
+  });
+
+  return <div>{propertiesList}</div>;
 }
