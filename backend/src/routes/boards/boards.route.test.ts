@@ -41,7 +41,7 @@ afterEach(async () => {
 
 describe('GET Board endpoints', () => {
   describe('GET api/v1/boards', () => {
-    test('should return all boards', async () => {
+    it('should return all boards', async () => {
       const response = await request(app).get('/api/v1/boards');
       expect(response.status).toEqual(200);
       expect(response.body).toHaveLength(3);
@@ -55,6 +55,24 @@ describe('GET Board endpoints', () => {
         const response = await request(app).get(`/api/v1/boards/${id}`);
         expect(response.status).toEqual(200);
         expect(response.body).toEqual({ id, name });
+      });
+    });
+
+    describe('given the board does not exist', () => {
+      it('should return 404', async () => {
+        const response = await request(app).get('/api/v1/boards/4000');
+        expect(response.status).toEqual(404);
+      });
+    });
+  });
+
+  describe('GET api/v1/boards/:id/objects', () => {
+    describe('given the board exists', () => {
+      it('should resturn an array of items belonging to the same boards', async () => {
+        const { id } = sampleBoards[0];
+        const response = await request(app).get(`/api/v1/boards/${id}/objects`);
+        expect(response.status).toEqual(200);
+        expect(response.body).toHaveLength(3);
       });
     });
   });
@@ -257,6 +275,9 @@ describe('PATCH Board endpoints', () => {
           const item = board.items.getItems()[0];
           const response = await request(app).delete(`/api/v1/boards/${board.id}/objects/${item.tag}`);
           expect(response.status).toEqual(204);
+          const check = await request(app).get(`/api/v1/boards/${board.id}/objects`);
+          expect(check.status).toEqual(200);
+          expect(check.body).toHaveLength(2);
         });
       });
 
