@@ -38,20 +38,20 @@ export const getOneRelationship = async (
 };
 
 export const postRelationship = async (
-  req: Request,
+  req: TypedRequest<any, RelationshipBody>,
   res: Response,
 ) => {
   try {
     utils.validateRequest(req.body);
 
-    const pipeline = await DI.itemRepository.findOne(req.body.pipeline);
-    const firstItem = await DI.itemRepository.findOne(req.body.firstItem);
-    const secondItem = await DI.itemRepository.findOne(req.body.secondItem);
+    const pipeline = await DI.itemRepository.findOne({ tag: req.body!.pipeline });
+    const firstItem = await DI.itemRepository.findOne({ tag: req.body!.firstItem });
+    const secondItem = await DI.itemRepository.findOne({ tag: req.body!.secondItem });
 
     utils.validateItems(pipeline, firstItem, secondItem);
     utils.checkItemsRelationship(firstItem, secondItem);
 
-    const relationship: Relationship = DI.em.create(Relationship, req.body);
+    const relationship: Relationship = DI.em.create(Relationship, req.body!);
     await DI.relationshipRepository.persist(relationship).flush();
 
     return res.status(201).json(relationship);
