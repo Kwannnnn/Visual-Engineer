@@ -1,6 +1,6 @@
 import axios from 'axios';
-import IBoard from '../typings/IBoard';
-import IObjectContext from '../typings/IObjectContext';
+import IBoard from '../../typings/IBoard';
+import IObjectContext from '../../typings/IObjectContext';
 
 const url = process.env.REACT_APP_API_URL;
 

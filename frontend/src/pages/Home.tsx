@@ -7,7 +7,7 @@ import {
 import NewBoard from '../components/board/Board';
 import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
-import { getBoardObjects, getObjectTypes, getTypeProperties } from '../api/utility-functions';
+import { getBoardObjects, getObjectTypes, getTypeProperties } from '../util/api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
 import IObjectContext from '../typings/IObjectContext';
 
