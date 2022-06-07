@@ -1,38 +1,39 @@
 import axios from 'axios';
-import IBoard from '../typings/IBoard';
-import IObjectContext from '../typings/IObjectContext';
+import IBoard from '../../typings/IBoard';
+import IObjectContext from '../../typings/IObjectContext';
 
-const url = process.env.REACT_APP_API_V1_URL;
-const urlV2 = 'http://localhost:3000/api/v2';
+const url = process.env.REACT_APP_API_URL;
 
 export async function getAllBoards() {
-  await axios.get(`${url}/boards`)
+  await axios.get(`${url}/v1/boards`)
     .then((response) => response.data)
     .catch((err) => err.data);
 }
 
 export async function getBoardById(id: number) {
-  await axios.get(`${url}/boards/${id}`)
+  await axios.get(`${url}/v1/boards/${id}`)
     .then((response) => response.data)
     .catch((err) => err.data);
 }
 
 export async function getBoardObjects(id: number) {
-  return axios.get(`${url}/boards/${id}/objects`)
-    .then((response) => response.data)
-    .catch((err) => err.data);
+  const response = await axios.get(`${url}/v1/boards/${id}/objects`);
+  const objects = response.data.map((object: IObjectContext) => ({
+    ...object,
+  }));
+  return objects;
 }
 
 export async function createBoard(properties: Partial<IBoard>) {
-  await axios.post(`${url}/boards/`, {
+  await axios.post(`${url}/v1/boards/`, {
     ...properties,
   })
     .then((response) => response.data)
     .catch((err) => err.data);
 }
 
-export async function createItem(boardId: number, properties: IObjectContext) {
-  await axios.post(`${url}/boards/${boardId}/objects/`, {
+export async function createItem(boardId: number, properties: Partial<IObjectContext>) {
+  await axios.post(`${url}/v1/boards/${boardId}/objects/`, {
     ...properties,
   })
     .then((response) => response.data)
@@ -40,7 +41,7 @@ export async function createItem(boardId: number, properties: IObjectContext) {
 }
 
 export async function updateBoard(id: number, properties: Partial<IBoard>) {
-  await axios.patch(`${url}/boards/${id}`, {
+  await axios.patch(`${url}/v1/boards/${id}`, {
     ...properties,
   })
     .then((response) => response.data)
@@ -52,7 +53,7 @@ export async function updateBoardObject(
   itemTag: string,
   properties: IObjectContext
 ) {
-  await axios.patch(`${url}/boards/${boardId}/objects/${itemTag}`, {
+  await axios.patch(`${url}/v1/boards/${boardId}/objects/${itemTag}`, {
     ...properties,
   })
     .then((response) => response.data)
@@ -60,21 +61,26 @@ export async function updateBoardObject(
 }
 
 export async function deleteBoard(id: number) {
-  await axios.delete(`${url}/boards/${id}`)
+  await axios.delete(`${url}/v1/boards/${id}`)
     .then((response) => response.data)
     .catch((err) => err.data);
 }
 
 export async function deleteBoardObject(id: number, tag:string) {
-  await axios.delete(`${url}/boards/${id}/objects/${tag}`)
+  await axios.delete(`${url}/v1/boards/${id}/objects/${tag}`)
     .then((response) => response.data)
     .catch((err) => err.data);
 }
 
 export async function getObjectTypes() {
-  const result = await axios.get(`${urlV2}/objects/types`)
+  const result = await axios.get(`${url}/v2/objects/types`)
     .then((response) => response.data)
     .catch((err) => err.data);
 
   return result;
+}
+
+export async function getTypeProperties(type: string) {
+  const result = await axios.get(`${url}/v2/objects/types/${type}/properties`);
+  return result.data;
 }
