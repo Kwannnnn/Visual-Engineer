@@ -125,6 +125,7 @@ frontend:cypress:
     DATABASE_URL: postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres/$POSTGRES_DB
   script:
     - cd backend
+    - npm run db:update
     - npm run db:seed
     - npx concurrently "npm run dev" "cd ../frontend && npx cypress install && npm run test:cypress"
 sast:
