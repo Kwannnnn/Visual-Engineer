@@ -15,7 +15,8 @@ import ReactFlow, {
   ReactFlowInstance,
   Connection,
   NodeTypes,
-  Background
+  Background,
+  BackgroundVariant
 } from 'react-flow-renderer';
 import ItemNode from './ItemNode';
 
@@ -126,7 +127,7 @@ function NewBoard(props: NewBoardProps) {
       >
         <MiniMap />
         <Controls />
-        <Background />
+        <Background variant={BackgroundVariant.Lines} color="#dfdfdf" gap={25} />
       </ReactFlow>
     </div>
   );
