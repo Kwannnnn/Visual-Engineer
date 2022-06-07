@@ -38,7 +38,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
 
   useEffect(() => {
     setPropValues(initialProperties);
-  });
+  }, [initialProperties]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newProps: Listing[] = [];
@@ -68,18 +68,20 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
           <FontAwesomeIcon icon={faX} size="sm" />
         </button>
 
-        <h2 id="siderbar-item-type" className="text-xl font-semibold mb-2">{heading}</h2>
+        <h2 id="siderbar-item-type" className="text-xl font-semibold mb-4">{heading}</h2>
 
-        <div className="flex space-x-2 w-full mb-8">
-          <button id="save-component-btn" type="submit" className="rounded-xl p-2 shadow-sm hover:shadow-md border border-green-200 bg-green-50 hover:bg-green-100 text-green-700 hover:text-green-700 py-2 cursor-pointer mt-auto">
+        <div className="flex space-x-2 w-full mb-6">
+          <button id="save-component-btn" type="submit" className="rounded-xl w-1/2 p-2 shadow-sm hover:shadow-md border border-green-200 bg-green-50 hover:bg-green-100 text-green-700 hover:text-green-700 py-2 cursor-pointer mt-auto">
             <FontAwesomeIcon icon={faTrash} />
             <p className="hidden md:inline"> Save</p>
           </button>
-          <button id="delete-component-btn" className="rounded-xl p-2 shadow-sm hover:shadow-md border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-700 py-2 cursor-pointer mt-auto" type="button">
+          <button id="delete-component-btn" className="rounded-xl p-2 w-1/2 shadow-sm hover:shadow-md border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-700 py-2 cursor-pointer mt-auto" type="button">
             <FontAwesomeIcon icon={faTrash} />
             <p className="hidden md:inline"> Delete</p>
           </button>
         </div>
+
+        <hr />
 
         <div id="sidebar-properties-list" className="w-full">
           {
