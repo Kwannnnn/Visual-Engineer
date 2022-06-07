@@ -127,7 +127,8 @@ frontend:cypress:
     - cd backend
     - npm run db:update
     - npm run db:seed
-    - npx concurrently "npm run dev" "cd ../frontend && npx cypress install && npm run test:cypress"
+    - npm run build
+    - npx concurrently "npm run prod" "cd ../frontend && npx cypress install && npm run test:cypress"
 sast:
   stage: test
   needs: []
