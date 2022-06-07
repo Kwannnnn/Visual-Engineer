@@ -117,11 +117,7 @@ frontend:cypress:
     - install
   script:
     - cd backend
-    - npm run dev
-    - cd ../frontend
-    - cd frontend
-    - npx cypress install
-    - npm run test:cypress
+    - npx concurrently "npm run dev" "cd ../frontend && npx cypress install && npm run test:cypress"
 
 sast:
   stage: test
