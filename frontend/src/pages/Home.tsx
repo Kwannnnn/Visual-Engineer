@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import {
   PropertiesSidebar, TabBar, Toolbox
 } from '../components';
-import NewBoard from '../components/board/NewBoard';
+import NewBoard from '../components/board/Board';
 import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
 import { getBoardObjects, getObjectTypes, getTypeProperties } from '../api/utility-functions';
