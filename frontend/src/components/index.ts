@@ -1,5 +1,5 @@
 export { default as Navbar } from './Navbar';
-export { default as PropertiesSidebar } from './propertiesSidebar/PropertiesSidebar';
+export { default as PropertiesSidebar } from './PropertiesSidebar';
 export { default as Board } from './board/Board';
 export { default as BoardItem } from './board/BoardItem';
 export { default as DropPlaceholder } from './board/DropPlaceholder';
