@@ -129,7 +129,7 @@ frontend:cypress:
     - npm run db:update
     - npm run db:seed
     - npm run build
-    - npx concurrently "PORT=3000 npm run prod" "cd ../frontend && npx cypress install && npm run test:cypress"
+    - npx concurrently -k "PORT=3000 npm run prod" "cd ../frontend && npx cypress install && npm run test:cypress"
 sast:
   stage: test
   needs: []
