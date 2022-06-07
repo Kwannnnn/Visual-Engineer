@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ReactFlowProvider, Node } from 'react-flow-renderer';
+import { ReactFlowProvider, Node, Edge } from 'react-flow-renderer';
 import {
   PropertiesSidebar, TabBar, Toolbox
 } from '../components';
 import NewBoard from '../components/board/NewBoard';
 import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
-import { getBoardObjects, getObjectTypes, getTypeProperties } from '../api/utility-functions';
+import {
+  getBoardObjects, getObjectTypes, getTypeProperties, getObjectEdges
+} from '../api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
+import transformConnectionToEdge from '../util/transformConnectionToEdge';
 import IObjectContext from '../typings/IObjectContext';
+import IOConnectionContext from '../typings/IOConnectionContext';
 
 function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -22,10 +26,12 @@ function Home() {
   const [initialProperties, setInitialProperties] = useState([]);
   const [types, setTypes] = useState<[]>([]);
   const [toolboxIsOpen, setToolboxIsOpen] = useState(true);
+  const [edges, setEdges] = useState<Edge[]>([]);
 
   const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
   const getPropertiesCallback = useCallback(async () => getTypeProperties(currentNode?.data.type), [currentNode]);
+  const getEdgesCallback = useCallback(async () => getObjectEdges(), [edges]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onNodesDeleteCallback = useCallback((nodes: Node[]) => {
@@ -40,12 +46,19 @@ function Home() {
   const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
   const { data: typeProperties } = useAPIUtil<any>(getPropertiesCallback);
+  const { data: objectEdges } = useAPIUtil<IOConnectionContext[]>(getEdgesCallback);
 
   useEffect(() => {
     if (!boardObjects) return;
     const nodes = transformObjectToNode(boardObjects);
     setInitialNodes(nodes);
   }, [boardObjects]);
+
+  useEffect(() => {
+    if (!objectEdges) return;
+    const connections = transformConnectionToEdge(objectEdges);
+    setEdges(connections);
+  }, [objectEdges]);
 
   useEffect(() => {
     if (!objectTypes) return;
@@ -84,6 +97,7 @@ function Home() {
               onDropNodeHandler={handleDropNode}
               onNodeClick={(node: Node) => setCurrentNode(node)}
               onNodesDelete={(node: Node[]) => onNodesDeleteCallback(node)}
+              initialEdges={edges}
             />
           </div>
           <PropertiesSidebar

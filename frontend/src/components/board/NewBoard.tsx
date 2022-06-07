@@ -53,13 +53,18 @@ function NewBoard(props: NewBoardProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
 
   // State containing the edges of the board
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges ?? []);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
   // State containing the React Flow Instance
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance>();
 
   useEffect(() => {
     setNodes(initialNodes ?? []);
   }, [initialNodes]);
+
+  useEffect(() => {
+    setEdges(initialEdges ?? []);
+  }, [initialEdges]);
 
   // Whenever a edge gets created update the edges state
   // eslint-disable-next-line max-len
