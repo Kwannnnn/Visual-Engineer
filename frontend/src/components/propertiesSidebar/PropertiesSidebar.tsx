@@ -57,10 +57,10 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
   const heading = currentNode?.data.type || 'Unknown';
 
   return (
-    <aside className={`w-full h-full flex bg-white pt-3 pb-12 px-6 overflow-y-auto border-l-4 rounded-sm relative ${className}`}>
+    <aside data-cy="properties-sidebar" className={`w-full h-full flex bg-white pt-3 pb-12 px-6 overflow-y-auto border-l-4 rounded-sm relative ${className}`}>
       <form onSubmit={handleSubmit}>
         <button
-          id="close-sidebar-btn"
+          data-cy="close-sidebar-btn"
           className="absolute top-3 right-3 text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-3 py-2 cursor-pointer"
           type="button"
           onClick={onClose}
@@ -68,7 +68,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
           <FontAwesomeIcon icon={faX} size="sm" />
         </button>
 
-        <h2 id="siderbar-item-type" className="text-xl font-semibold mb-2">{heading}</h2>
+        <h2 data-cy="siderbar-item-type" className="text-xl font-semibold mb-2">{heading}</h2>
 
         <div className="flex space-x-2 w-full mb-8">
           <button id="save-component-btn" type="submit" className="rounded-xl p-2 shadow-sm hover:shadow-md border border-green-200 bg-green-50 hover:bg-green-100 text-green-700 hover:text-green-700 py-2 cursor-pointer mt-auto">
@@ -81,20 +81,20 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
           </button>
         </div>
 
-        <div id="sidebar-properties-list" className="w-full">
+        <div data-cy="sidebar-properties-list" className="w-full">
           {
-            propValues.map((p, i) => {
+            propValues.map((p) => {
               const value = getPropertyValue(currentNode, p.name);
               p.value = value;
 
               return (
                 <div className="flex flex-col overflow-y-auto" key={p.name}>
-                  <label htmlFor={`sidebar-prop-${i}`}>
+                  <label htmlFor={`sidebar-input-field-${p.name}`}>
                     {p.name}
                     <input
                       name={p.name}
                       type={p.type}
-                      id={`sidebar-prop-${i}`}
+                      data-cy={`sidebar-input-field-${p.name}`}
                       value={p.value}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange(event)}
                       className="focus:outline-blue-400 focus:outline-offset-m2 rounded-xl w-full bg-blue-50 px-3 py-2 mt-1"
