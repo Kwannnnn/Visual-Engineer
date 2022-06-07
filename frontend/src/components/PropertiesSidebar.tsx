@@ -19,7 +19,7 @@ function getPropertyValue(node: Node | null, propName: string) {
   if (!node) return '';
 
   const propKey = Object.keys(node.data).find((key) => key === propName);
-  const value = propKey ? node.data[propKey] : '';
+  const value = propKey ? node.data[`${propKey}`] : '';
 
   return value;
 }
