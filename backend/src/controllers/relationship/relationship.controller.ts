@@ -4,7 +4,7 @@ import { TypedRequest } from '../../routes/util/typed-request';
 import * as utils from './relationship.util';
 import { Relationship } from '../../database/models';
 import ValidationError from '../../error/ValidationError';
-import { RelationshipParams, RelationshipBody } from '../../routes/relationships/relationships.types';
+import { RelationshipParams, RelationshipBody, RelationshipRequestBody } from '../../routes/relationships/relationships.types';
 
 export const getAllRelationships = async (
   req: Request,
@@ -38,17 +38,13 @@ export const getOneRelationship = async (
 };
 
 export const postRelationship = async (
-  req: TypedRequest<any, RelationshipBody>,
+  req: TypedRequest<any, RelationshipRequestBody>,
   res: Response,
 ) => {
   try {
-    utils.validateRequest(req.body);
+    const firstItem = req.body?.firstItem;
+    const secondItem = req.body?.secondItem;
 
-    const pipeline = await DI.itemRepository.findOne({ tag: req.body!.pipeline });
-    const firstItem = await DI.itemRepository.findOne({ tag: req.body!.firstItem });
-    const secondItem = await DI.itemRepository.findOne({ tag: req.body!.secondItem });
-
-    utils.validateItems(pipeline, firstItem, secondItem);
     utils.checkItemsRelationship(firstItem, secondItem);
 
     const relationship: Relationship = DI.em.create(Relationship, req.body!);
