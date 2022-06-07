@@ -20,24 +20,6 @@ export function validateRequest(body: any): void {
   }
 }
 
-export function validateItems(pipeline: any, firstItem: any, secondItem: any): void {
-  if (!pipeline || !firstItem || !secondItem) {
-    throw new ValidationError('Item not found', 404);
-  }
-
-  if (pipeline.type !== 'pipeline') {
-    throw new ValidationError('The connector must be of type Pipeline.', 400);
-  }
-
-  if (firstItem === secondItem) {
-    throw new ValidationError('First and second item cannot be the same', 400);
-  }
-
-  if (firstItem.type === 'pipeline' || secondItem.type === 'pipeline') {
-    throw new ValidationError('Cannot connect a pipeline to a pipeline', 400);
-  }
-}
-
 function getClassName(type: string): string {
   const itemClassName = getClass(type).prototype.constructor.name;
   return itemClassName;
@@ -63,8 +45,9 @@ export function checkItemsRelationship(firstItem: any, secondItem: any): void {
 
   const relationship = getRelationshipTuple(firstItem, secondItem);
 
-  // eslint-disable-next-line max-len
-  const isRelationshipPossible = Object.values(possibleRelationships).some((a) => a.every((e) => relationship.includes(e)));
+  const isRelationshipPossible = Object
+    .values(possibleRelationships)
+    .some((a) => a.every((e) => relationship.includes(e)));
 
   if (!isRelationshipPossible) {
     throw new ValidationError(`You cannot associate a ${firstItemClassName} with a ${secondItemClassName}!`, 400);
