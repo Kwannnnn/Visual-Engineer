@@ -47,7 +47,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     propValues.forEach((item) => {
       if (item.name === event.target.name) {
         item.value = event.target.value; // update the prop state
-        currentNode.data[item.name] = event.target.value; // update node state
+        currentNode.data[`${item.name}`] = event.target.value; // update node state
       }
 
       newProps.push(item);
