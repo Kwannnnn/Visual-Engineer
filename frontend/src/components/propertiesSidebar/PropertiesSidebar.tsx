@@ -26,7 +26,7 @@ function getPropertyValue(node: Node | null, propName: string) {
 
 function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
   event.preventDefault();
-  alert('form submitted');
+  // TODO: handle form submission (e.g. POST to server)
 }
 
 function PropertiesSidebar(props: PropertiesSidebarProps) {
@@ -41,12 +41,13 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
   }, [initialProperties]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!currentNode) return;
     const newProps: Listing[] = [];
 
     propValues.forEach((item) => {
       if (item.name === event.target.name) {
         item.value = event.target.value; // update the prop state
-        currentNode!.data[item.name] = event.target.value; // update node state
+        currentNode.data[item.name] = event.target.value; // update node state
       }
 
       newProps.push(item);
