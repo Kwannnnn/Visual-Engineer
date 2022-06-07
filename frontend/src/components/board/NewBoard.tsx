@@ -116,7 +116,7 @@ function NewBoard(props: NewBoardProps) {
         onInit={setReactFlowInstance}
         onDrop={onDrop}
         onDragOver={onDragOver}
-        onNodeClick={(e: React.MouseEvent, n: Node) => onNodeClick(n)}
+        onNodeClick={(e, n) => onNodeClick(n)}
         onNodesDelete={(nd) => onNodesDelete(nd)}
       >
         <MiniMap />
