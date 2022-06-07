@@ -16,7 +16,8 @@ import ReactFlow, {
   Connection,
   NodeTypes,
   Background,
-  BackgroundVariant
+  BackgroundVariant,
+  ConnectionLineType
 } from 'react-flow-renderer';
 import ItemNode from './ItemNode';
 
@@ -124,6 +125,8 @@ function NewBoard(props: NewBoardProps) {
         onDragOver={onDragOver}
         onNodeClick={(e: React.MouseEvent, n: Node) => onNodeClick(n)}
         onNodesDelete={(nd) => onNodesDelete(nd)}
+        fitView
+        connectionLineType={ConnectionLineType.Straight}
       >
         <MiniMap />
         <Controls />
