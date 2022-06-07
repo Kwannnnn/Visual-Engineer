@@ -70,7 +70,25 @@ function NewBoard(props: NewBoardProps) {
 
   // Whenever a edge gets created update the edges state
   // eslint-disable-next-line max-len
-  const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+  const onConnect = useCallback(
+    (params: Connection) => {
+      const newConnection: Edge = {
+        id: `${params.source}_${params.target}`,
+        source: params.source ?? '',
+        target: params.target ?? '',
+        label: 'Draft Pipeline',
+        labelBgPadding: [8, 4],
+        labelBgBorderRadius: 4,
+        labelBgStyle: { fill: '#FFCC00', color: '#fff', fillOpacity: 0.7 },
+        type: 'straight',
+        sourceHandle: params.sourceHandle ?? '',
+        targetHandle: params.targetHandle ?? '',
+      };
+
+      setEdges((edgesState) => edgesState.concat(newConnection));
+    },
+    [setEdges]
+  );
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     // eslint-disable-next-line no-param-reassign
