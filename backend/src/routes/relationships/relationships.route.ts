@@ -1,5 +1,8 @@
 import { Router } from 'express';
+import { body } from 'express-validator';
 import { relationshipController } from '../../controllers';
+import * as middleware from '../../middleware/relationships.middleware';
+import validate from '../../middleware/validate';
 
 const relationshipRouter: Router = Router();
 
@@ -128,7 +131,23 @@ relationshipRouter.get('/:pipelineTag', relationshipController.getOneRelationshi
  *       "message": "Connected item cannot be a pipe item"
  *     }
  */
-relationshipRouter.post('/', relationshipController.postRelationship);
+relationshipRouter.post(
+  '/',
+  validate([
+    body('pipeline')
+      .exists()
+      .withMessage('Pipeline tag is missing!'),
+    body(['firstItem', 'secondItem'])
+      .exists()
+      .withMessage('Two items are needed to create a relationship.'),
+  ]),
+  middleware.isValidPipeline,
+  middleware.areValidItems,
+  middleware.isPipelineInstanceOfPipeline,
+  middleware.areItemsNotInstanceOfPipeline,
+  middleware.areConnectedItemsTheSame,
+  relationshipController.postRelationship,
+);
 
 /**
  * @api {patch} /api/v2/relationships/:pipelineTag Update an existing relationship
