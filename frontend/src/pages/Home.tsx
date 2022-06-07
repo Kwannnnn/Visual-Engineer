@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ReactFlowProvider, Node } from 'react-flow-renderer';
+import classNames from 'classnames';
 import {
   PropertiesSidebar, TabBar, Toolbox
 } from '../components';
@@ -21,7 +22,6 @@ function Home() {
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
   const [initialProperties, setInitialProperties] = useState([]);
   const [types, setTypes] = useState<[]>([]);
-  const [toolboxIsOpen, setToolboxIsOpen] = useState(true);
 
   const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
@@ -65,19 +65,19 @@ function Home() {
     setCurrentNode(node);
   };
 
-  const toolboxDisplay = currentNode ? 'lg:col-span-12' : 'lg:col-span-17';
-  const propertiesDisplay = currentNode ? 'lg:block lg:col-span-5' : 'lg:hidden';
-
   return (
     <ReactFlowProvider>
       <div className="flex-1 min-h-0">
         <div className="grid grid-cols-20 h-full">
           <Toolbox
-            isOpen={toolboxIsOpen}
             className="hidden lg:block lg:min-w-sm lg:col-span-3"
             types={types}
           />
-          <div className={`col-span-20 ${toolboxDisplay} flex flex-col`}>
+          <div className={classNames('flex flex-col col-span-20', {
+            'lg:col-span-17': !currentNode,
+            'lg:col-span-12': currentNode,
+          })}
+          >
             <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
             <NewBoard
               initialNodes={initialNodes}
@@ -87,7 +87,9 @@ function Home() {
             />
           </div>
           <PropertiesSidebar
-            className={`hidden ${propertiesDisplay}`}
+            className={classNames('hidden', {
+              'lg:block lg:col-span-5': currentNode,
+            })}
             currentNode={currentNode}
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
