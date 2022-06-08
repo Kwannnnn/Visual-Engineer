@@ -12,7 +12,8 @@ interface Listing {
   }
 
 interface Item {
-    name: string;
+  type: string;
+  displayName: string;
 }
 
 function ToolboxList(prop: {listing: Listing[], subsetNbr: number}) {
@@ -43,7 +44,7 @@ function ToolboxList(prop: {listing: Listing[], subsetNbr: number}) {
       }
       if (listing.items) {
         listing.items.forEach((item) => {
-          itemBuilder.append(<ToolboxItem name={item.name} />);
+          itemBuilder.append(<ToolboxItem type={item.type} displayName={item.displayName} />);
         });
       }
 

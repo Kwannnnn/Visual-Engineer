@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
 import { TypedRequest } from '../../routes/util/typed-request';
-import { RelationshipParams } from '../../routes/relationships/relationships.types';
+import { RelationshipParams, RelationshipBody } from '../../routes/relationships/relationships.types';
+import ValidationError from '../../error/ValidationError';
+import { validateRelationshipPatchBody, validateRelationshipItems } from './relationship.util';
 
 export const getAllRelationships = async (
   req: Request,
@@ -59,6 +61,42 @@ export const deleteRelationship = async (
 
     return res.status(204).send();
   } catch (e: any) {
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+
+export const patchRelationship = async (
+  req: TypedRequest<RelationshipParams, RelationshipBody>,
+  res: Response,
+) => {
+  const { pipelineTag } = req.params;
+
+  try {
+    const relationship = await DI.relationshipRepository.findOne(pipelineTag);
+
+    validateRelationshipPatchBody(req, relationship, pipelineTag);
+
+    const firstItem = await DI.itemRepository.findOne({ tag: req.body!.firstItem });
+    const secondItem = await DI.itemRepository.findOne({ tag: req.body!.secondItem });
+    const pipeline = await DI.itemRepository.findOne({ tag: req.body!.pipeline });
+
+    validateRelationshipItems(req, firstItem, secondItem, pipeline);
+
+    relationship!.firstItem = firstItem || relationship!.firstItem;
+    relationship!.secondItem = secondItem || relationship!.secondItem;
+
+    await DI.relationshipRepository.persistAndFlush(relationship!);
+
+    res.status(201);
+    return res.json(relationship);
+  } catch (e: any) {
+    if (e instanceof ValidationError) {
+      return res.status(e.statusCode).json({
+        message: e.message,
+      });
+    }
     return res.status(400).json({
       message: e.message,
     });
