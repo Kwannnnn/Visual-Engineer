@@ -51,7 +51,7 @@ export async function updateBoard(id: number, properties: Partial<IBoard>) {
 export async function updateBoardObject(
   boardId: number,
   itemTag: string,
-  properties: IObjectContext
+  properties: Partial<IObjectContext>
 ) {
   await axios.patch(`${url}/v1/boards/${boardId}/objects/${itemTag}`, {
     ...properties,
