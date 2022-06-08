@@ -5,6 +5,7 @@ import {
 import { ObjectProperty, PropertyType } from '../../util/properties';
 // eslint-disable-next-line
 import Board from './Board';
+import { v4 } from 'uuid';
 
 @Entity({
   discriminatorColumn: 'type',
@@ -13,17 +14,17 @@ import Board from './Board';
 })
 export default abstract class Item {
   constructor(
-    tag: string,
-    name: string,
-    length: number,
-    width: number,
-    depth: number,
-    diameter: number,
+    // tag: string,
     type: string,
     x: number,
     y: number,
+    name?: string,
+    length?: number,
+    width?: number,
+    depth?: number,
+    diameter?: number,
   ) {
-    this.tag = tag;
+    this.tag = v4();
     this.name = name;
     this.length = length;
     this.width = width;
@@ -40,25 +41,25 @@ export default abstract class Item {
   @Property({ nullable: false })
     type!: string;
 
-  @Property({ nullable: false })
+  @Property({ nullable: true })
   @ObjectProperty(PropertyType.STRING)
-    name!: string;
+    name?: string;
 
-  @Property({ nullable: false, type: 'float' })
+  @Property({ nullable: true, type: 'float' })
   @ObjectProperty(PropertyType.NUMBER)
-    length!: number;
+    length?: number;
 
-  @Property({ nullable: false, type: 'float' })
+  @Property({ nullable: true, type: 'float' })
   @ObjectProperty(PropertyType.NUMBER)
-    width!: number;
+    width?: number;
 
-  @Property({ nullable: false, type: 'float' })
+  @Property({ nullable: true, type: 'float' })
   @ObjectProperty(PropertyType.NUMBER)
-    depth!: number;
+    depth?: number;
 
-  @Property({ nullable: false, type: 'float' })
+  @Property({ nullable: true, type: 'float' })
   @ObjectProperty(PropertyType.NUMBER)
-    diameter!: number;
+    diameter?: number;
 
   @Property({ nullable: false, type: 'float' })
     x!: number;
