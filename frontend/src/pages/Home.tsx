@@ -22,7 +22,7 @@ function Home() {
     { id: 2, name: 'PTPFu02' }
   ]);
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
-  const [currentNode, setCurrentNode] = useState<Node | null>(null);
+  const [currentNode, setCurrentNode] = useState<Node | Edge | null>(null);
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
   const [initialProperties, setInitialProperties] = useState([]);
   const [types, setTypes] = useState<[]>([]);
@@ -58,7 +58,7 @@ function Home() {
 
   useEffect(() => {
     if (!objectEdges) return;
-    const connections = transformConnectionToEdge(objectEdges);
+    const connections = transformConnectionToEdge(objectEdges, boardObjects);
     setEdges(connections);
   }, [objectEdges]);
 
@@ -98,6 +98,7 @@ function Home() {
               initialNodes={initialNodes}
               onDropNodeHandler={handleDropNode}
               onNodeClick={(node: Node) => setCurrentNode(node)}
+              onEdgeClick={(edge: Edge) => setCurrentNode(edge)}
               onNodesDelete={(node: Node[]) => onNodesDeleteCallback(node)}
               initialEdges={edges}
             />

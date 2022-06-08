@@ -26,6 +26,7 @@ interface NewBoardProps {
   onDropNodeHandler?: (node: Node) => void;
   onNodeClick: (node: Node) => void;
   onNodesDelete: (node: Node[]) => void;
+  onEdgeClick: (edge: Edge) => void;
 }
 
 // This string key must match the key in the nodeTypes object in order to render the correct
@@ -45,7 +46,7 @@ const getId = () => {
 
 function NewBoard(props: NewBoardProps) {
   const {
-    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete,
+    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete, onEdgeClick,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
@@ -145,6 +146,7 @@ function NewBoard(props: NewBoardProps) {
         onDragOver={onDragOver}
         onNodeClick={(e, n) => onNodeClick(n)}
         onNodesDelete={(nd) => onNodesDelete(nd)}
+        onEdgeClick={(e, n) => onEdgeClick(n)}
         fitView
         connectionLineType={ConnectionLineType.Straight}
       >
