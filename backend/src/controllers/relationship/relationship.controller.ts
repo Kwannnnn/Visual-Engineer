@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
 import { TypedRequest } from '../../routes/util/typed-request';
-import * as utils from './relationship.util';
+import checkItemsRelationship from './relationship.util';
 import { Relationship } from '../../database/models';
 import ValidationError from '../../error/ValidationError';
-import { RelationshipParams, RelationshipBody, RelationshipRequestBody } from '../../routes/relationships/relationships.types';
+import { RelationshipParams, RelationshipRequestBody } from '../../routes/relationships/relationships.types';
 
 export const getAllRelationships = async (
   req: Request,
@@ -45,7 +45,7 @@ export const postRelationship = async (
     const firstItem = req.body?.firstItem;
     const secondItem = req.body?.secondItem;
 
-    utils.checkItemsRelationship(firstItem, secondItem);
+    checkItemsRelationship(firstItem, secondItem);
 
     const relationship: Relationship = DI.em.create(Relationship, req.body!);
     await DI.relationshipRepository.persist(relationship).flush();
@@ -95,7 +95,7 @@ export const deleteRelationship = async (
 };
 
 export const patchRelationship = async (
-  req: TypedRequest<RelationshipParams, RelationshipBody>,
+  req: TypedRequest<any, RelationshipRequestBody>,
   res: Response,
 ) => {
   const { pipelineTag } = req.params;
@@ -103,16 +103,13 @@ export const patchRelationship = async (
   try {
     const relationship = await DI.relationshipRepository.findOne(pipelineTag);
 
-    utils.validateRelationshipPatchBody(req, relationship, pipelineTag);
+    const firstItem = req.body!.firstItem!;
+    const secondItem = req.body!.secondItem!;
 
-    const firstItem = await DI.itemRepository.findOne({ tag: req.body!.firstItem });
-    const secondItem = await DI.itemRepository.findOne({ tag: req.body!.secondItem });
-    const pipeline = await DI.itemRepository.findOne({ tag: req.body!.pipeline });
+    relationship!.firstItem = firstItem;
+    relationship!.secondItem = secondItem;
 
-    utils.validateRelationshipItems(req, firstItem, secondItem, pipeline);
-
-    relationship!.firstItem = firstItem || relationship!.firstItem;
-    relationship!.secondItem = secondItem || relationship!.secondItem;
+    checkItemsRelationship(firstItem, secondItem);
 
     await DI.relationshipRepository.persistAndFlush(relationship!);
 
