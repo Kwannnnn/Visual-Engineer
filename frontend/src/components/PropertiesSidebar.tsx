@@ -3,15 +3,11 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Node } from 'react-flow-renderer';
 import classNames from 'classnames';
+import { IListing } from '../typings/IListing';
 
-interface Listing {
-  name: string; // name of the property
-  type: string; // data type of the property
-  value?: string; // value of the property
-}
 interface PropertiesSidebarProps {
   className?: string;
-  initialProperties?: Listing[];
+  initialProperties: IListing[];
   currentNode: Node | null;
   onClose: () => void;
   onFieldChange?: (node: Node, field: string, value: string) => void;
@@ -21,7 +17,8 @@ function getPropertyValue(node: Node | null, propName: string) {
   if (!node) return '';
 
   const propKey = Object.keys(node.data).find((key) => key === propName);
-  const value = propKey ? node.data[`${propKey}`] : '';
+
+  const value = node.data[`${propKey}`] ? node.data[`${propKey}`] : '';
 
   return value;
 }
@@ -36,24 +33,27 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     className = '', initialProperties = [], onClose, currentNode, onFieldChange,
   } = props;
 
-  const [propValues, setPropValues] = useState<Listing[]>([]);
+  const [propValues, setPropValues] = useState<IListing[]>([]);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    setPropValues(initialProperties);
+    if (!currentNode) return;
+    const newValues = initialProperties.map((prop) => ({
+      ...prop,
+      value: getPropertyValue(currentNode, prop.name),
+    }));
+    setPropValues(newValues);
   }, [initialProperties]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
-    const newProps: Listing[] = [];
-
-    propValues.forEach((item) => {
+    const newProps: IListing[] = propValues.map((item) => {
       if (item.name === event.target.name) {
         item.value = event.target.value; // update the prop state
         currentNode.data[`${item.name}`] = event.target.value; // update node state
       }
 
-      newProps.push(item);
+      return item;
     });
     setPropValues(newProps);
 
@@ -141,7 +141,6 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
         </div>
       </form>
     </aside>
-
   );
 }
 
