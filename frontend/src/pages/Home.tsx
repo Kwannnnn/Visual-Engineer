@@ -34,10 +34,10 @@ function Home() {
   const getEdgesCallback = useCallback(async () => getObjectEdges(), [currentBoardId]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onNodesDeleteCallback = useCallback((nodes: Node[]) => {
-    nodes.forEach((node) => {
-      // TODO: Delete node from backend
-      if (node.data.id === currentNode?.data.id) {
+  const onObjectDeleteCallback = useCallback((items: Node[] | Edge[]) => {
+    items.forEach((item) => {
+      // TODO: Delete object from backend
+      if (item.data.id === currentNode?.data.id) {
         setCurrentNode(null);
       }
     });
@@ -99,7 +99,8 @@ function Home() {
               onDropNodeHandler={handleDropNode}
               onNodeClick={(node: Node) => setCurrentNode(node)}
               onEdgeClick={(edge: Edge) => setCurrentNode(edge)}
-              onNodesDelete={(node: Node[]) => onNodesDeleteCallback(node)}
+              onNodesDelete={(node: Node[]) => onObjectDeleteCallback(node)}
+              onEdgesDelete={(edge: Edge[]) => onObjectDeleteCallback(edge)}
               initialEdges={edges}
             />
           </div>
