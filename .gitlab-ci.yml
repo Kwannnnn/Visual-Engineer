@@ -150,6 +150,10 @@ frontend:cypress:
       paths:
         - "$CI_PROJECT_DIR/frontend/node_modules/"
       policy: pull
+    - key: $CI_COMMIT_REF_SLUG-backend
+      paths:
+        - "$CI_PROJECT_DIR/backend/node_modules/"
+      policy: pull
   services:
     - postgres:14-alpine
   variables:
@@ -172,7 +176,7 @@ frontend:cypress:
 frontend:deploy:
   variables:
     API_TOKEN: $DEPLOYMENT_TOKEN
-    APP_PATH: "$CI_PROJECT_DIR"
+    APP_PATH: "$CI_PROJECT_DIR/frontend"
     OUTPUT_PATH: "$CI_PROJECT_DIR/frontend/build"
   # only:
   #   changes:
