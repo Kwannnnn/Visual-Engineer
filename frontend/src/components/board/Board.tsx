@@ -77,10 +77,13 @@ function NewBoard(props: NewBoardProps) {
         label: 'Draft Pipeline',
         labelBgPadding: [8, 4],
         labelBgBorderRadius: 4,
-        labelBgStyle: { fill: '#FFCC00', color: '#fff', fillOpacity: 0.7 },
+        labelBgStyle: {
+          cursor: 'pointer', fill: '#FFCC00', color: '#fff', fillOpacity: 0.7,
+        },
         type: 'straight',
         sourceHandle: params.sourceHandle ?? '',
         targetHandle: params.targetHandle ?? '',
+        style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
       };
 
       setEdges((edgesState) => edgesState.concat(newConnection));

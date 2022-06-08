@@ -16,6 +16,9 @@ export default function transformConnectionToEdge(objects: Partial<IOConnectionC
       target: secondItem,
       label: pipeline,
       type: 'straight',
+      labelStyle: { cursor: 'pointer' },
+      labelBgStyle: { cursor: 'pointer' },
+      style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
     };
     edges.push(edge);
   });
