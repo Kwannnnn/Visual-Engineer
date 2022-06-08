@@ -36,9 +36,12 @@ function Tab({
       })}
     >
       <p className="truncate flex-1">{name}</p>
-      <button type="button" className="hover:bg-gray-100 text-gray-500 hover:text-gray-800 rounded-full px-2" onClick={handleDelete}>
-        <FontAwesomeIcon icon={faXmark} size="sm" />
-      </button>
+      <FontAwesomeIcon
+        icon={faXmark}
+        className="hover:bg-gray-100 text-gray-500 hover:text-gray-800 rounded-full px-2 py-1.5"
+        size="sm"
+        onClick={handleDelete}
+      />
     </button>
   );
 }
