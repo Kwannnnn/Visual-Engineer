@@ -8,12 +8,21 @@ stages:
   - image
   - deploy
 
-cache:
-  paths:
-    - backend/node_modules/
-    - frontend/node_modules/
-    - frontend/build/
-  when: on_success
+cache: &global_cache
+  # - key:
+  #     files:
+  #       - "$CI_PROJECT_DIR/backend/package-lock.json"
+  #   paths:
+  #     - "$CI_PROJECT_DIR/backend/node_modules/"
+  # - key:
+  #     files:
+  #       - "$CI_PROJECT_DIR/frontend/package-lock.json"
+  #   paths:
+  #     - "$CI_PROJECT_DIR/frontend/node_modules/"
+  # - key: frontend-build-$CI_COMMIT_REF_SLUG
+  #   paths:
+  #     - "$CI_PROJECT_DIR/frontend/build/"
+
 
 install:
   stage: install
@@ -23,10 +32,18 @@ install:
     - cd ../frontend
     - npm ci
   cache:
-    paths:
-      - "$CI_PROJECT_DIR/backend/node_modules/"
-      - "$CI_PROJECT_DIR/frontend/node_modules/"
-    when: on_success
+    - key:
+        files:
+          - "$CI_PROJECT_DIR/backend/package-lock.json"
+      paths:
+        - "$CI_PROJECT_DIR/backend/node_modules/"
+      policy: push
+    - key:
+        files:
+          - "$CI_PROJECT_DIR/frontend/package-lock.json"
+      paths:
+        - "$CI_PROJECT_DIR/frontend/node_modules/"
+      policy: push
 
 # Backend
 
@@ -41,9 +58,12 @@ backend:build:
   needs:
     - install
   cache:
-    paths:
-      - backend/node_modules/
-    when: on_success
+    - key:
+        files:
+          - "$CI_PROJECT_DIR/backend/package-lock.json"
+      paths:
+        - "$CI_PROJECT_DIR/backend/node_modules/"
+      policy: pull
 
 backend:lint:
   stage: lint
@@ -55,6 +75,13 @@ backend:lint:
   script:
     - cd backend
     - npm run lint
+  cache:
+    - key:
+        files:
+          - "$CI_PROJECT_DIR/backend/package-lock.json"
+      paths:
+        - "$CI_PROJECT_DIR/backend/node_modules/"
+      policy: pull
 
 backend:apidoc:
   stage: build
@@ -69,6 +96,13 @@ backend:apidoc:
   artifacts:
     paths:
       - backend/dist/docs/apidoc/
+  cache:
+    - key:
+        files:
+          - "$CI_PROJECT_DIR/backend/package-lock.json"
+      paths:
+        - "$CI_PROJECT_DIR/backend/node_modules/"
+      policy: pull
 
 backend:integration:
   stage: test
@@ -117,13 +151,19 @@ frontend:build:
     - npm run build
   needs:
     - install
-  cache:
-    paths:
-      - "$CI_PROJECT_DIR/frontend/node_modules/"
-      - "$CI_PROJECT_DIR/frontend/build/"
-    when: on_success
   variables:
     REACT_APP_API_URL: $BACKEND_URL
+  cache:
+    - key:
+        files:
+          - "$CI_PROJECT_DIR/frontend/package-lock.json"
+      paths:
+        - "$CI_PROJECT_DIR/frontend/node_modules/"
+      policy: pull
+    - key: frontend-build-$CI_COMMIT_REF_SLUG
+      paths:
+        - "$CI_PROJECT_DIR/frontend/build/"
+      policy: push
 
 frontend:cypress:
   image: cypress/browsers:node16.13.2-chrome97-ff96
@@ -134,9 +174,12 @@ frontend:cypress:
   needs:
     - install
   cache:
-    paths:
-      - "$CI_PROJECT_DIR/frontend/node_modules/"
-    when: on_success
+    - key:
+        files:
+          - "$CI_PROJECT_DIR/frontend/package-lock.json"
+      paths:
+        - "$CI_PROJECT_DIR/frontend/node_modules/"
+      policy: pull
   services:
     - postgres:14-alpine
   variables:
@@ -178,9 +221,10 @@ frontend:deploy:
     name: production
     url: https://visualengineer-prod.philipposslicher.tech
   cache:
-    paths:
-      - "$CI_PROJECT_DIR/frontend/build/"
-    when: on_success
+    - key: frontend-build-$CI_COMMIT_REF_SLUG
+      paths:
+        - "$CI_PROJECT_DIR/frontend/build/"
+      policy: pull
 
 sast:
   stage: test
