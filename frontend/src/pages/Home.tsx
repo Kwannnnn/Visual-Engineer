@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ReactFlowProvider, Node, Edge } from 'react-flow-renderer';
+import classNames from 'classnames';
 import {
   PropertiesSidebar, TabBar, Toolbox
 } from '../components';
-import NewBoard from '../components/board/NewBoard';
+import NewBoard from '../components/board/Board';
 import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
 import {
   getBoardObjects, getObjectTypes, getTypeProperties, getObjectEdges
-} from '../api/utility-functions';
+} from '../util/api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
 import transformConnectionToEdge from '../util/transformConnectionToEdge';
 import IObjectContext from '../typings/IObjectContext';
@@ -25,7 +26,6 @@ function Home() {
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
   const [initialProperties, setInitialProperties] = useState([]);
   const [types, setTypes] = useState<[]>([]);
-  const [toolboxIsOpen, setToolboxIsOpen] = useState(true);
   const [edges, setEdges] = useState<Edge[]>([]);
 
   const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
@@ -44,7 +44,9 @@ function Home() {
   }, []);
 
   const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: typeProperties } = useAPIUtil<any>(getPropertiesCallback);
   const { data: objectEdges } = useAPIUtil<IOConnectionContext[]>(getEdgesCallback);
 
@@ -78,19 +80,19 @@ function Home() {
     setCurrentNode(node);
   };
 
-  const toolboxDisplay = currentNode ? 'lg:col-span-12' : 'lg:col-span-17';
-  const propertiesDisplay = currentNode ? 'lg:block lg:col-span-5' : 'lg:hidden';
-
   return (
     <ReactFlowProvider>
       <div className="flex-1 min-h-0">
         <div className="grid grid-cols-20 h-full">
           <Toolbox
-            isOpen={toolboxIsOpen}
             className="hidden lg:block lg:min-w-sm lg:col-span-3"
             types={types}
           />
-          <div className={`col-span-20 ${toolboxDisplay} flex flex-col`}>
+          <div className={classNames('flex flex-col col-span-20', {
+            'lg:col-span-17': !currentNode,
+            'lg:col-span-12': currentNode,
+          })}
+          >
             <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
             <NewBoard
               initialNodes={initialNodes}
@@ -101,7 +103,9 @@ function Home() {
             />
           </div>
           <PropertiesSidebar
-            className={`hidden ${propertiesDisplay}`}
+            className={classNames('hidden', {
+              'lg:block lg:col-span-5': currentNode,
+            })}
             currentNode={currentNode}
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}

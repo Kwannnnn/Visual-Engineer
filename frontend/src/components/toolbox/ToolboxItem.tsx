@@ -9,7 +9,7 @@ interface Item {
 }
 
 function ToolboxItem({ type, displayName, className = '' }: Item) {
-  const onDragStart = (event: React.DragEvent, name: string) => {
+  const onDragStart = (event: React.DragEvent) => {
     if (!event.dataTransfer) return;
     event.dataTransfer.setData('application/reactflow', type);
     // eslint-disable-next-line no-param-reassign
@@ -18,7 +18,7 @@ function ToolboxItem({ type, displayName, className = '' }: Item) {
 
   return (
     <div
-      onDragStart={(event) => onDragStart(event, displayName)}
+      onDragStart={(event) => onDragStart(event)}
       className={`cursor-move p-1 text-sm select-none transition-all hover:bg-slate-100 hover:rounded-r-lg hover:font-bold
      ${className}`}
       draggable

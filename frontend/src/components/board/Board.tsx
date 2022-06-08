@@ -1,234 +1,156 @@
 import React, {
   useState,
+  useCallback,
   useRef,
-  WheelEventHandler,
-  PointerEventHandler
+  useEffect
 } from 'react';
-import { DropTargetMonitor, useDrop } from 'react-dnd';
-import update from 'immutability-helper';
-import { motion, useDragControls } from 'framer-motion';
-import DropPlaceholder from './DropPlaceholder';
-import ItemTypes from './item/ItemTypes';
-import BoardItem from './BoardItem';
-import DragLayer from './DragLayer';
-import Item from './item/Item';
-import Items from './item/ItemsList';
+import ReactFlow, {
+  MiniMap,
+  Controls,
+  Node,
+  Edge,
+  useNodesState,
+  useEdgesState,
+  ReactFlowInstance,
+  Connection,
+  NodeTypes,
+  Background,
+  BackgroundVariant,
+  ConnectionLineType
+} from 'react-flow-renderer';
+import ItemNode from './ItemNode';
 
-interface BoardProps {
-  className?: string;
+interface NewBoardProps {
+  initialNodes?: Node[];
+  initialEdges?: Edge[];
+  onDropNodeHandler?: (node: Node) => void;
+  onNodeClick: (node: Node) => void;
+  onNodesDelete: (node: Node[]) => void;
 }
 
-function Board({ className }: BoardProps) {
-  // Constant parameters
-  const SCROLL_DISTANCE = 700;
-  const SCALE_AMOUNT = 0.06;
-  const MIN_SCALE = 0.6;
-  const MAX_SCALE = 1.5;
-  const ASPECT_RATIO = 1.3;
+// This string key must match the key in the nodeTypes object in order to render the correct
+// custom node. Otherwise a default node will be rendered.
+const NODE_TYPE = 'itemNode';
+const nodeTypes: NodeTypes = {
+  itemNode: ItemNode,
+};
 
-  const constraintsRef = useRef(null);
-  const boardRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState<number>(1);
+let id = 0;
+// Every node must have an unique id
+const getId = () => {
+  const result = `itemNode_${id}`;
+  id += 1;
+  return result;
+};
 
-  const dragControls = useDragControls();
+function NewBoard(props: NewBoardProps) {
+  const {
+    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete,
+  } = props;
 
-  const [canDrag, setCanDrag] = useState(true);
+  const reactFlowWrapper = useRef<HTMLInputElement>(null);
+  // State containing the nodes of the board
 
-  const startDrag: PointerEventHandler<HTMLDivElement> = (event) => {
-    dragControls.start(event, { snapToCursor: false });
-  };
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
 
-  const handleScaleScroll: WheelEventHandler<HTMLDivElement> = (e) => {
-    const positive = e.deltaY < 0;
+  // State containing the edges of the board
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  // State containing the React Flow Instance
+  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance>();
 
-    const scaleModification = SCALE_AMOUNT * (positive ? 1 : -1);
+  useEffect(() => {
+    setNodes(initialNodes ?? []);
+  }, [initialNodes]);
 
-    let newScale = scale + scaleModification;
+  useEffect(() => {
+    setEdges(initialEdges ?? []);
+  }, [initialEdges]);
 
-    if (scale > MAX_SCALE) {
-      newScale = MAX_SCALE;
-    } else if (scale < MIN_SCALE) {
-      newScale = MIN_SCALE;
-    }
+  // Whenever a edge gets created update the edges state
+  // eslint-disable-next-line max-len
+  const onConnect = useCallback(
+    (params: Connection) => {
+      const newConnection: Edge = {
+        id: `${params.source}_${params.target}`,
+        source: params.source ?? '',
+        target: params.target ?? '',
+        label: 'Draft Pipeline',
+        labelBgPadding: [8, 4],
+        labelBgBorderRadius: 4,
+        labelBgStyle: { fill: '#FFCC00', color: '#fff', fillOpacity: 0.7 },
+        type: 'straight',
+        sourceHandle: params.sourceHandle ?? '',
+        targetHandle: params.targetHandle ?? '',
+      };
 
-    setScale(newScale);
-  };
+      setEdges((edgesState) => edgesState.concat(newConnection));
+    },
+    [setEdges]
+  );
 
-  // set the initial state of the board as an empty array of Items
-  // and declare a setBoard function that updates the board when being called
-  const [board, setBoard] = useState<Item[]>([]);
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    // eslint-disable-next-line no-param-reassign
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
 
-  // updates the board's state everytime a new item is dropped
-  // or when an item is moved around the board
-  const updateBoard = (item: Item) => {
-    // this loops through the existing items on the board
-    // by comparing the items' tags with the one's being
-    // dropped and passed as an argument;
-    // stores what is being returned in a new variable
-    const foundItem = board.find((i) => i.tag === item.tag);
+  // The callback that creates the node whenever a new node is dropped on the board
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      // TODO: improve those null checks
+      if (!reactFlowInstance || !reactFlowWrapper || !reactFlowWrapper.current) return;
 
-    // if it's not an existing item, adds it to the board's items
-    // else, updates the item's position and sets the new state of the board
-    if (foundItem === undefined) {
-      board.push(item);
-    } else {
-      const index = board.indexOf(foundItem);
-      Object.assign(foundItem, item);
-      board[index] = foundItem;
-    }
-    setBoard(board);
-  };
+      event.preventDefault();
+      // Contains information about the size of the react flow container
+      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+      const name = event.dataTransfer?.getData('application/reactflow');
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getItemByType = (itemType: any, itemName: string) => {
-    let foundItem;
+      // check if the dropped element is valid
+      if (typeof name === 'undefined' || !name) return;
 
-    // gets the item from the hardcoded items list
-    // or from the ones on the board
-    if (itemType === ItemTypes.ITEM) {
-      foundItem = Items.find((i) => i.name === itemName);
-    } else {
-      foundItem = board.find((i) => i.name === itemName);
-    }
-
-    return foundItem;
-  };
-
-  const updateItemOffsets = (foundItem: Item, monitor: DropTargetMonitor<Pick<Item, 'name'>>) => {
-    let newItem;
-
-    // the x,y position of the pointer when dropping an item
-    const delta = monitor.getClientOffset();
-
-    // get the board element's properties, like size and position
-    const boardRect = boardRef.current?.getBoundingClientRect();
-
-    if (delta && boardRect) {
-      // subtract the top-left corner coordinates of the board
-      // from the pointer's last offset
-      let left = delta.x - boardRect.left;
-      let top = delta.y - boardRect.top;
-
-      // the resulted top, left values should be calculated
-      // relatively to the board's scale
-      left /= scale;
-      top /= scale;
-
-      // the x,y position of the pointer when clicking
-      // on the item that is going to be dragged
-      const initialClientOffset = monitor.getInitialClientOffset();
-
-      // the item's top-left corner position
-      // when the dragging process starts
-      const initialSourceClientOffset = monitor.getInitialSourceClientOffset();
-
-      const itemType = monitor.getItemType();
-
-      // calculate the item's local position on the board
-      if (itemType === ItemTypes.BOARD_ITEM && initialClientOffset
-            && initialSourceClientOffset) {
-        const localOffset = {
-          x: initialClientOffset.x - initialSourceClientOffset.x,
-          y: initialClientOffset.y - initialSourceClientOffset.y,
-        };
-
-        left -= localOffset.x;
-        top -= localOffset.y;
-      }
-
-      // update the item's position with the newly calculated values
-      newItem = update(foundItem, {
-        left: { $set: left },
-        top: { $set: top },
+      const position = reactFlowInstance.project({
+        x: event.clientX - reactFlowBounds.left,
+        y: event.clientY - reactFlowBounds.top,
       });
-    }
+      const newNode = {
+        id: getId(),
+        type: NODE_TYPE,
+        position,
+        data: {
+          type: name,
+          dataCY: getId(),
+        },
+      };
 
-    return newItem;
-  };
-
-  // React DnD hook that sets the board as a drop target;
-  // it accepts two different types: a new item being dropped,
-  // and an existing item on the board, that changes its position;
-  // it returns the collected props of the item being dragged: canDrop and isOver,
-  // (which are not being used at the moment)
-  // and the drop reference that is being attached to the
-  // target, in this case, the DropPlaceholder component
-  const [, drop] = useDrop<Pick<Item, 'name'>>(
-    () => ({
-      accept: [ItemTypes.ITEM, ItemTypes.BOARD_ITEM],
-      collect: (monitor) => ({
-        canDrop: monitor.canDrop(),
-        isOver: monitor.isOver(),
-      }),
-      drop(item, monitor) {
-        const itemType = monitor.getItemType();
-        const itemName = item.name;
-        const foundItem = getItemByType(itemType, itemName);
-        if (foundItem === undefined) {
-          return;
-        }
-
-        const newItem = updateItemOffsets(foundItem, monitor);
-        if (newItem === undefined) {
-          return;
-        }
-
-        // set the state of the board with the updated item
-        updateBoard(newItem);
-        setCanDrag(true);
-      },
-    }),
-
-    [board, scale]
+      setNodes((nodesState) => nodesState.concat(newNode));
+      if (onDropNodeHandler) onDropNodeHandler(newNode);
+    },
+    [reactFlowInstance]
   );
 
   return (
-    <motion.main
-      className={`overflow-hidden bg-neutral-200 relative flex flex-1 justify-center items-center ${className}`}
-      id="board"
-      onWheel={handleScaleScroll}
-      onPointerDown={startDrag}
-      ref={constraintsRef}
-    >
-      <motion.div
-        ref={boardRef}
-        className="bg-white z-50 transform-gpu"
-        animate={{ scale }}
-        style={{
-          width: '85%',
-          aspectRatio: ASPECT_RATIO.toString(),
-          translateY: 0.1,
-        }}
-        drag={canDrag}
-        dragControls={dragControls}
-        dragElastic={0.2}
-        dragMomentum={false}
-        dragTransition={{ bounceStiffness: 1000 }}
-        dragConstraints={{
-          left: -SCROLL_DISTANCE * scale,
-          right: SCROLL_DISTANCE * scale,
-          bottom: SCROLL_DISTANCE * (scale / ASPECT_RATIO),
-          top: -SCROLL_DISTANCE * (scale / ASPECT_RATIO),
-        }}
-        whileHover={{ cursor: 'grab' }}
+    <div className="w-full h-full" data-cy="board" ref={reactFlowWrapper}>
+      <ReactFlow
+        nodeTypes={nodeTypes}
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onInit={setReactFlowInstance}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
+        onNodeClick={(e, n) => onNodeClick(n)}
+        onNodesDelete={(nd) => onNodesDelete(nd)}
+        fitView
+        connectionLineType={ConnectionLineType.Straight}
       >
-        {board?.map((item) => (
-          <BoardItem
-            key={item.tag}
-            tag={item.tag}
-            name={item.name}
-            className="px-3 bg-gray-50 w-32 h-24 flex flex-col justify-center items-center"
-            top={item.top}
-            left={item.left}
-            setCanDrag={setCanDrag}
-            scale={1}
-          />
-        ))}
-        <DropPlaceholder innerRef={drop} />
-      </motion.div>
-      <DragLayer scale={scale} />
-    </motion.main>
+        <MiniMap />
+        <Controls />
+        <Background variant={BackgroundVariant.Lines} color="#dfdfdf" gap={25} />
+      </ReactFlow>
+    </div>
   );
 }
 
-export default Board;
+export default NewBoard;
