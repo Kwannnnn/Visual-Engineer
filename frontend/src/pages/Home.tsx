@@ -30,7 +30,7 @@ function Home() {
 
   const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
-  const getPropertiesCallback = useCallback(async () => getTypeProperties(currentNode?.data.type), [currentNode]);
+  const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode?.data.type), [currentNode]);
   const getEdgesCallback = useCallback(async () => getObjectEdges(), [currentBoardId]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
