@@ -57,7 +57,7 @@ describe('POST Relationship endpoints', () => {
   describe('POST api/v2/relationships', () => {
     test('should return the posted relationship', async () => {
       const pipeline = sampleBoards[0].items[4].tag;
-      const firstItem = sampleBoards[0].items[3].tag;
+      const firstItem = sampleBoards[0].items[6].tag;
       const secondItem = sampleBoards[0].items[5].tag;
 
       const response = await request(app)
@@ -181,12 +181,13 @@ describe('PATCH /relationships/:pipelineTag', () => {
         .patch(`/api/v2/relationships/${relationship.pipeline.tag}`)
         .send({
           pipeline: relationship.pipeline.tag,
+          firstItem: relationship.firstItem.tag,
           secondItem: sampleBoards[0].items[2].tag,
         });
       expect(response.status).toEqual(201);
       const exrsp = {
-        firstItem: relationship.firstItem.tag,
         pipeline: relationship.pipeline.tag,
+        firstItem: relationship.firstItem.tag,
         secondItem: sampleBoards[0].items[2].tag,
       };
       expect(response.body).toEqual(exrsp);
@@ -198,14 +199,14 @@ describe('PATCH /relationships/:pipelineTag', () => {
         .patch(`/api/v2/relationships/${relationship.pipeline.tag}`)
         .send({
           pipeline: relationship.pipeline.tag,
-          firstItem: sampleBoards[0].items[1].tag,
-          secondItem: sampleBoards[0].items[2].tag,
+          firstItem: sampleBoards[0].items[2].tag,
+          secondItem: sampleBoards[0].items[6].tag,
         });
       expect(response.status).toEqual(201);
       const exrsp = {
         pipeline: relationship.pipeline.tag,
-        firstItem: sampleBoards[0].items[1].tag,
-        secondItem: sampleBoards[0].items[2].tag,
+        firstItem: sampleBoards[0].items[2].tag,
+        secondItem: sampleBoards[0].items[6].tag,
       };
       expect(response.body).toEqual(exrsp);
     });
@@ -229,10 +230,11 @@ describe('PATCH /relationships/:pipelineTag', () => {
           .send({
             pipeline: relationship.pipeline.tag,
             firstItem: sampleBoards[0].items[0].tag,
+            secondItem: relationship.secondItem.tag,
           });
         expect(response.status).toEqual(400);
         const exrsp = {
-          message: 'Connected item cannot be a pipe item',
+          message: 'Cannot connect a pipeline to a pipeline',
         };
         expect(response.body).toEqual(exrsp);
       });
@@ -291,7 +293,7 @@ describe('PATCH /relationships/:pipelineTag', () => {
           });
         expect(response.status).toEqual(404);
         const exrsp = {
-          message: 'Item by tag not found',
+          message: 'Item not found',
         };
         expect(response.body).toEqual(exrsp);
       });
@@ -315,7 +317,7 @@ describe('DELETE /relationships/:pipelineTag', () => {
       const { id } = sampleBoards[0];
       const check = await request(app).get(`/api/v1/boards/${id}/objects`);
       expect(check.status).toEqual(200);
-      expect(check.body).toHaveLength(5);
+      expect(check.body).toHaveLength(6);
     });
   });
 

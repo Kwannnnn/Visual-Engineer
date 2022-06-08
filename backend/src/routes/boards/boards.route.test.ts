@@ -72,7 +72,7 @@ describe('GET Board endpoints', () => {
         const { id } = sampleBoards[0];
         const response = await request(app).get(`/api/v1/boards/${id}/objects`);
         expect(response.status).toEqual(200);
-        expect(response.body).toHaveLength(6);
+        expect(response.body).toHaveLength(7);
       });
     });
   });
@@ -277,7 +277,7 @@ describe('PATCH Board endpoints', () => {
           expect(response.status).toEqual(204);
           const check = await request(app).get(`/api/v1/boards/${board.id}/objects`);
           expect(check.status).toEqual(200);
-          expect(check.body).toHaveLength(5);
+          expect(check.body).toHaveLength(6);
         });
       });
 
