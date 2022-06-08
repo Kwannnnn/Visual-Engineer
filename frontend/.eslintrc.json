@@ -27,6 +27,8 @@
         "react/destructuring-assignment": "off",
         "no-shadow": "off",
         "comma-dangle": "off",
+        "max-len": "off",
+        "no-param-reassign": "off",
         "@typescript-eslint/comma-dangle": [
             "error",
             {

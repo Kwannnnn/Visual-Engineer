@@ -65,7 +65,7 @@ objectsRouter.get('/types/:type/properties', objectController.getTypeProperties)
  * @apiGroup Object
  *
  * @apiSuccess (Success 200) {Object[]} types JSON objects with object types arranged in a
- *                                            hierachical manner
+ *                                            hierarchical manner
  * @apiSuccessExample Success-Response:
  * HTTP/1.1 200 OK
  *     [{
@@ -74,7 +74,10 @@ objectsRouter.get('/types/:type/properties', objectController.getTypeProperties)
  *         {
  *           "group": "Pipe Item",
  *           "items": [
- *             { "name": "Pipe Fitting" }
+ *             {
+ *               "type": "pipeFitting",
+ *               "displayName": "Pipe Fitting"
+ *             },
  *           ],
  *         },
  *         {
@@ -83,15 +86,27 @@ objectsRouter.get('/types/:type/properties', objectController.getTypeProperties)
  *             {
  *               "group": "Rotating Equipment",
  *               "items": [
- *                 { "name": "Pump" },
- *                 { "name": "Blower" }
+ *                 {
+ *                   "type": "pump",
+ *                   "displayName": "Pump"
+ *                 },
+ *                 {
+ *                   "type": "blower",
+ *                   "displayName": "Blower"
+ *                 },
  *               ],
  *             },
  *             {
  *               "group": "Static Equipment",
  *               "items": [
- *                 { "name": "Tank" },
- *                 { "name": "Vessel" }
+ *                 {
+ *                   "type": "tank",
+ *                   "displayName": "Tank"
+ *                 },
+ *                 {
+ *                   "type": "vessel",
+ *                   "displayName": "Vessel"
+ *                 },
  *               ],
  *             }
  *           ],
