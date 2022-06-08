@@ -1,13 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ReactFlowProvider, Node } from 'react-flow-renderer';
 import classNames from 'classnames';
+import { AxiosError } from 'axios';
 import {
+  AlertPane,
   PropertiesSidebar, TabBar, Toolbox
 } from '../components';
 import NewBoard from '../components/board/Board';
 import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
-import { getBoardObjects, getObjectTypes, getTypeProperties } from '../util/api/utility-functions';
+import {
+  getBoardObjects,
+  getObjectTypes,
+  getTypeProperties,
+  updateBoardObject
+} from '../util/api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
 import IObjectContext from '../typings/IObjectContext';
 
@@ -21,11 +28,12 @@ function Home() {
   const [currentNode, setCurrentNode] = useState<Node | null>(null);
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
   const [initialProperties, setInitialProperties] = useState([]);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [types, setTypes] = useState<[]>([]);
 
   const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
-  const getPropertiesCallback = useCallback(async () => getTypeProperties(currentNode?.data.type), [currentNode]);
+  const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onNodesDeleteCallback = useCallback((nodes: Node[]) => {
@@ -46,6 +54,7 @@ function Home() {
   useEffect(() => {
     if (!boardObjects) return;
     const nodes = transformObjectToNode(boardObjects);
+
     setInitialNodes(nodes);
   }, [boardObjects]);
 
@@ -59,12 +68,41 @@ function Home() {
     setInitialProperties(typeProperties);
   }, [typeProperties]);
 
+  useEffect(() => {
+    if (errorMessage) {
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 5000);
+    }
+  }, [errorMessage]);
+
   const handleTab = (id: number) => {
     setCurrentBoardId(id);
   };
 
   const handleDropNode = (node: Node) => {
     setCurrentNode(node);
+  };
+
+  const onNodeMoveCallback = (node: Node) => {
+    const { id } = node;
+    const { x, y } = node.position;
+
+    if (!node.data.tag) return;
+
+    updateBoardObject(currentBoardId, id, {
+      x: Math.round(x * 1000) / 1000,
+      y: Math.round(y * 1000) / 1000,
+    }).catch((err: AxiosError) => {
+      const { response } = err;
+      if (response && response.status === 404) {
+        node.data.isDraft = true;
+        setErrorMessage(`${node.data.type} ${id} does not exist in the database!
+        It has been marked as draft`);
+        node.data.tag = undefined;
+        setCurrentNode(node);
+      }
+    });
   };
 
   return (
@@ -81,11 +119,15 @@ function Home() {
           })}
           >
             <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
+            { errorMessage && (
+              <AlertPane className="transition-opacity ease-in" message={errorMessage} />
+            )}
             <NewBoard
               initialNodes={initialNodes}
               onDropNodeHandler={handleDropNode}
               onNodeClick={(node: Node) => setCurrentNode(node)}
               onNodesDelete={(node: Node[]) => onNodesDeleteCallback(node)}
+              onNodeMove={(node: Node) => onNodeMoveCallback(node)}
             />
           </div>
           <PropertiesSidebar
