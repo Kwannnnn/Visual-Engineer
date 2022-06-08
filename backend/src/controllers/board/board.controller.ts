@@ -84,8 +84,10 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
       throw new ValidationError(`Board with id ${id} not found`, 404);
     }
 
-    checkCommonItemAttributes(req.body);
-    checkTypeSpecificAttributes(req.body);
+    //FIXME: find a way to validate only the required fields
+    //FIXME: so only tag, type, x and y
+    // checkCommonItemAttributes(req.body);
+    // checkTypeSpecificAttributes(req.body);
 
     const itemClass = getClass(req.body.type);
     const item: Item = DI.em.create(itemClass, req.body);
