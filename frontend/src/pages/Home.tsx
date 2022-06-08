@@ -37,11 +37,11 @@ function Home() {
   const onObjectDeleteCallback = useCallback((items: Node[] | Edge[]) => {
     items.forEach((item) => {
       // TODO: Delete object from backend
-      if (item.data.id === currentNode?.data.id) {
+      if (item.id === currentNode?.id) {
         setCurrentNode(null);
       }
     });
-  }, []);
+  }, [currentNode]);
 
   const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
