@@ -12,7 +12,7 @@ describe('ItemNode', () => {
     it('should send a PATCH request to update the position', () => {
       cy.intercept('PATCH', '/api/*/boards/*/objects/*').as('patchObject');
 
-      cy.get('[data-id=4fab71e6-d30d-4458-9e7a-b03c28624e7e]')
+      cy.get('[data-id=PU01]')
         .move({
           deltaX: 10,
           deltaY: 0,
