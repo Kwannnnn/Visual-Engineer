@@ -8,22 +8,6 @@ stages:
   - image
   - deploy
 
-cache: &global_cache
-  # - key:
-  #     files:
-  #       - "$CI_PROJECT_DIR/backend/package-lock.json"
-  #   paths:
-  #     - "$CI_PROJECT_DIR/backend/node_modules/"
-  # - key:
-  #     files:
-  #       - "$CI_PROJECT_DIR/frontend/package-lock.json"
-  #   paths:
-  #     - "$CI_PROJECT_DIR/frontend/node_modules/"
-  # - key: frontend-build-$CI_COMMIT_REF_SLUG
-  #   paths:
-  #     - "$CI_PROJECT_DIR/frontend/build/"
-
-
 install:
   stage: install
   script:
@@ -32,15 +16,11 @@ install:
     - cd ../frontend
     - npm ci
   cache:
-    - key:
-        files:
-          - "$CI_PROJECT_DIR/backend/package-lock.json"
+    - key: $CI_COMMIT_REF_SLUG-backend
       paths:
         - "$CI_PROJECT_DIR/backend/node_modules/"
       policy: push
-    - key:
-        files:
-          - "$CI_PROJECT_DIR/frontend/package-lock.json"
+    - key: $CI_COMMIT_REF_SLUG-frontend
       paths:
         - "$CI_PROJECT_DIR/frontend/node_modules/"
       policy: push
@@ -58,9 +38,7 @@ backend:build:
   needs:
     - install
   cache:
-    - key:
-        files:
-          - "$CI_PROJECT_DIR/backend/package-lock.json"
+    - key: $CI_COMMIT_REF_SLUG-backend
       paths:
         - "$CI_PROJECT_DIR/backend/node_modules/"
       policy: pull
@@ -76,9 +54,7 @@ backend:lint:
     - cd backend
     - npm run lint
   cache:
-    - key:
-        files:
-          - "$CI_PROJECT_DIR/backend/package-lock.json"
+    - key: $CI_COMMIT_REF_SLUG-backend
       paths:
         - "$CI_PROJECT_DIR/backend/node_modules/"
       policy: pull
@@ -97,9 +73,7 @@ backend:apidoc:
     paths:
       - backend/dist/docs/apidoc/
   cache:
-    - key:
-        files:
-          - "$CI_PROJECT_DIR/backend/package-lock.json"
+    - key: $CI_COMMIT_REF_SLUG-backend
       paths:
         - "$CI_PROJECT_DIR/backend/node_modules/"
       policy: pull
@@ -154,9 +128,7 @@ frontend:build:
   variables:
     REACT_APP_API_URL: $BACKEND_URL
   cache:
-    - key:
-        files:
-          - "$CI_PROJECT_DIR/frontend/package-lock.json"
+    - key: $CI_COMMIT_REF_SLUG-frontend
       paths:
         - "$CI_PROJECT_DIR/frontend/node_modules/"
       policy: pull
@@ -174,9 +146,7 @@ frontend:cypress:
   needs:
     - install
   cache:
-    - key:
-        files:
-          - "$CI_PROJECT_DIR/frontend/package-lock.json"
+    - key: $CI_COMMIT_REF_SLUG-frontend
       paths:
         - "$CI_PROJECT_DIR/frontend/node_modules/"
       policy: pull
