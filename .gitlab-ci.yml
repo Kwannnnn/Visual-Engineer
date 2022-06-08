@@ -104,9 +104,9 @@ backend:image:
 
 frontend:build:
   stage: build
-  only:
-    changes:
-      - frontend/**/*
+  # only:
+  #   changes:
+  #     - frontend/**/*
   script:
     - cd frontend
     - npm run build
@@ -115,7 +115,7 @@ frontend:build:
   cache:
     paths:
       - frontend/node_modules/
-      - frontend/build/
+      - "$CI_PROJECT_DIR/frontend/build/"
     when: on_success
   variables:
     REACT_APP_API_URL: $BACKEND_URL
