@@ -86,6 +86,9 @@ function NewBoard(props: NewBoardProps) {
         sourceHandle: params.sourceHandle ?? '',
         targetHandle: params.targetHandle ?? '',
         style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
+        data: {
+          type: 'pipeline',
+        },
       };
 
       setEdges((edgesState) => edgesState.concat(newConnection));
