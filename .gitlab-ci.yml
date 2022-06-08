@@ -141,7 +141,7 @@ frontend:deploy:
     - echo "Frontend deployed successfully."
   environment:
     name: production
-    url: http://delightful-bush-0eab0d703.1.azurestaticapps.net
+    url: https://visualengineer-prod.philipposslicher.tech
   # only:
   #   - main
   #   - staging
