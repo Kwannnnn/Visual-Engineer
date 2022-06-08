@@ -14,6 +14,7 @@ interface PropertiesSidebarProps {
   initialProperties?: Listing[];
   currentNode: Node | null;
   onClose: () => void;
+  onFieldChange?: (node: Node, field: string, value: string) => void;
 }
 
 function getPropertyValue(node: Node | null, propName: string) {
@@ -32,10 +33,11 @@ function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 
 function PropertiesSidebar(props: PropertiesSidebarProps) {
   const {
-    className = '', initialProperties = [], onClose, currentNode,
+    className = '', initialProperties = [], onClose, currentNode, onFieldChange,
   } = props;
 
   const [propValues, setPropValues] = useState<Listing[]>([]);
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setPropValues(initialProperties);
@@ -54,9 +56,16 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
       newProps.push(item);
     });
     setPropValues(newProps);
-  };
 
-  const heading = currentNode?.data.type || 'Unknown';
+    if (!onFieldChange) return;
+    if (timer) clearTimeout(timer);
+
+    // If the user is typing, we want to debounce the update to the node
+    const delayDebounce = setTimeout(() => {
+      onFieldChange(currentNode, event.target.name, event.target.value);
+    }, 1500);
+    setTimer(delayDebounce);
+  };
 
   return (
     <aside data-cy="properties-sidebar" className={`w-full h-full flex bg-slate-50 pt-3 pb-12 px-6 overflow-y-auto border-l border-slate-200 rounded-sm relative ${className}`}>
@@ -71,7 +80,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
         </button>
 
         <div>
-          <h2 data-cy="siderbar-item-type" className="text-xl inline-block font-semibold mb-4">{heading}</h2>
+          <h2 data-cy="siderbar-item-type" className="text-xl inline-block font-semibold mb-4">{currentNode?.data.type ?? ''}</h2>
           { currentNode && currentNode.data.isDraft && (
             <span className="bg-amber-100 rounded-md text-amber-600 uppercase px-1.5 py-1.5 ml-1.5 text-sm font-medium">Draft</span>
           )}
@@ -112,7 +121,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
                       type={p.type}
                       data-cy={`sidebar-input-field-${p.name}`}
                       value={p.value}
-                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleChange(event)}
+                      onChange={(event) => handleChange(event)}
                       className="focus:outline-sky-600 rounded-lg w-full bg-gray-200 text-slate-700 px-3 py-2 mt-1"
                     />
                   </label>

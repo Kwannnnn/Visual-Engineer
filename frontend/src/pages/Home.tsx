@@ -36,7 +36,17 @@ function Home() {
   const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
   const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
-
+  const onErrorCallback = useCallback((error: AxiosError, node: Node) => {
+    const { response } = error;
+    const { id } = node;
+    if (response && response.status === 404) {
+      node.data.isDraft = true;
+      setErrorMessage(`${node.data.type} ${id} does not exist in the database!
+        It has been marked as draft`);
+      node.data.tag = undefined;
+      setCurrentNode(node);
+    }
+  }, []);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onNodesDeleteCallback = useCallback((nodes: Node[]) => {
     nodes.forEach((node) => {
@@ -46,6 +56,26 @@ function Home() {
       }
     });
   }, []);
+  const onNodeMoveCallback = useCallback((node: Node) => {
+    const { x, y } = node.position;
+
+    if (!node.data.tag) return;
+    updateBoardObject(currentBoardId, node.data.tag, {
+      x: Math.round(x * 1000) / 1000,
+      y: Math.round(y * 1000) / 1000,
+    }).catch((err: AxiosError) => {
+      onErrorCallback(err, node);
+    });
+  }, [currentBoardId, onErrorCallback]);
+
+  const onNodeFieldUpdateCallback = useCallback((node: Node, field: string, value: string) => {
+    if (!node.data.tag) return;
+    updateBoardObject(currentBoardId, node.data.tag, {
+      [field]: value,
+    }).catch((err: AxiosError) => {
+      onErrorCallback(err, node);
+    });
+  }, [currentBoardId, onErrorCallback]);
 
   const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -87,27 +117,6 @@ function Home() {
     setCurrentNode(node);
   };
 
-  const onNodeMoveCallback = (node: Node) => {
-    const { id } = node;
-    const { x, y } = node.position;
-
-    if (!node.data.tag) return;
-
-    updateBoardObject(currentBoardId, id, {
-      x: Math.round(x * 1000) / 1000,
-      y: Math.round(y * 1000) / 1000,
-    }).catch((err: AxiosError) => {
-      const { response } = err;
-      if (response && response.status === 404) {
-        node.data.isDraft = true;
-        setErrorMessage(`${node.data.type} ${id} does not exist in the database!
-        It has been marked as draft`);
-        node.data.tag = undefined;
-        setCurrentNode(node);
-      }
-    });
-  };
-
   return (
     <ReactFlowProvider>
       <div className="flex-1 min-h-0">
@@ -140,6 +149,7 @@ function Home() {
             currentNode={currentNode}
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
+            onFieldChange={(node: Node, field: string, value: string) => onNodeFieldUpdateCallback(node, field, value)}
           />
         </div>
       </div>
