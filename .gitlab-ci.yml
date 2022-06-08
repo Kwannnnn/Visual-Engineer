@@ -130,6 +130,9 @@ frontend:deploy:
     API_TOKEN: $DEPLOYMENT_TOKEN
     APP_PATH: "$CI_PROJECT_DIR"
     OUTPUT_PATH: "$CI_PROJECT_DIR/frontend/build"
+  only:
+    changes:
+      - frontend/**/*
   stage: deploy
   needs:
     - frontend:build
