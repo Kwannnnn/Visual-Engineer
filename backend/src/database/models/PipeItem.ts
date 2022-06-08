@@ -19,11 +19,11 @@ export default abstract class PipeItem extends Item {
     diameter?: number,
     pressureClass?: PressureClass,
   ) {
-    super( type, x, y, name, length, width, depth, diameter);
+    super(type, x, y, name, length, width, depth, diameter);
     this.pressureClass = pressureClass;
   }
 
-  @Enum({items: () => PressureClass, nullable : true})
+  @Enum({ items: () => PressureClass, nullable: true })
   @ObjectProperty(PropertyType.STRING)
     pressureClass?: PressureClass;
 }

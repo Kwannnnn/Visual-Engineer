@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import DI from '../../DI';
 import { Item, Board } from '../../database/models';
 import ValidationError from '../../error/ValidationError';
-import { checkCommonItemAttributes, checkTypeSpecificAttributes, getClass } from './board.util';
+import { getClass } from './board.util';
 import {
   BoardObjectParams, BoardParams, FieldError, PatchBoardBody, PatchBoardObject,
 } from '../../routes/boards/boards.types';
@@ -84,8 +84,8 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
       throw new ValidationError(`Board with id ${id} not found`, 404);
     }
 
-    //FIXME: find a way to validate only the required fields
-    //FIXME: so only tag, type, x and y
+    // FIXME: find a way to validate only the required fields
+    // FIXME: so only tag, type, x and y
     // checkCommonItemAttributes(req.body);
     // checkTypeSpecificAttributes(req.body);
 
