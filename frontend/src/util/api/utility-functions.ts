@@ -86,6 +86,6 @@ export async function getTypeProperties(type: string) {
 }
 
 export async function getObjectEdges() {
-  const result = await axios.get(`${urlV2}/relationships`);
+  const result = await axios.get(`${url}/v2/relationships`);
   return result.data;
 }
