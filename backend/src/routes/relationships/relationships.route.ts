@@ -141,8 +141,8 @@ relationshipRouter.post(
       .exists()
       .withMessage('Two items are needed to create a relationship.'),
   ]),
-  middleware.isValidPipeline,
-  middleware.areValidItems,
+  middleware.isPipelineValid,
+  middleware.areItemsValid,
   middleware.isPipelineInstanceOfPipeline,
   middleware.areItemsNotInstanceOfPipeline,
   middleware.areConnectedItemsTheSame,
@@ -200,17 +200,33 @@ relationshipRouter.post(
  * @apiErrorExample ConnectPipeToPipe:
  *     HTTP/1.1 400 BAD REQUEST
  *     {
- *       "message": "Connected item cannot be a pipe item"
+ *       "message": "Cannot connect a pipeline to a pipeline"
  *     }
  *
  * @apiError ItemNotFound New item to connect does not exist
  * @apiErrorExample ItemNotFound:
  *     HTTP/1.1 404 NOT FOUND
  *     {
- *       "message": "Item by tag not found"
+ *       "message": "Item not found"
+ *     }
+ *
+ * @apiError InvalidRelationship The provided items cannot be associated.
+ * @apiErrorExample InvalidRelationship:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "You cannot associate a Pump with a Blower."
  *     }
  */
-relationshipRouter.patch('/:pipelineTag', relationshipController.patchRelationship);
+relationshipRouter.patch(
+  '/:pipelineTag',
+  middleware.isRelationshipValid,
+  middleware.isRequestBodyValid,
+  middleware.arePipelinesMatching,
+  middleware.areConnectedItemsTheSame,
+  middleware.areItemsValid,
+  middleware.areItemsNotInstanceOfPipeline,
+  relationshipController.patchRelationship,
+);
 
 /**
  * @api {delete} /api/v2/relationships/:pipelineTag Delete a relationship

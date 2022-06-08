@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { Pipeline } from '../database/models';
 import DI from '../DI';
 
-export async function isValidPipeline(
+export async function isPipelineValid(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -22,7 +22,58 @@ export async function isValidPipeline(
   return next();
 }
 
-export async function areValidItems(
+export async function isRelationshipValid(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const { pipelineTag } = req.params;
+
+  const relationship = await DI
+    .relationshipRepository
+    .findOne(pipelineTag);
+
+  if (!relationship) {
+    return res.status(404).json({
+      message: 'Relationship not found',
+    });
+  }
+
+  return next();
+}
+
+export function isRequestBodyValid(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  if (!req.body || (!req.body.firstItem && !req.body.secondItem && !req.body.pipeline)) {
+    return res.status(400).json({
+      message: 'Mandatory fields in request body are missing',
+    });
+  }
+
+  return next();
+}
+
+export function arePipelinesMatching(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const { pipelineTag } = req.params;
+
+  if (!req.body!.pipeline || pipelineTag !== req.body!.pipeline) {
+    return res.status(400).json({
+
+      message: 'Pipeline tag in request body does not match',
+    });
+  }
+
+  return next();
+}
+
+export async function areItemsValid(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -89,7 +140,7 @@ export async function areConnectedItemsTheSame(
 ) {
   if (req.body!.firstItem === req.body!.secondItem) {
     return res.status(400).json({
-      message: 'First and second item cannot be the same.',
+      message: 'First and second item cannot be the same',
     });
   }
 
