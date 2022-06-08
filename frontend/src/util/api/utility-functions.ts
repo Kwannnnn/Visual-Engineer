@@ -53,11 +53,10 @@ export async function updateBoardObject(
   itemTag: string,
   properties: Partial<IObjectContext>
 ) {
-  await axios.patch(`${url}/v1/boards/${boardId}/objects/${itemTag}`, {
+  const response = await axios.patch(`${url}/v1/boards/${boardId}/objects/${itemTag}`, {
     ...properties,
-  })
-    .then((response) => response.data)
-    .catch((err) => err.data);
+  });
+  return response.data;
 }
 
 export async function deleteBoard(id: number) {
