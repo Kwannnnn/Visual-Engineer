@@ -2,10 +2,10 @@
 import {
   Property, PrimaryKey, ManyToOne, Entity,
 } from '@mikro-orm/core';
+import { v4 } from 'uuid';
 import { ObjectProperty, PropertyType } from '../../util/properties';
 // eslint-disable-next-line
 import Board from './Board';
-import { v4 } from 'uuid';
 
 @Entity({
   discriminatorColumn: 'type',
