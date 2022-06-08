@@ -92,6 +92,7 @@ function NewBoard(props: NewBoardProps) {
       };
 
       setEdges((edgesState) => edgesState.concat(newConnection));
+      onEdgeClick(newConnection);
     },
     [setEdges]
   );
