@@ -12,6 +12,7 @@ import {
 import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
 import {
+  createItem,
   getBoardObjects,
   getObjectTypes,
   getTypeProperties,
@@ -19,6 +20,7 @@ import {
 } from '../util/api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
 import IObjectContext from '../typings/IObjectContext';
+import { IListing } from '../typings/IListing';
 
 function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,11 +31,14 @@ function Home() {
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
   const [currentNode, setCurrentNode] = useState<Node | null>(null);
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
-  const [initialProperties, setInitialProperties] = useState([]);
+  const [initialProperties, setInitialProperties] = useState<IListing[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [types, setTypes] = useState<[]>([]);
 
-  const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
+  const getBoardObjectsCallback = useCallback(
+    async () => getBoardObjects(currentBoardId),
+    [currentBoardId]
+  );
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
   const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
   const onErrorCallback = useCallback((error: AxiosError, node: Node) => {
@@ -77,7 +82,9 @@ function Home() {
     });
   }, [currentBoardId, onErrorCallback]);
 
-  const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
+  const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(
+    getBoardObjectsCallback
+  );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -117,6 +124,12 @@ function Home() {
     setCurrentNode(node);
   };
 
+  const postInitialItem = (x: number, y: number, type: string) => createItem(currentBoardId, {
+    type,
+    x,
+    y,
+  });
+
   return (
     <ReactFlowProvider>
       <div className="flex-1 min-h-0">
@@ -125,10 +138,11 @@ function Home() {
             className="hidden lg:block lg:min-w-sm lg:col-span-3"
             types={types}
           />
-          <div className={classNames('flex flex-col col-span-20', {
-            'lg:col-span-17': !currentNode,
-            'lg:col-span-12': currentNode,
-          })}
+          <div
+            className={classNames('flex flex-col col-span-20', {
+              'lg:col-span-17': !currentNode,
+              'lg:col-span-12': currentNode,
+            })}
           >
             <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
             { errorMessage && (
@@ -140,6 +154,7 @@ function Home() {
               onNodeClick={(node: Node) => setCurrentNode(node)}
               onNodesDelete={(node: Node[]) => onNodesDeleteCallback(node)}
               onNodeMove={(node: Node) => onNodeMoveCallback(node)}
+              postInitialItem={postInitialItem}
             />
           </div>
           <PropertiesSidebar
