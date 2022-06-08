@@ -43,7 +43,7 @@ const getId = () => {
   return result;
 };
 
-function NewBoard(props: NewBoardProps) {
+function Board(props: NewBoardProps) {
   const {
     initialNodes,
     initialEdges,
@@ -138,4 +138,4 @@ function NewBoard(props: NewBoardProps) {
   );
 }
 
-export default NewBoard;
+export default Board;

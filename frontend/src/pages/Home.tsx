@@ -4,9 +4,11 @@ import classNames from 'classnames';
 import { AxiosError } from 'axios';
 import {
   AlertPane,
-  PropertiesSidebar, TabBar, Toolbox
+  PropertiesSidebar,
+  TabBar,
+  Toolbox,
+  Board
 } from '../components';
-import NewBoard from '../components/board/Board';
 import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
 import {
@@ -123,7 +125,7 @@ function Home() {
             { errorMessage && (
               <AlertPane className="transition-opacity ease-in" message={errorMessage} />
             )}
-            <NewBoard
+            <Board
               initialNodes={initialNodes}
               onDropNodeHandler={handleDropNode}
               onNodeClick={(node: Node) => setCurrentNode(node)}
