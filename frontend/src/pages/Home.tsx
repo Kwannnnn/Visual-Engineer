@@ -77,6 +77,7 @@ function Home() {
   }, [errorMessage]);
 
   const handleTab = (id: number) => {
+    setCurrentNode(null);
     setCurrentBoardId(id);
   };
 
