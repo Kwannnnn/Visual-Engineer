@@ -141,10 +141,11 @@ frontend:deploy:
     API_TOKEN: $DEPLOYMENT_TOKEN
     APP_PATH: "$CI_PROJECT_DIR"
     OUTPUT_PATH: "$CI_PROJECT_DIR/frontend/build"
-    BACKEND_URL: $BACKEND_URL
-  only:
-    changes:
-      - frontend/**/*
+    REACT_APP_API_URL: $BACKEND_URL
+  rules:
+    - changes:
+        - frontend/**/*
+    # - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "main"
   stage: deploy
   needs:
     - frontend:build
@@ -154,9 +155,6 @@ frontend:deploy:
   environment:
     name: production
     url: https://visualengineer-prod.philipposslicher.tech
-  # only:
-  #   - main
-  #   - staging
 
 sast:
   stage: test
