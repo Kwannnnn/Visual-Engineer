@@ -5,7 +5,10 @@
         {
           "group": "Pipe Item",
           "items": [
-            { "name": "Pipe Fitting" }
+            { 
+              "type": "pipeFitting",
+              "displayName": "Pipe Fitting"
+            }
           ]
         },
         {
@@ -14,15 +17,26 @@
             {
               "group": "Rotating Equipment",
               "items": [
-                { "name": "Pump" },
-                { "name": "Blower" }
+                { 
+                  "type": "pump",
+                  "displayName": "Pump" 
+                },
+                { 
+                  "type": "blower",
+                  "displayName": "Blower" }
               ]
             },
             {
               "group": "Static Equipment",
               "items": [
-                { "name": "Tank" },
-                { "name": "Vessel" }
+                { 
+                  "type": "tank",
+                  "displayName": "Tank"
+                },
+                { 
+                  "type": "vessel",
+                  "displayName": "Vessel"
+                }
               ]
             }
           ]

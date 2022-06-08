@@ -115,14 +115,24 @@ frontend:cypress:
       - frontend/**/*
   needs:
     - install
+  services:
+    - postgres:14-alpine
+  variables:
+    POSTGRES_DB: $POSTGRES_DB
+    POSTGRES_USER: $POSTGRES_USER
+    POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    POSTGRES_HOST_AUTH_METHOD: trust
+    DATABASE_URL: postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres/$POSTGRES_DB
+    REACT_APP_API_URL: http://localhost:3000/api
   script:
     - cd backend
-    - npm run dev
+    - npm run db:update
+    - npm run db:seed
+    - npm run build
+    - PORT=3000 npm run prod &
     - cd ../frontend
-    - cd frontend
     - npx cypress install
     - npm run test:cypress
-
 sast:
   stage: test
   needs: []
