@@ -6,11 +6,13 @@ stages:
   - lint
   - test
   - image
+  - deploy
 
 cache:
   paths:
     - backend/node_modules/
     - frontend/node_modules/
+    - frontend/build/
   when: on_success
 
 install:
@@ -122,6 +124,24 @@ frontend:cypress:
     - cd frontend
     - npx cypress install
     - npm run test:cypress
+
+frontend:deploy:
+  variables:
+    API_TOKEN: $DEPLOYMENT_TOKEN
+    APP_PATH: "$CI_PROJECT_DIR"
+    OUTPUT_PATH: "$CI_PROJECT_DIR/frontend/build"
+  stage: deploy
+  needs:
+    - frontend:build
+  image: registry.gitlab.com/static-web-apps/azure-static-web-apps-deploy
+  script:
+    - echo "Frontend deployed successfully."
+  environment:
+    name: production
+    url: http://delightful-bush-0eab0d703.1.azurestaticapps.net
+  # only:
+  #   - main
+  #   - staging
 
 sast:
   stage: test
