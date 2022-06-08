@@ -22,6 +22,11 @@ install:
     - npm ci
     - cd ../frontend
     - npm ci
+  cache:
+    paths:
+      - "$CI_PROJECT_DIR/backend/node_modules/"
+      - "$CI_PROJECT_DIR/frontend/node_modules/"
+    when: on_success
 
 # Backend
 
@@ -114,7 +119,7 @@ frontend:build:
     - install
   cache:
     paths:
-      - frontend/node_modules/
+      - "$CI_PROJECT_DIR/frontend/node_modules/"
       - "$CI_PROJECT_DIR/frontend/build/"
     when: on_success
   variables:
@@ -130,8 +135,7 @@ frontend:cypress:
     - install
   cache:
     paths:
-      - frontend/node_modules/
-      - frontend/build/
+      - "$CI_PROJECT_DIR/frontend/node_modules/"
     when: on_success
   services:
     - postgres:14-alpine
