@@ -108,6 +108,13 @@ frontend:build:
     - npm run build
   needs:
     - install
+  cache:
+    paths:
+      - frontend/node_modules/
+      - frontend/build/
+    when: on_success
+  variables:
+    REACT_APP_API_URL: $BACKEND_URL
 
 frontend:cypress:
   image: cypress/browsers:node16.13.2-chrome97-ff96
@@ -117,6 +124,11 @@ frontend:cypress:
       - frontend/**/*
   needs:
     - install
+  cache:
+    paths:
+      - frontend/node_modules/
+      - frontend/build/
+    when: on_success
   services:
     - postgres:14-alpine
   variables:
@@ -141,14 +153,13 @@ frontend:deploy:
     API_TOKEN: $DEPLOYMENT_TOKEN
     APP_PATH: "$CI_PROJECT_DIR"
     OUTPUT_PATH: "$CI_PROJECT_DIR/frontend/build"
-    REACT_APP_API_URL: $BACKEND_URL
   only:
     changes:
       - frontend/**/*
   # rules:
   #   - changes:
   #       - frontend/**/*
-    # - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "main"
+  # - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "main"
   stage: deploy
   needs:
     - frontend:build
