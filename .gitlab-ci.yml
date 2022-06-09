@@ -193,15 +193,16 @@ frontend:deploy:
     APP_PATH: "$CI_PROJECT_DIR/frontend"
     OUTPUT_PATH: "$CI_PROJECT_DIR/frontend/build"
     BRANCH: $CI_COMMIT_REF_NAME
-    # ENV_NAME: $CI_COMMIT_REF_NAME
     REACT_APP_API_URL: $BACKEND_URL
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       variables:
         ENV_NAME: production
+        DEPLOYMENT_URL: https://visualengineer-prod.philipposslicher.tech
     - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
       variables:
         ENV_NAME: staging
+        DEPLOYMENT_URL: https://delightful-bush-0eab0d703-staging.westeurope.1.azurestaticapps.net
   # only:
   #   changes:
   #     - frontend/**/*
@@ -215,7 +216,7 @@ frontend:deploy:
     - echo "Frontend deployed successfully."
   environment:
     name: $ENV_NAME
-    url: https://visualengineer-prod.philipposslicher.tech
+    url: $DEPLOYMENT_URL
   cache:
     - key: frontend-build-$CI_COMMIT_REF_SLUG
       paths:
