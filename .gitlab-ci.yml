@@ -207,16 +207,17 @@ frontend:deploy:
     APP_PATH: "$CI_PROJECT_DIR/frontend"
     OUTPUT_PATH: "$CI_PROJECT_DIR/frontend/build"
     BRANCH: $CI_COMMIT_REF_NAME
-    REACT_APP_API_URL: $BACKEND_URL
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       variables:
         ENV_NAME: production
-        DEPLOYMENT_URL: https://visualengineer-prod.philipposslicher.tech
+        DEPLOYMENT_URL: $FRONTEND_DEPLOYMENT_URL
+        REACT_APP_API_URL: $BACKEND_URL
     - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
       variables:
         ENV_NAME: staging
-        DEPLOYMENT_URL: https://delightful-bush-0eab0d703-staging.westeurope.1.azurestaticapps.net
+        DEPLOYMENT_URL: $FRONTEND_DEPLOYMENT_URL_STAGING
+        REACT_APP_API_URL: $BACKEND_URL_STAGING
     - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "main"
   stage: deploy
   image: registry.gitlab.com/static-web-apps/azure-static-web-apps-deploy
