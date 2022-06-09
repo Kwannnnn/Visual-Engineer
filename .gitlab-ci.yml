@@ -80,6 +80,8 @@ backend:integration:
   only:
     changes:
       - backend/**/*
+  needs:
+    - backend:build
   image: docker/compose:1.29.2
   services:
     - docker:dind
