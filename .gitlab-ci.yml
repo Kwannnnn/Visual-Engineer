@@ -192,9 +192,13 @@ frontend:deploy:
     API_TOKEN: $DEPLOYMENT_TOKEN
     APP_PATH: "$CI_PROJECT_DIR/frontend"
     OUTPUT_PATH: "$CI_PROJECT_DIR/frontend/build"
-    BRANCH: $CI_COMMIT_BRANCH
-    ENV_NAME: $CI_COMMIT_BRANCH
+    BRANCH: $CI_COMMIT_REF_NAME
+    ENV_NAME: $CI_COMMIT_REF_NAME
     REACT_APP_API_URL: $BACKEND_URL
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      variables:
+        ENV_NAME: production
   # only:
   #   changes:
   #     - frontend/**/*
@@ -207,7 +211,7 @@ frontend:deploy:
   script:
     - echo "Frontend deployed successfully."
   environment:
-    name: production
+    name: $ENV_NAME
     url: https://visualengineer-prod.philipposslicher.tech
   cache:
     - key: frontend-build-$CI_COMMIT_REF_SLUG
