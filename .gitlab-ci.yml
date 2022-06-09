@@ -201,7 +201,7 @@ frontend:deploy:
         ENV_NAME: production
     - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
       variables:
-        ENV_NAME: $CI_COMMIT_REF_NAME
+        ENV_NAME: staging
   # only:
   #   changes:
   #     - frontend/**/*
@@ -214,7 +214,7 @@ frontend:deploy:
   script:
     - echo "Frontend deployed successfully."
   environment:
-    name: production
+    name: $ENV_NAME
     url: https://visualengineer-prod.philipposslicher.tech
   cache:
     - key: frontend-build-$CI_COMMIT_REF_SLUG
