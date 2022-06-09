@@ -8,24 +8,21 @@ stages:
   - image
   - deploy
 
-install:
+# Backend
+
+backend:install:
   stage: install
+  only:
+    changes:
+      - backend/**/*
   script:
     - cd backend
-    - npm ci
-    - cd ../frontend
     - npm ci
   cache:
     - key: $CI_COMMIT_REF_SLUG-backend
       paths:
         - "$CI_PROJECT_DIR/backend/node_modules/"
       policy: push
-    - key: $CI_COMMIT_REF_SLUG-frontend
-      paths:
-        - "$CI_PROJECT_DIR/frontend/node_modules/"
-      policy: push
-
-# Backend
 
 backend:build:
   stage: build
@@ -36,7 +33,7 @@ backend:build:
     - cd backend
     - npm run build
   needs:
-    - install
+    - backend:install
   cache:
     - key: $CI_COMMIT_REF_SLUG-backend
       paths:
@@ -49,7 +46,7 @@ backend:lint:
     changes:
       - backend/**/*
   needs:
-    - install
+    - backend:install
   script:
     - cd backend
     - npm run lint
@@ -65,7 +62,7 @@ backend:apidoc:
     changes:
       - backend/**/*
   needs:
-    - install
+    - backend:install
   script:
     - cd backend
     - npm run apidoc
@@ -115,16 +112,30 @@ backend:image:
 
 # Frontend
 
+frontend:install:
+  stage: install
+  only:
+    changes:
+      - frontend/**/*
+  script:
+    - cd frontend
+    - npm ci
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-frontend
+      paths:
+        - "$CI_PROJECT_DIR/frontend/node_modules/"
+      policy: push
+
 frontend:build:
   stage: build
-  # only:
-  #   changes:
-  #     - frontend/**/*
+  only:
+    changes:
+      - frontend/**/*
   script:
     - cd frontend
     - npm run build
   needs:
-    - install
+    - frontend:install
   variables:
     REACT_APP_API_URL: $BACKEND_URL
   cache:
@@ -144,7 +155,8 @@ frontend:cypress:
     changes:
       - frontend/**/*
   needs:
-    - install
+    - frontend:install
+    - backend:install
   cache:
     - key: $CI_COMMIT_REF_SLUG-frontend
       paths:
@@ -187,8 +199,6 @@ frontend:deploy:
   #       - frontend/**/*
   # - if: $CI_COMMIT_BRANCH == "staging" || $CI_COMMIT_BRANCH == "main"
   stage: deploy
-  needs:
-    - frontend:build
   image: registry.gitlab.com/static-web-apps/azure-static-web-apps-deploy
   script:
     - echo "Frontend deployed successfully."
