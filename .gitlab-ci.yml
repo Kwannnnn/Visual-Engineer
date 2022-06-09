@@ -193,12 +193,15 @@ frontend:deploy:
     APP_PATH: "$CI_PROJECT_DIR/frontend"
     OUTPUT_PATH: "$CI_PROJECT_DIR/frontend/build"
     BRANCH: $CI_COMMIT_REF_NAME
-    ENV_NAME: $CI_COMMIT_REF_NAME
+    # ENV_NAME: $CI_COMMIT_REF_NAME
     REACT_APP_API_URL: $BACKEND_URL
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       variables:
         ENV_NAME: production
+    - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+      variables:
+        ENV_NAME: $CI_COMMIT_REF_NAME
   # only:
   #   changes:
   #     - frontend/**/*
