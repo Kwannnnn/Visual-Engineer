@@ -30,7 +30,7 @@ export default function Navbar() {
         <nav className="hidden lg:block">
           <ul className="flex items-center space-x-5">
             <li>
-              <button className="py-2 px-5 text-sm shadow-md font-medium text-white focus:outline-none bg-cyan-600 hover:bg-cyan-700 rounded-xl" type="button">
+              <button className="py-2 px-5 text-sm shadow-md font-medium text-white focus:outline-none bg-wb-blue hover:bg-sky-600 rounded-xl" type="button">
                 <FontAwesomeIcon icon={faPlus} className="pr-2" />
                 New Project
               </button>
