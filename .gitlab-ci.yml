@@ -211,7 +211,7 @@ frontend:deploy:
   script:
     - echo "Frontend deployed successfully."
   environment:
-    name: $ENV_NAME
+    name: production
     url: https://visualengineer-prod.philipposslicher.tech
   cache:
     - key: frontend-build-$CI_COMMIT_REF_SLUG
