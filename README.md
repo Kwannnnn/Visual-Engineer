@@ -84,6 +84,6 @@ The backend is deployed with a multi-container group using Azure ACI, accessible
 
 Additionally, a sidecar reverse proxy Caddy container is deployed to proxy and serve the backend using TLS (with an automated LetsEncrypt certificate).
 
-> To deploy this sidecar, run `az container create --resource-group 24HBOICTBVWBVE --file azure/caddy-proxy-aci.yml`.
+> To deploy this sidecar, run `az container create --resource-group 24HBOICTBVWBVE --file caddy-proxy-aci.yml` from the [azure directory](./azure/).
 
 This will deploy the container to [https://visualengineer-api-tls.westeurope.azurecontainer.io/](https://visualengineer-api-tls.westeurope.azurecontainer.io/).
