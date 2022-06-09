@@ -21,6 +21,7 @@
     "react-scripts": "^5.0.1"
   },
   "devDependencies": {
+    "@4tw/cypress-drag-drop": "^2.1.0",
     "@cypress/code-coverage": "^3.9.12",
     "@cypress/instrument-cra": "^1.4.0",
     "@types/node": "^16.11.31",

@@ -2,8 +2,8 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
-      outlineOffset: {
-        m2: '-2px',
+      colors: {
+        'wb-blue': '#0097d9',
       },
       gridTemplateColumns: {
         20: 'repeat(20, minmax(0, 1fr))',
