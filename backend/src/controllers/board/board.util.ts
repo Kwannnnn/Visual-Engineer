@@ -4,6 +4,7 @@ import {
 import ValidationError from '../../error/ValidationError';
 
 const propsToFilter = ['constructor', '__entity', '__meta', '__platform', '__factory', '__helper', 'toJSON'];
+const requiredAttributes = ['type', 'x', 'y'];
 
 export function getClass(type: string): any {
   switch (type) {
@@ -19,7 +20,6 @@ export function getClass(type: string): any {
 
 export function checkRequiredAttributes(body: any): void {
   const itemClass = getClass(body.type);
-  const requiredAttributes = ['type', 'x', 'y'];
   const properties = Object
     .getOwnPropertyNames(itemClass.prototype)
     .filter((p) => !propsToFilter.includes(p));
