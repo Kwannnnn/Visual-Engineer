@@ -100,13 +100,13 @@ function Board(props: NewBoardProps) {
 
       postInitialItem(position.x, position.y, name).then((item) => {
         const newNode = {
-          id: getId(),
+          id: item.tag!,
           type: NODE_TYPE,
           position,
           data: {
             type: name,
             tag: item.tag,
-            dataCY: getId(),
+            dataCY: `itemNode-${item.tag}`,
           },
         };
 
