@@ -1,56 +1,60 @@
 import {
-  dragAndDropVessel, getPropertiesSidebar, getPropertiesSidebarList
+	getPropertiesSidebar, getPropertiesSidebarList, dragAndDropVessel
 } from '../support/test-utils.js';
 
 beforeEach(() => {
-  cy.visit('http://localhost:8080');
-  cy.viewport(1440, 900);
+	cy.visit('http://localhost:8080');
+	cy.viewport(1440, 900);
 });
 
 describe('PropertiesSidebar', () => {
-  describe('When "Vessel" is dragged and dropped from the Toolbox to the Board', () => {
-    it('should populate the PropertiesSidebar with empty input fields', () => {
-      getPropertiesSidebar();
-      getPropertiesSidebarList();
-      dragAndDropVessel();
+	describe('When "Vessel" is dragged and dropped from the Toolbox to the Board', () => {
+		it('should send a POST request with the new item', () => {
+			dragAndDropVessel();
+		});
 
-      cy.get('@sidebar')
-        .should('exist')
-        .should('be.visible');
+		it('should populate the PropertiesSidebar with empty input fields', () => {
+			getPropertiesSidebar();
+			getPropertiesSidebarList();
+			dragAndDropVessel();
 
-      cy.get('@sidebar-prop-list')
-        .children()
-        .should('exist')
-        .should('be.visible');
+			cy.get('@sidebar')
+				.should('exist')
+				.and('be.visible');
 
-      cy.get('@sidebar-prop-list')
-        .children().each(($el) => {
-          cy.wrap($el)
-            .first()
-            .first()
-            .should('have.value', '');
-        });
-    });
+			cy.get('@sidebar-prop-list')
+				.children()
+				.should('exist')
+				.and('be.visible');
 
-    describe('When the close button is clicked on the PropertiesSidebar', () => {
-      it('should close the PropertiesSidebar', () => {
-        getPropertiesSidebar();
-        getPropertiesSidebarList();
-        dragAndDropVessel();
+			cy.get('@sidebar-prop-list')
+				.children().each(($el) => {
+					cy.wrap($el)
+						.first()
+						.first()
+						.should('have.value', '');
+				});
+		});
 
-        cy.get('@sidebar')
-          .should('exist')
-          .should('be.visible');
+		describe('When the close button is clicked on the PropertiesSidebar', () => {
+			it('should close the PropertiesSidebar', () => {
+				getPropertiesSidebar();
+				getPropertiesSidebarList();
+				dragAndDropVessel();
 
-        cy.get('[data-cy=close-sidebar-btn]')
-          .should('exist')
-          .should('be.visible')
-          .click();
+				cy.get('@sidebar')
+					.should('exist')
+					.and('be.visible');
 
-        cy.get('@sidebar')
-          .should('exist')
-          .should('not.be.visible');
-      });
-    });
-  });
+				cy.get('[data-cy=close-sidebar-btn]')
+					.should('exist')
+					.and('be.visible')
+					.click();
+
+				cy.get('@sidebar')
+					.should('exist')
+					.and('not.be.visible');
+			});
+		});
+	});
 });
