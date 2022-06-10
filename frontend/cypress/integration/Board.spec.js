@@ -1,52 +1,57 @@
+import {
+  getBoard, getVessel, getPipeFitting, dragAndDropVessel, dragAndDropPipeFitting
+} from '../support/test-utils.js';
+
 beforeEach(() => {
   cy.visit('http://localhost:8080');
   cy.viewport(1440, 900);
 });
 
-const getBoard = () => cy.get('[data-cy=board]')
-  .first() // react-flow
-  .first() // react-flow__renderer
-  .first() // react-flow__viewport
-  .first() // react-flow__edges
-  .first() // react-flow__nodes
-  .as('board');
+describe('ItemNode', () => {
+  describe('When an item is moved to another position Board', () => {
+    it('should send a PATCH request to update the position', () => {
+      cy.intercept('PATCH', '/api/*/boards/*/objects/*').as('patchObject');
 
-const getVessel = () => cy.get('[data-cy=toolbox-item-vessel]')
-  .as('vessel');
+      cy.get('[data-id=PU01]')
+        .move({
+          deltaX: 10,
+          deltaY: 0,
+        });
 
-const getPipeFitting = () => cy.get('[data-cy=toolbox-item-pipeFitting]')
-  .as('pipeFitting');
+      cy.wait('@patchObject').should(({ request, response }) => {
+        const { x, y } = request.body;
+        expect(response.statusCode).to.eq(200);
+        expect(response.body).property('x').to.be.equal(x);
+        expect(response.body).property('y').to.be.equal(y);
+      });
+    });
+  });
+});
 
 describe('Board', () => {
   describe('When "Vessel" is dragged and dropped from the Toolbox', () => {
     const dataTransfer = new DataTransfer();
-
     it('should render on the Board', () => {
       getVessel();
-      getBoard();
-
-      cy.get('@board')
-        .should('exist')
-        .should('be.visible');
 
       cy.get('@vessel')
         .should('exist')
-        .should('be.visible');
-
-      cy.get('@vessel')
-        .click()
         .trigger('dragstart', { dataTransfer });
 
-      cy.get('@board')
+      cy.get('[data-cy=board]')
+        .should('exist')
         .trigger('drop', { dataTransfer });
 
-      cy.get('@board')
-        .get('[data-cy=itemNode_1]')
-        .as('boardVessel');
-
-      cy.get('@boardVessel')
+      cy.get('[data-cy=itemNode_1]')
         .should('exist')
-        .should('be.visible');
+        .and('be.visible');
+
+      cy.get('[data-cy=itemNode_1]')
+        .find('div')
+        .last().as('label');
+
+      cy.get('@label')
+        .should('contain', 'vessel');
     });
   });
 
@@ -58,61 +63,25 @@ describe('Board', () => {
       getPipeFitting(); // Get a reference to the PipeFitting sidebar item
       getBoard(); // Get a reference to the Board
 
-      cy.get('@board')
-        .should('exist')
-        .should('be.visible');
-
-      cy.get('@vessel')
-        .should('exist')
-        .should('be.visible');
-
-      cy.get('@pipeFitting')
-        .should('exist')
-        .should('be.visible');
-
-      // Drag the vessel item
-      cy.get('@vessel')
-        .click()
-        .trigger('dragstart', { dataTransfer });
-
-      // Drop the vessel item on the board
-      cy.get('@board')
-        .trigger('drop', { dataTransfer });
-
-      // Drag the pipe fitting item
-      cy.get('@pipeFitting')
-        .click({ force: true })
-        .trigger('dragstart', { dataTransfer });
-
-      // Drop the pipe fitting item on the board
-      cy.get('@board')
-        .trigger('drop', { dataTransfer });
+      dragAndDropVessel(); // Drag the Vessel sidebar item to the Board
+      dragAndDropPipeFitting(); // Drag the PipeFitting sidebar item to the Board
 
       // Get reference to the vessel node on the board
-      cy.get('@board')
-        .get('[data-cy=itemNode_1]')
+      cy.get('[data-cy=itemNode_1]')
+        .should('exist')
+        .and('be.visible')
         .as('boardVessel');
 
       // Get reference to the pipe fitting node on the board
-      cy.get('@board')
-        .get('[data-cy=itemNode_3]')
+      cy.get('[data-cy=itemNode_3]')
+        .should('exist')
+        .and('be.visible')
         .as('boardPipeFitting');
 
-      cy.get('@boardVessel')
-        .should('exist')
-        .should('be.visible');
-
-      cy.get('@boardPipeFitting')
-        .should('exist')
-        .should('be.visible');
-
-      cy.get('@board')
-        .get('[data-cy=right-itemNode_1]')
-        .click({ force: true })
+      cy.get('[data-cy=right-itemNode_1]')
         .trigger('dragstart', { dataTransfer, force: true });
 
-      cy.get('@board')
-        .get('[data-cy=left-itemNode_3]')
+      cy.get('[data-cy=left-itemNode_3]')
         .trigger('drop', { dataTransfer });
     });
   });

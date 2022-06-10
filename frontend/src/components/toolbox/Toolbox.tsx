@@ -9,7 +9,7 @@ interface ToolboxProps {
 function Toolbox(props: ToolboxProps) {
   const { className, types } = props;
   return (
-    <aside className={`overflow-y-auto md:border-r-4 ${className}`}>
+    <aside className={`overflow-y-auto bg-slate-50 border-r border-slate-200 ${className}`}>
       <div data-cy="toolbox-list" className="p-3">
         <ToolboxList listing={types} subsetNbr={1} />
       </div>

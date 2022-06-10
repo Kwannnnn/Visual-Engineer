@@ -1,3 +1,5 @@
+export { default as Board } from './board/Board';
+export { default as AlertPane } from './AlertPane';
 export { default as Navbar } from './Navbar';
 export { default as PropertiesSidebar } from './PropertiesSidebar';
 export { default as Tab } from './board/tabbar/Tab';

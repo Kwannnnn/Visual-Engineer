@@ -30,10 +30,18 @@ function Tab({
     <button
       type="button"
       onClick={handleSelect}
-      className={classNames({ 'border-black max-w-xs p-1.5 flex flex-1 items-center space-x-2': true, 'border-2': active })}
+      className={classNames({
+        'box-content max-w-xs p-2 flex flex-1 items-center space-x-2': true,
+        'border-b-4': active,
+      })}
     >
       <p className="truncate flex-1">{name}</p>
-      <FontAwesomeIcon icon={faXmark} onClick={handleDelete} />
+      <FontAwesomeIcon
+        icon={faXmark}
+        className="hover:bg-gray-100 text-gray-500 hover:text-gray-800 rounded-full px-2 py-1.5"
+        size="sm"
+        onClick={handleDelete}
+      />
     </button>
   );
 }
