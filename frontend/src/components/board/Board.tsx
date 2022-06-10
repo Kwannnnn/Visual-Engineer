@@ -34,14 +34,6 @@ const nodeTypes: NodeTypes = {
   itemNode: ItemNode,
 };
 
-let id = 0;
-// Every node must have an unique id
-const getId = () => {
-  const result = `itemNode_${id}`;
-  id += 1;
-  return result;
-};
-
 function Board(props: NewBoardProps) {
   const {
     initialNodes,
@@ -100,6 +92,7 @@ function Board(props: NewBoardProps) {
 
       postInitialItem(position.x, position.y, name).then((item) => {
         const newNode = {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           id: item.tag!,
           type: NODE_TYPE,
           position,
