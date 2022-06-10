@@ -124,7 +124,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
               p.value = value;
 
               return (
-                <label htmlFor={`sidebar-input-field-${p.name}`}>
+                <label key={p.name} htmlFor={`sidebar-input-field-${p.name}`}>
                   {p.name}
                   <input
                     name={p.name}
