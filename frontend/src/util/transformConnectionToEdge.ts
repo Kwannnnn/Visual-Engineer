@@ -6,7 +6,7 @@ export default function transformConnectionToEdge(allEdges: Partial<IOConnection
   const edges: Edge[] = [];
   if (!allObjects) return edges;
 
-  allEdges.forEach((object) => {
+  allEdges.forEach((object, i) => {
     const {
       pipeline, firstItem, secondItem,
     } = object;
@@ -26,6 +26,8 @@ export default function transformConnectionToEdge(allEdges: Partial<IOConnection
       labelBgStyle: { cursor: 'pointer' },
       style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
       data: { ...pipelineObject },
+      // Used for cypress test
+      className: `itemEdge_${i}`,
     };
     edges.push(edge);
   });

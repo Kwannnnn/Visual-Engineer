@@ -38,10 +38,18 @@ const nodeTypes: NodeTypes = {
 };
 
 let id = 0;
+let edgeID = 0;
 // Every node must have an unique id
-const getId = () => {
+const getNodeId = () => {
   const result = `itemNode_${id}`;
   id += 1;
+  return result;
+};
+
+const getEdgeId = () => {
+  // Used for Cypress to track unsaved item edges
+  const result = `itemTmpEdge_${edgeID}`;
+  edgeID += 1;
   return result;
 };
 
@@ -89,6 +97,7 @@ function NewBoard(props: NewBoardProps) {
         data: {
           type: 'pipeline',
         },
+        className: getEdgeId(),
       };
 
       setEdges((edgesState) => edgesState.concat(newConnection));
@@ -122,12 +131,12 @@ function NewBoard(props: NewBoardProps) {
         y: event.clientY - reactFlowBounds.top,
       });
       const newNode = {
-        id: getId(),
+        id: getNodeId(),
         type: NODE_TYPE,
         position,
         data: {
           type: name,
-          dataCY: getId(),
+          dataCY: getNodeId(),
         },
       };
 
