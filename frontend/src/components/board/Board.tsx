@@ -89,7 +89,7 @@ function Board(props: NewBoardProps) {
         labelBgPadding: [8, 4],
         labelBgBorderRadius: 4,
         labelBgStyle: {
-          cursor: 'pointer', fill: '#FFCC00', color: '#fff', fillOpacity: 0.7,
+          cursor: 'pointer', fill: '#FFCC00', color: '#fff',
         },
         type: 'straight',
         sourceHandle: params.sourceHandle ?? '',
