@@ -124,11 +124,7 @@ function Home() {
     setCurrentNode(node);
   };
 
-  const postInitialItem = (x: number, y: number, type: string) => createItem(currentBoardId, {
-    type,
-    x,
-    y,
-  });
+  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item });
 
   return (
     <ReactFlowProvider>
@@ -154,7 +150,7 @@ function Home() {
               onNodeClick={(node: Node) => setCurrentNode(node)}
               onNodesDelete={(node: Node[]) => onNodesDeleteCallback(node)}
               onNodeMove={(node: Node) => onNodeMoveCallback(node)}
-              postInitialItem={postInitialItem}
+              postItem={postItem}
             />
           </div>
           <PropertiesSidebar
@@ -165,6 +161,7 @@ function Home() {
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
             onFieldChange={(node: Node, field: string, value: string) => onNodeFieldUpdateCallback(node, field, value)}
+            postItem={postItem}
           />
         </div>
       </div>

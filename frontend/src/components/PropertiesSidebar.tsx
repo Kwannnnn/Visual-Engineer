@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Node } from 'react-flow-renderer';
 import classNames from 'classnames';
 import { IListing } from '../typings/IListing';
+import IObjectContext from '../typings/IObjectContext';
 
 interface PropertiesSidebarProps {
   className?: string;
@@ -11,6 +12,7 @@ interface PropertiesSidebarProps {
   currentNode: Node | null;
   onClose: () => void;
   onFieldChange?: (node: Node, field: string, value: string) => void;
+  postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
 }
 
 function getPropertyValue(node: Node | null, propName: string) {
@@ -23,14 +25,9 @@ function getPropertyValue(node: Node | null, propName: string) {
   return value;
 }
 
-function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-  event.preventDefault();
-  // TODO: handle form submission (e.g. POST to server)
-}
-
 function PropertiesSidebar(props: PropertiesSidebarProps) {
   const {
-    className = '', initialProperties = [], onClose, currentNode, onFieldChange,
+    className = '', initialProperties = [], onClose, currentNode, onFieldChange, postItem,
   } = props;
 
   const [propValues, setPropValues] = useState<IListing[]>([]);
@@ -65,6 +62,27 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
       onFieldChange(currentNode, event.target.name, event.target.value);
     }, 1500);
     setTimer(delayDebounce);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // TODO: handle form submission (e.g. POST to server)
+    let item: Partial<IObjectContext> = {};
+
+    propValues.forEach((prop: IListing) => {
+      const tempItem = {
+        [prop.name]: prop.value,
+      };
+
+      item = { ...item, ...tempItem };
+    });
+
+    if (!currentNode) return;
+
+    item.x = currentNode.position.x;
+    item.y = currentNode.position.y;
+    item.type = currentNode.data.type;
+    postItem(item);
   };
 
   return (

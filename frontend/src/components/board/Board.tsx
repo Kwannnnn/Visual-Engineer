@@ -24,7 +24,7 @@ interface NewBoardProps {
   onNodeClick: (node: Node) => void;
   onNodesDelete: (node: Node[]) => void;
   onNodeMove?: (node: Node) => void;
-  postInitialItem: (x: number, y: number, type: string) => Promise<Partial<IObjectContext>>;
+  postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
 }
 
 // This string key must match the key in the nodeTypes object in order to render the correct
@@ -42,7 +42,7 @@ function Board(props: NewBoardProps) {
     onNodeClick,
     onNodesDelete,
     onNodeMove,
-    postInitialItem,
+    postItem,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
@@ -90,7 +90,12 @@ function Board(props: NewBoardProps) {
         y: event.clientY - reactFlowBounds.top,
       });
 
-      postInitialItem(position.x, position.y, name).then((item) => {
+      const initialItem: Partial<IObjectContext> = {
+        x: position.x,
+        y: position.y,
+        type: name,
+      };
+      postItem(initialItem).then((item) => {
         const newNode = {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           id: item.tag!,
