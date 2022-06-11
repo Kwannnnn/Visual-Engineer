@@ -88,3 +88,16 @@ export async function getObjectEdges() {
   const result = await axios.get(`${url}/v2/relationships`);
   return result.data;
 }
+
+export async function updateRelationship(
+  pipelineTag: string,
+  firstItem: string,
+  secondItem: string
+) {
+  const response = await axios.patch(`${url}/v2/relationships/${pipelineTag}`, {
+    pipeline: pipelineTag,
+    firstItem,
+    secondItem,
+  });
+  return response.data;
+}
