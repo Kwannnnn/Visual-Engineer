@@ -129,9 +129,6 @@ function Home() {
   };
 
   const handleEdgeUpdate = (oldEdge: Edge, newConnection: Connection) => {
-    console.log(oldEdge);
-    console.log(newConnection);
-
     const pipelineTag = oldEdge.id;
     const firstItem = newConnection.source;
     const secondItem = newConnection.target;
