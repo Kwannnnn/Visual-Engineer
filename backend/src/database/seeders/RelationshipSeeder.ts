@@ -11,8 +11,8 @@ export default class RelationshipSeeder extends Seeder {
 
     const relationship = em.create(Relationship, {
       pipeline: context.sampleBoards[0].items[0],
-      firstItem: context.sampleBoards[0].items[1],
-      secondItem: context.sampleBoards[0].items[2],
+      firstItem: context.sampleBoards[0].items[3],
+      secondItem: context.sampleBoards[0].items[1],
     });
 
     sampleRelationships.push(relationship);

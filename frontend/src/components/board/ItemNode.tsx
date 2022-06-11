@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 
@@ -6,13 +7,16 @@ interface ItemNodeProps {
   data: {
     tag?: string;
     type: string;
+    isDraft: boolean;
     dataCY: string;
   };
 }
 
 function ItemNode(props: ItemNodeProps) {
   const { className = '', data } = props;
-  const { tag = '', type, dataCY } = data;
+  const {
+    tag = '', type, dataCY, isDraft,
+  } = data;
 
   return (
     <>
@@ -42,7 +46,9 @@ function ItemNode(props: ItemNodeProps) {
       />
       <div
         data-cy={dataCY}
-        className={`bg-slate-50 border-2 px-12 py-8 border-black ${className}`}
+        className={classNames(`bg-slate-50 border-2 px-12 py-8 border-black ${className}`, {
+          'bg-amber-50': isDraft,
+        })}
       >
         <div>{tag}</div>
         <div>{type}</div>

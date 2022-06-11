@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import classNames from 'classnames';
 import ReactNodeBuilder from '../../util/ReactNodeBuilder';
 import ToolboxItem from './ToolboxItem';
 
@@ -24,18 +25,15 @@ function ToolboxList(prop: {listing: Listing[], subsetNbr: number}) {
   const subset = prop.subsetNbr > 3 ? 3 : prop.subsetNbr;
 
   prop.listing.forEach((listing) => {
-    const [rotation, setIconRotation] = useState<string>('');
     const [visible, toggleVisibility] = useState<boolean>(false);
 
-    const toggleIconRotation = () => {
+    const toggleIconRotation = useCallback(() => {
       if (visible) {
-        setIconRotation('');
         toggleVisibility(false);
       } else {
-        setIconRotation('rotate-90');
         toggleVisibility(true);
       }
-    };
+    }, [visible]);
 
     if (listing.group) {
       if (listing.subsets) {
@@ -48,25 +46,14 @@ function ToolboxList(prop: {listing: Listing[], subsetNbr: number}) {
         });
       }
 
-      let size: string;
-      switch (subset) {
-        case 1:
-          size = 'text-lg';
-          break;
-        case 2:
-          size = 'text-md';
-          break;
-        case 3:
-          size = 'text-sm';
-          break;
-        default:
-          size = '';
-      }
-
       listBuilder.append(
         <div data-cy={`listing-${listing.group}`}>
           <div
-            className={`hover:opacity-60 p-1 transition-all cursor-pointer select-none flex justify-between hover:pl-2 ${size}`}
+            className={classNames('hover:opacity-60 p-1 transition-all cursor-pointer select-none flex justify-between hover:pl-2', {
+              'text-lg': subset === 1,
+              'text-md': subset === 2,
+              'text-sm': subset === 3,
+            })}
             role="button"
             tabIndex={0}
             onClick={() => toggleIconRotation()}
@@ -75,10 +62,18 @@ function ToolboxList(prop: {listing: Listing[], subsetNbr: number}) {
           >
             <p className={`${subset === 3 ? 'font-medium' : 'font-bold'}`}>{listing.group}</p>
             <div className="align-middle">
-              <FontAwesomeIcon icon={faAngleRight} className={`transition-all duration-300 ml-2 ${rotation}`} />
+              <FontAwesomeIcon
+                icon={faAngleRight}
+                className={classNames('transition-all duration-300 ml-2', {
+                  'rotate-90': !visible,
+                })}
+              />
             </div>
           </div>
-          <div className={`mb-2 ${visible ? 'hidden' : ''}`} data-cy={`listing-${listing.group.replace(' ', '_')}-subset`}>
+          <div
+            data-cy={`listing-${listing.group.replace(' ', '_')}-subset`}
+            className={classNames('mb-2', { hidden: visible })}
+          >
             {subsetBuilder.build()}
             {itemBuilder.build()}
           </div>

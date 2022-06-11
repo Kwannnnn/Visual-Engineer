@@ -16,7 +16,7 @@ function TabBar({ currentBoardId, boards, onSelect }: TabBarProps) {
   };
 
   return (
-    <div className="bg-white shadow z-10 flex">
+    <div className="bg-white border-b border-slate-200 z-10 flex">
       {boards.map((board) => (
         <Tab
           key={board.id}
