@@ -24,7 +24,7 @@ describe('/objects', () => {
     it('should return a list of all existing objects', async () => {
       const response = await request(app).get('/api/v1/objects');
       expect(response.statusCode).toEqual(200);
-      expect(response.body).toHaveLength(3);
+      expect(response.body).toHaveLength(7);
     });
   });
 

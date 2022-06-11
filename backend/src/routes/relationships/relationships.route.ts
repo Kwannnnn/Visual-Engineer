@@ -1,5 +1,8 @@
 import { Router } from 'express';
+import { body } from 'express-validator';
 import { relationshipController } from '../../controllers';
+import * as middleware from '../../middleware/relationships.middleware';
+import validate from '../../middleware/validate';
 
 const relationshipRouter: Router = Router();
 
@@ -58,6 +61,95 @@ relationshipRouter.get('/', relationshipController.getAllRelationships);
 relationshipRouter.get('/:pipelineTag', relationshipController.getOneRelationship);
 
 /**
+ * @api {post} /api/v2/relationships Post a relationship
+ * @apiDescription Returns a resource response containing
+ * the newly posted relationship in the system.
+ * @apiVersion 2.0.0
+ * @apiName PostRelationship
+ * @apiGroup Relationship
+ *
+ * @apiBody {String} pipeline Pipeline tag identifier
+ * @apiBody {String} firstItem First connected item identifier
+ * @apiBody {String} secondItem Second connected item identifier
+ *
+ * @apiSuccess (Success 201) {Relationship} object representing the newly added relationship.
+ * @apiSuccessExample Success-Response:
+ * HTTP/1.1 201 CREATED
+ *    {
+ *      "pipeline": "122-12sa-gi2",
+ *      "firstItem": "345-hg2-wru3"
+ *      "secondItem": "321-ji0q-112"
+ *    }
+ *
+ * @apiError PipelineTagMissing The request body is missing the pipeline tag.
+ * @apiErrorExample PipelineTagMissing:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "Pipeline tag is missing."
+ *     }
+ *
+ * @apiError ItemMissing The request body is missing one or both to-be-connected items.
+ * @apiErrorExample ItemMissing:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "Two items are needed to create a relationship."
+ *     }
+ *
+ * @apiError ItemNotFound Item with identifier <code>pipeline</code>,
+ * <code>firstItem</code> or <code>secondItem</code> does not exist.
+ * @apiErrorExample ItemNotFound:
+ *     HTTP/1.1 404 Not Found
+ *     {
+ *       "message": "Item not found"
+ *     }
+ *
+ * @apiError InvalidConnector The provided pipeline is not an item of type Pipeline.
+ * @apiErrorExample InvalidConnector:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "The connector must be of type Pipeline."
+ *     }
+ *
+ * @apiError InvalidRelationship The provided items cannot be associated.
+ * @apiErrorExample InvalidRelationship:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "You cannot associate a Pump with a Blower."
+ *     }
+ *
+ * @apiError ConnectItemToItself Items to connect are the same
+ * @apiErrorExample ConnectItemToItself:
+ *     HTTP/1.1 400 BAD REQUEST
+ *     {
+ *       "message": "First and second item cannot be the same"
+ *     }
+ *
+ * @apiError ConnectPipeToPipe Cannot connect a pipeline to a pipeline
+ * @apiErrorExample ConnectPipeToPipe:
+ *     HTTP/1.1 400 BAD REQUEST
+ *     {
+ *       "message": "Connected item cannot be a pipe item"
+ *     }
+ */
+relationshipRouter.post(
+  '/',
+  validate([
+    body('pipeline')
+      .exists()
+      .withMessage('Pipeline tag is missing!'),
+    body(['firstItem', 'secondItem'])
+      .exists()
+      .withMessage('Two items are needed to create a relationship.'),
+  ]),
+  middleware.isPipelineValid,
+  middleware.areItemsValid,
+  middleware.isPipelineInstanceOfPipeline,
+  middleware.areItemsNotInstanceOfPipeline,
+  middleware.areConnectedItemsTheSame,
+  relationshipController.postRelationship,
+);
+
+/**
  * @api {patch} /api/v2/relationships/:pipelineTag Update an existing relationship
  * @apiDescription Change the relationship between two items
  * @apiVersion 2.0.0
@@ -108,17 +200,33 @@ relationshipRouter.get('/:pipelineTag', relationshipController.getOneRelationshi
  * @apiErrorExample ConnectPipeToPipe:
  *     HTTP/1.1 400 BAD REQUEST
  *     {
- *       "message": "Connected item cannot be a pipe item"
+ *       "message": "Cannot connect a pipeline to a pipeline"
  *     }
  *
  * @apiError ItemNotFound New item to connect does not exist
  * @apiErrorExample ItemNotFound:
  *     HTTP/1.1 404 NOT FOUND
  *     {
- *       "message": "Item by tag not found"
+ *       "message": "Item not found"
+ *     }
+ *
+ * @apiError InvalidRelationship The provided items cannot be associated.
+ * @apiErrorExample InvalidRelationship:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "You cannot associate a Pump with a Blower."
  *     }
  */
-relationshipRouter.patch('/:pipelineTag', relationshipController.patchRelationship);
+relationshipRouter.patch(
+  '/:pipelineTag',
+  middleware.isRelationshipValid,
+  middleware.isRequestBodyValid,
+  middleware.arePipelinesMatching,
+  middleware.areConnectedItemsTheSame,
+  middleware.areItemsValid,
+  middleware.areItemsNotInstanceOfPipeline,
+  relationshipController.patchRelationship,
+);
 
 /**
  * @api {delete} /api/v2/relationships/:pipelineTag Delete a relationship
