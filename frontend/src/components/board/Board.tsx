@@ -28,6 +28,7 @@ interface NewBoardProps {
   onNodesDelete: (node: Node[]) => void;
   onEdgesDelete: (edge: Edge[]) => void;
   onEdgeClick: (edge: Edge) => void;
+  onEdgeUpdate?: (oldEdge: Edge, newConnection: Connection) => void;
   onNodeMove?: (node: Node) => void;
 }
 
@@ -56,7 +57,7 @@ const getEdgeId = () => {
 
 function Board(props: NewBoardProps) {
   const {
-    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete, onEdgeClick, onEdgesDelete, onNodeMove,
+    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete, onEdgeClick, onEdgesDelete, onNodeMove, onEdgeUpdate,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
@@ -167,6 +168,7 @@ function Board(props: NewBoardProps) {
         onNodesDelete={(nd) => onNodesDelete(nd)}
         onEdgeClick={(e, n) => onEdgeClick(n)}
         onEdgesDelete={(ed) => onEdgesDelete(ed)}
+        onEdgeUpdate={onEdgeUpdate}
         fitView
         connectionLineType={ConnectionLineType.Straight}
         onNodeDragStop={(e, n) => onNodeDragStop(e, n)}

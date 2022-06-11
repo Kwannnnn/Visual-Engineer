@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ReactFlowProvider, Node, Edge } from 'react-flow-renderer';
+import {
+  ReactFlowProvider, Node, Edge, updateEdge, Connection
+} from 'react-flow-renderer';
 import classNames from 'classnames';
 import { AxiosError } from 'axios';
 import {
@@ -12,7 +14,7 @@ import {
 import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
 import {
-  getBoardObjects, getObjectTypes, getTypeProperties, getObjectEdges, updateBoardObject
+  getBoardObjects, getObjectTypes, getTypeProperties, getObjectEdges, updateBoardObject, updateRelationship
 } from '../util/api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
 import transformConnectionToEdge from '../util/transformConnectionToEdge';
@@ -126,6 +128,21 @@ function Home() {
     setCurrentNode(node);
   };
 
+  const handleEdgeUpdate = (oldEdge: Edge, newConnection: Connection) => {
+    console.log(oldEdge);
+    console.log(newConnection);
+
+    const pipelineTag = oldEdge.id;
+    const firstItem = newConnection.source;
+    const secondItem = newConnection.target;
+
+    if (!firstItem || !secondItem) {
+      return;
+    }
+    updateRelationship(pipelineTag, firstItem, secondItem);
+    setEdges((els) => updateEdge(oldEdge, newConnection, els));
+  };
+
   return (
     <ReactFlowProvider>
       <div className="flex-1 min-h-0">
@@ -151,6 +168,7 @@ function Home() {
               onNodesDelete={(node: Node[]) => onObjectDeleteCallback(node)}
               onEdgesDelete={(edge: Edge[]) => onObjectDeleteCallback(edge)}
               onNodeMove={(node: Node) => onNodeMoveCallback(node)}
+              onEdgeUpdate={handleEdgeUpdate}
               initialEdges={edges}
             />
           </div>
