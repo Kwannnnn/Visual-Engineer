@@ -14,9 +14,9 @@ export default class ObjectSeeder extends Seeder {
     const { id: sampleBoardId, items: sampleBoardItems } = await context.sampleBoards[0];
 
     // Add 3 sample items to the exported array
-    sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId }));
-    sampleBoardObjects.push(new PumpFactory(em).makeOne({ board: sampleBoardId }));
-    sampleBoardObjects.push(new BlowerFactory(em).makeOne({ board: sampleBoardId }));
+    sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId, tag: 'PL01' }));
+    sampleBoardObjects.push(new PumpFactory(em).makeOne({ board: sampleBoardId, tag: 'PU01' }));
+    sampleBoardObjects.push(new BlowerFactory(em).makeOne({ board: sampleBoardId, tag: 'BL01' }));
 
     // Assign the newly created items to the sample board
     sampleBoardObjects.forEach((object) => sampleBoardItems.add(object));

@@ -25,6 +25,7 @@ interface NewBoardProps {
   onDropNodeHandler?: (node: Node) => void;
   onNodeClick: (node: Node) => void;
   onNodesDelete: (node: Node[]) => void;
+  onNodeMove?: (node: Node) => void;
 }
 
 // This string key must match the key in the nodeTypes object in order to render the correct
@@ -42,9 +43,14 @@ const getId = () => {
   return result;
 };
 
-function NewBoard(props: NewBoardProps) {
+function Board(props: NewBoardProps) {
   const {
-    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete,
+    initialNodes,
+    initialEdges,
+    onDropNodeHandler,
+    onNodeClick,
+    onNodesDelete,
+    onNodeMove,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
@@ -104,6 +110,10 @@ function NewBoard(props: NewBoardProps) {
     [reactFlowInstance]
   );
 
+  const onNodeDragStop = useCallback((event: React.MouseEvent, node: Node) => {
+    if (onNodeMove) onNodeMove(node);
+  }, [onNodeMove]);
+
   return (
     <div className="w-full h-full" data-cy="board" ref={reactFlowWrapper}>
       <ReactFlow
@@ -118,6 +128,7 @@ function NewBoard(props: NewBoardProps) {
         onDragOver={onDragOver}
         onNodeClick={(e, n) => onNodeClick(n)}
         onNodesDelete={(nd) => onNodesDelete(nd)}
+        onNodeDragStop={(e, n) => onNodeDragStop(e, n)}
       >
         <MiniMap />
         <Controls />
@@ -127,4 +138,4 @@ function NewBoard(props: NewBoardProps) {
   );
 }
 
-export default NewBoard;
+export default Board;

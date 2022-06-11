@@ -21,6 +21,7 @@
     "react-scripts": "^5.0.1"
   },
   "devDependencies": {
+    "@4tw/cypress-drag-drop": "^2.1.0",
     "@cypress/code-coverage": "^3.9.12",
     "@cypress/instrument-cra": "^1.4.0",
     "@types/node": "^16.11.31",
@@ -54,9 +55,7 @@
     "eject": "react-scripts eject",
     "test:cypress": "npx start-server-and-test start http://localhost:8080 'npx cypress run'",
     "lint": "npx eslint src --ext .ts,.tsx",
-    "lint:fix": "npx eslint src --ext .ts,.tsx --fix",
-    "docker:build": "docker build -t registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/frontend .",
-    "docker:run": "docker run -d -p 8080:8080 --name=visual-engineer-frontend registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/frontend"
+    "lint:fix": "npx eslint src --ext .ts,.tsx --fix"
   },
   "browserslist": {
     "production": [

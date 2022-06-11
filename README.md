@@ -74,3 +74,16 @@ The `jest-junit` reporter is used when running the backend integration tests, as
 ### CI Images
 
 Currently, Docker images will be built and pushed (using Kaniko) to the GitLab Container Registry for the `staging` and `main` branches.
+
+## Azure
+
+The frontend package is automatically deployed to an Azure Static Web App using the [frontend:deploy CI job](./.gitlab-ci.yml#176).
+The deployed frontend URL is currently [https://visualengineer-prod.philipposslicher.tech/](https://visualengineer-prod.philipposslicher.tech/).
+
+The backend is deployed with a multi-container group using Azure ACI, accessible at [http://visualengineer-api.westeurope.azurecontainer.io:3000/](http://visualengineer-api.westeurope.azurecontainer.io:3000/).
+
+Additionally, a sidecar reverse proxy Caddy container is deployed to proxy and serve the backend using TLS (with an automated LetsEncrypt certificate).
+
+> To deploy this sidecar, run `az container create --resource-group 24HBOICTBVWBVE --file caddy-proxy-aci.yml` from the [azure directory](./azure/).
+
+This will deploy the container to [https://visualengineer-api-tls.westeurope.azurecontainer.io/](https://visualengineer-api-tls.westeurope.azurecontainer.io/).

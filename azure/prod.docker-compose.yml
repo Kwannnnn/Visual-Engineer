@@ -1,5 +1,4 @@
 version: '3'
-# name: ve-prod
 
 services:
   postgres:
@@ -11,19 +10,20 @@ services:
       POSTGRES_DB: $POSTGRES_DB
   init:
     image: visualengineer.azurecr.io/init:latest
+    # image: registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/init:$IMAGE_TAG
     container_name: ve-db-init
     deploy:
       restart_policy:
         condition: on-failure
-    build: 
-      context: .
+    build:
+      context: ../backend
       dockerfile: init.Dockerfile
     environment:
       DATABASE_URL: postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres:5432/$POSTGRES_DB
   backend:
-    image: registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/backend:staging
+    image: registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/backend:$IMAGE_TAG
     container_name: ve-backend
-    domainname: visualengineer-api
+    domainname: $DOMAIN_NAME
     depends_on:
       - init
       - postgres
