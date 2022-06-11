@@ -38,7 +38,7 @@ function Home() {
   const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
   const getEdgesCallback = useCallback(async () => getObjectEdges(), [currentBoardId]);
 
-  const onErrorCallback = useCallback((error: AxiosError, node: Node) => {
+  const onErrorCallback = useCallback((error: AxiosError, node: Node | Edge) => {
     const { response } = error;
     const { id } = node;
     if (response && response.status === 404) {
@@ -57,7 +57,7 @@ function Home() {
         setCurrentNode(null);
       }
     });
-  }, []);
+  }, [currentNode]);
   const onNodeMoveCallback = useCallback((node: Node) => {
     const { x, y } = node.position;
 
@@ -70,7 +70,7 @@ function Home() {
     });
   }, [currentBoardId, onErrorCallback]);
 
-  const onNodeFieldUpdateCallback = useCallback((node: Node, field: string, value: string) => {
+  const onNodeFieldUpdateCallback = useCallback((node: Node | Edge, field: string, value: string) => {
     if (!node.data.tag) return;
     updateBoardObject(currentBoardId, node.data.tag, {
       [field]: value,
@@ -161,7 +161,7 @@ function Home() {
             currentNode={currentNode}
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
-            onFieldChange={(node: Node, field: string, value: string) => onNodeFieldUpdateCallback(node, field, value)}
+            onFieldChange={(node: Node | Edge, field: string, value: string) => onNodeFieldUpdateCallback(node, field, value)}
           />
         </div>
       </div>
