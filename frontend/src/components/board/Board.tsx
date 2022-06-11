@@ -22,7 +22,7 @@ interface NewBoardProps {
   initialEdges?: Edge[];
   onDropNodeHandler?: (node: Node) => void;
   onNodeClick: (node: Node) => void;
-  onNodesDelete: (node: Node[]) => void;
+  onDeleteNode: (node: Node) => void;
   onNodeMove?: (node: Node) => void;
   postInitialItem: (x: number, y: number, type: string) => Promise<Partial<IObjectContext>>;
 }
@@ -40,7 +40,7 @@ function Board(props: NewBoardProps) {
     initialEdges,
     onDropNodeHandler,
     onNodeClick,
-    onNodesDelete,
+    onDeleteNode,
     onNodeMove,
     postInitialItem,
   } = props;
@@ -114,6 +114,12 @@ function Board(props: NewBoardProps) {
     if (onNodeMove) onNodeMove(node);
   }, [onNodeMove]);
 
+  const onNodesDeleteHandler = (nds: Node[]) => {
+    nds.forEach((node) => {
+      onDeleteNode(node);
+    });
+  };
+
   return (
     <div className="w-full h-full" data-cy="board" ref={reactFlowWrapper}>
       <ReactFlow
@@ -127,7 +133,7 @@ function Board(props: NewBoardProps) {
         onDrop={onDrop}
         onDragOver={onDragOver}
         onNodeClick={(e, n) => onNodeClick(n)}
-        onNodesDelete={(nd) => onNodesDelete(nd)}
+        onNodesDelete={(nd) => onNodesDeleteHandler(nd)}
         onNodeDragStop={(e, n) => onNodeDragStop(e, n)}
       >
         <MiniMap />

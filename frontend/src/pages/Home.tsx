@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ReactFlowProvider, Node } from 'react-flow-renderer';
 import classNames from 'classnames';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import {
   AlertPane,
   PropertiesSidebar,
@@ -13,6 +13,7 @@ import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
 import {
   createItem,
+  deleteBoardObject,
   getBoardObjects,
   getObjectTypes,
   getTypeProperties,
@@ -52,15 +53,39 @@ function Home() {
       setCurrentNode(node);
     }
   }, []);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onNodesDeleteCallback = useCallback((nodes: Node[]) => {
-    nodes.forEach((node) => {
-      // TODO: Delete node from backend
-      if (node.data.id === currentNode?.data.id) {
+
+  const onNodeDelete = useCallback(async (node: Node) => {
+    if (node.data.isDraft) {
+      const newNodes = initialNodes.filter((n) => n.data.tag !== node.data.tag);
+      setInitialNodes(newNodes);
+      setCurrentNode(null);
+      return;
+    }
+
+    if (!currentNode) return;
+    if (node.data.tag !== currentNode.data.tag) return;
+
+    let response500 = false;
+    try {
+      await deleteBoardObject(currentBoardId, node.data.tag);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const { response } = err;
+        if (response && (response.status === 500 || response.status === 0)) {
+          response500 = true;
+          console.log('Cannot connect to the server');
+        }
+      }
+    } finally {
+      // Check whether there was a 500 error to avoid deleting the node from the frontend
+      if (!response500) {
+        const newNodes = initialNodes.filter((n) => n.data.tag !== node.data.tag);
+        setInitialNodes(newNodes);
         setCurrentNode(null);
       }
-    });
-  }, []);
+    }
+  }, [currentNode]);
+
   const onNodeMoveCallback = useCallback((node: Node) => {
     const { x, y } = node.position;
 
@@ -152,8 +177,8 @@ function Home() {
               initialNodes={initialNodes}
               onDropNodeHandler={handleDropNode}
               onNodeClick={(node) => setCurrentNode(node)}
-              onNodesDelete={(node) => onNodesDeleteCallback(node)}
               onNodeMove={(node) => onNodeMoveCallback(node)}
+              onDeleteNode={(node) => onNodeDelete(node)}
               postInitialItem={postInitialItem}
             />
           </div>
@@ -165,6 +190,7 @@ function Home() {
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
             onFieldChange={(node, field, value) => onNodeFieldUpdateCallback(node, field, value)}
+            onDelete={(node) => onNodeDelete(node)}
           />
         </div>
       </div>

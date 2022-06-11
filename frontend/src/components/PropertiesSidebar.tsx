@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Node } from 'react-flow-renderer';
@@ -11,6 +11,7 @@ interface PropertiesSidebarProps {
   currentNode: Node | null;
   onClose: () => void;
   onFieldChange?: (node: Node, field: string, value: string) => void;
+  onDelete: (node: Node) => void;
 }
 
 function getPropertyValue(node: Node | null, propName: string) {
@@ -30,7 +31,7 @@ function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 
 function PropertiesSidebar(props: PropertiesSidebarProps) {
   const {
-    className = '', initialProperties = [], onClose, currentNode, onFieldChange,
+    className = '', initialProperties = [], onClose, currentNode, onDelete, onFieldChange,
   } = props;
 
   const [propValues, setPropValues] = useState<IListing[]>([]);
@@ -44,6 +45,11 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     }));
     setPropValues(newValues);
   }, [initialProperties]);
+
+  const onDeleteHandler = useCallback(() => {
+    if (!currentNode) return;
+    onDelete(currentNode);
+  }, [currentNode]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
@@ -111,6 +117,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
                 'w-full': !(currentNode && currentNode.data.isDraft),
               })}
               type="button"
+              onClick={() => onDeleteHandler()}
             >
               <p className="hidden md:inline"> Delete</p>
             </button>
