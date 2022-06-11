@@ -94,10 +94,10 @@ function Home() {
   }, [boardObjects]);
 
   useEffect(() => {
-    if (!objectEdges) return;
+    if (!objectEdges || !boardObjects) return;
     const connections = transformConnectionToEdge(objectEdges, boardObjects);
     setEdges(connections);
-  }, [objectEdges]);
+  }, [objectEdges, boardObjects]);
 
   useEffect(() => {
     if (!objectTypes) return;
