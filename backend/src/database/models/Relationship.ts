@@ -1,5 +1,5 @@
 import {
-  Entity, OneToOne, PrimaryKeyType,
+  Entity, ManyToOne, OneToOne, PrimaryKeyType,
 } from '@mikro-orm/core';
 import Item from './Item';
 import Pipeline from './Pipeline';
@@ -21,9 +21,9 @@ export default class Relationship {
 
   [PrimaryKeyType]?: string;
 
-  @OneToOne({ nullable: false, orphanRemoval: true })
+  @ManyToOne({ nullable: false, onDelete: 'cascade' })
     firstItem!: Item;
 
-  @OneToOne({ nullable: false, orphanRemoval: true })
+  @ManyToOne({ nullable: false, onDelete: 'cascade' })
     secondItem!: Item;
 }
