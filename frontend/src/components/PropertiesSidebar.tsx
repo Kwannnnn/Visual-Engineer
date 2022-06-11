@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Node } from 'react-flow-renderer';
+import { Edge, Node } from 'react-flow-renderer';
 import classNames from 'classnames';
 
 interface Listing {
@@ -12,12 +12,12 @@ interface Listing {
 interface PropertiesSidebarProps {
   className?: string;
   initialProperties?: Listing[];
-  currentNode: Node | null;
+  currentNode: Node | Edge | null;
   onClose: () => void;
-  onFieldChange?: (node: Node, field: string, value: string) => void;
+  onFieldChange?: (node: Node | Edge, field: string, value: string) => void;
 }
 
-function getPropertyValue(node: Node | null, propName: string) {
+function getPropertyValue(node: Node | Edge | null, propName: string) {
   if (!node) return '';
 
   const propKey = Object.keys(node.data).find((key) => key === propName);

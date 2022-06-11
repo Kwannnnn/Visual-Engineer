@@ -9,13 +9,14 @@ import ReactFlow, {
   Controls,
   Node,
   Edge,
-  addEdge,
   useNodesState,
   useEdgesState,
   ReactFlowInstance,
   Connection,
   NodeTypes,
-  Background
+  Background,
+  BackgroundVariant,
+  ConnectionLineType
 } from 'react-flow-renderer';
 import ItemNode from './ItemNode';
 
@@ -25,6 +26,8 @@ interface NewBoardProps {
   onDropNodeHandler?: (node: Node) => void;
   onNodeClick: (node: Node) => void;
   onNodesDelete: (node: Node[]) => void;
+  onEdgesDelete: (edge: Edge[]) => void;
+  onEdgeClick: (edge: Edge) => void;
   onNodeMove?: (node: Node) => void;
 }
 
@@ -36,21 +39,24 @@ const nodeTypes: NodeTypes = {
 };
 
 let id = 0;
+let edgeID = 0;
 // Every node must have an unique id
-const getId = () => {
+const getNodeId = () => {
   const result = `itemNode_${id}`;
   id += 1;
   return result;
 };
 
+const getEdgeId = () => {
+  // Used for Cypress to track unsaved item edges
+  const result = `itemTmpEdge_${edgeID}`;
+  edgeID += 1;
+  return result;
+};
+
 function Board(props: NewBoardProps) {
   const {
-    initialNodes,
-    initialEdges,
-    onDropNodeHandler,
-    onNodeClick,
-    onNodesDelete,
-    onNodeMove,
+    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete, onEdgeClick, onEdgesDelete, onNodeMove,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
@@ -59,7 +65,7 @@ function Board(props: NewBoardProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
 
   // State containing the edges of the board
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges ?? []);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   // State containing the React Flow Instance
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance>();
 
@@ -67,9 +73,40 @@ function Board(props: NewBoardProps) {
     setNodes(initialNodes ?? []);
   }, [initialNodes]);
 
+  useEffect(() => {
+    setEdges(initialEdges ?? []);
+  }, [initialEdges]);
+
   // Whenever a edge gets created update the edges state
   // eslint-disable-next-line max-len
-  const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+  const onConnect = useCallback(
+    (params: Connection) => {
+      const newConnection: Edge = {
+        id: `${params.source}_${params.target}`,
+        source: params.source ?? '',
+        target: params.target ?? '',
+        label: 'Draft Pipeline',
+        labelBgPadding: [8, 4],
+        labelBgBorderRadius: 4,
+        labelBgStyle: {
+          cursor: 'pointer', fill: '#FFCC00', color: '#fff',
+        },
+        type: 'straight',
+        sourceHandle: params.sourceHandle ?? '',
+        targetHandle: params.targetHandle ?? '',
+        style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
+        data: {
+          type: 'pipeline',
+        },
+        className: getEdgeId(),
+      };
+
+      setEdges((edgesState) => edgesState.concat(newConnection));
+      onEdgeClick(newConnection);
+    },
+    [setEdges]
+  );
+
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     // eslint-disable-next-line no-param-reassign
@@ -95,12 +132,12 @@ function Board(props: NewBoardProps) {
         y: event.clientY - reactFlowBounds.top,
       });
       const newNode = {
-        id: getId(),
+        id: getNodeId(),
         type: NODE_TYPE,
         position,
         data: {
           type: name,
-          dataCY: getId(),
+          dataCY: getNodeId(),
         },
       };
 
@@ -128,11 +165,15 @@ function Board(props: NewBoardProps) {
         onDragOver={onDragOver}
         onNodeClick={(e, n) => onNodeClick(n)}
         onNodesDelete={(nd) => onNodesDelete(nd)}
+        onEdgeClick={(e, n) => onEdgeClick(n)}
+        onEdgesDelete={(ed) => onEdgesDelete(ed)}
+        fitView
+        connectionLineType={ConnectionLineType.Straight}
         onNodeDragStop={(e, n) => onNodeDragStop(e, n)}
       >
         <MiniMap />
         <Controls />
-        <Background />
+        <Background variant={BackgroundVariant.Lines} color="#dfdfdf" gap={25} />
       </ReactFlow>
     </div>
   );
