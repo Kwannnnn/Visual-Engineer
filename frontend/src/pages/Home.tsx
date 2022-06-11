@@ -151,9 +151,9 @@ function Home() {
             <Board
               initialNodes={initialNodes}
               onDropNodeHandler={handleDropNode}
-              onNodeClick={(node: Node) => setCurrentNode(node)}
-              onNodesDelete={(node: Node[]) => onNodesDeleteCallback(node)}
-              onNodeMove={(node: Node) => onNodeMoveCallback(node)}
+              onNodeClick={(node) => setCurrentNode(node)}
+              onNodesDelete={(node) => onNodesDeleteCallback(node)}
+              onNodeMove={(node) => onNodeMoveCallback(node)}
               postInitialItem={postInitialItem}
             />
           </div>
@@ -164,7 +164,7 @@ function Home() {
             currentNode={currentNode}
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
-            onFieldChange={(node: Node, field: string, value: string) => onNodeFieldUpdateCallback(node, field, value)}
+            onFieldChange={(node, field, value) => onNodeFieldUpdateCallback(node, field, value)}
           />
         </div>
       </div>
