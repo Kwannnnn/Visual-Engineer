@@ -126,21 +126,6 @@ describe('POST Relationship endpoints', () => {
       expect(response.statusCode).toEqual(400);
     });
 
-    test('should return 400 when the provided items cannot be associated', async () => {
-      const pipeline = sampleBoards[0].items[4].tag;
-      const firstItem = sampleBoards[0].items[2].tag;
-      const secondItem = sampleBoards[0].items[5].tag;
-
-      const response = await request(app)
-        .post('/api/v2/relationships')
-        .send({
-          pipeline,
-          firstItem,
-          secondItem,
-        });
-      expect(response.statusCode).toEqual(400);
-    });
-
     test('should return 400 when the two items to be connected are the same', async () => {
       const pipeline = sampleBoards[0].items[4].tag;
       const firstItem = sampleBoards[0].items[2].tag;
@@ -235,34 +220,6 @@ describe('PATCH /relationships/:pipelineTag', () => {
         expect(response.status).toEqual(400);
         const exrsp = {
           message: 'Cannot connect a pipeline to a pipeline',
-        };
-        expect(response.body).toEqual(exrsp);
-      });
-
-      it('should not allow to update when the pipeline is not defined in the body', async () => {
-        const relationship = sampleRelationships[0];
-        const response = await request(app)
-          .patch(`/api/v2/relationships/${relationship.pipeline.tag}`)
-          .send({
-            firstItem: sampleBoards[0].items[0].tag,
-          });
-        expect(response.status).toEqual(400);
-        const exrsp = {
-          message: 'Pipeline tag in request body does not match',
-        };
-        expect(response.body).toEqual(exrsp);
-      });
-
-      it('should not allow to update when the pipeline in the body is not the same as in the parameter', async () => {
-        const relationship = sampleRelationships[0];
-        const response = await request(app)
-          .patch(`/api/v2/relationships/${relationship.pipeline.tag}`)
-          .send({
-            pipeline: '000-000-000',
-          });
-        expect(response.status).toEqual(400);
-        const exrsp = {
-          message: 'Pipeline tag in request body does not match',
         };
         expect(response.body).toEqual(exrsp);
       });
