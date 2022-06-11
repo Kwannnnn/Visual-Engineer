@@ -15,14 +15,14 @@ export default class ObjectSeeder extends Seeder {
     // Get the board items list form the board attached to context
     const { id: sampleBoardId, items: sampleBoardItems } = await context.sampleBoards[0];
 
-    // Add 3 sample items to the exported array
-    sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId }));
-    sampleBoardObjects.push(new PumpFactory(em).makeOne({ board: sampleBoardId }));
-    sampleBoardObjects.push(new BlowerFactory(em).makeOne({ board: sampleBoardId }));
-    sampleBoardObjects.push(new PipeFittingFactory(em).makeOne({ board: sampleBoardId }));
-    sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId }));
-    sampleBoardObjects.push(new TankFactory(em).makeOne({ board: sampleBoardId }));
-    sampleBoardObjects.push(new PipeFittingFactory(em).makeOne({ board: sampleBoardId }));
+    // Add sample items to the exported array
+    sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId, tag: 'PL01' }));
+    sampleBoardObjects.push(new PumpFactory(em).makeOne({ board: sampleBoardId, tag: 'PU01' }));
+    sampleBoardObjects.push(new BlowerFactory(em).makeOne({ board: sampleBoardId, tag: 'BL01' }));
+    sampleBoardObjects.push(new PipeFittingFactory(em).makeOne({ board: sampleBoardId, tag: 'PF01' }));
+    sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId, tag: 'PL02' }));
+    sampleBoardObjects.push(new TankFactory(em).makeOne({ board: sampleBoardId, tag: 'T01' }));
+    sampleBoardObjects.push(new PipeFittingFactory(em).makeOne({ board: sampleBoardId, tag: 'PF02' }));
 
     // Assign the newly created items to the sample board
     sampleBoardObjects.forEach((object) => sampleBoardItems.add(object));
