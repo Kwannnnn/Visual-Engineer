@@ -85,6 +85,8 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     item.type = currentNode.data.type;
     await postItem(item);
     await fetchBoardObjects();
+    const closeSidebar = onClose;
+    closeSidebar();
   };
 
   return (
