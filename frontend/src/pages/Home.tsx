@@ -82,7 +82,7 @@ function Home() {
     });
   }, [currentBoardId, onErrorCallback]);
 
-  const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(
+  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<Partial<IObjectContext>[]>(
     getBoardObjectsCallback
   );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -162,6 +162,7 @@ function Home() {
             onClose={() => setCurrentNode(null)}
             onFieldChange={(node: Node, field: string, value: string) => onNodeFieldUpdateCallback(node, field, value)}
             postItem={postItem}
+            fetchBoardObjects={fetchBoardObjects}
           />
         </div>
       </div>

@@ -13,6 +13,7 @@ interface PropertiesSidebarProps {
   onClose: () => void;
   onFieldChange?: (node: Node, field: string, value: string) => void;
   postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
+  fetchBoardObjects: () => Promise<unknown>;
 }
 
 function getPropertyValue(node: Node | null, propName: string) {
@@ -27,7 +28,7 @@ function getPropertyValue(node: Node | null, propName: string) {
 
 function PropertiesSidebar(props: PropertiesSidebarProps) {
   const {
-    className = '', initialProperties = [], onClose, currentNode, onFieldChange, postItem,
+    className = '', initialProperties = [], onClose, currentNode, onFieldChange, postItem, fetchBoardObjects,
   } = props;
 
   const [propValues, setPropValues] = useState<IListing[]>([]);
@@ -64,7 +65,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     setTimer(delayDebounce);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // TODO: handle form submission (e.g. POST to server)
     let item: Partial<IObjectContext> = {};
@@ -74,7 +75,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
         [prop.name]: prop.value,
       };
 
-      item = { ...item, ...tempItem };
+      if (prop.value !== '') item = { ...item, ...tempItem };
     });
 
     if (!currentNode) return;
@@ -82,7 +83,8 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     item.x = currentNode.position.x;
     item.y = currentNode.position.y;
     item.type = currentNode.data.type;
-    postItem(item);
+    await postItem(item);
+    await fetchBoardObjects();
   };
 
   return (
