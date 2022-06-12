@@ -12,7 +12,7 @@ import {
 import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
 import {
-  getBoardObjects, getObjectTypes, getTypeProperties, getObjectEdges, updateBoardObject
+  getBoardObjects, getObjectTypes, getTypeProperties, getObjectEdges, updateBoardObject, createRelationship, createItem
 } from '../util/api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
 import transformConnectionToEdge from '../util/transformConnectionToEdge';
@@ -79,12 +79,66 @@ function Home() {
     });
   }, [currentBoardId, onErrorCallback]);
 
+  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item });
+  const postRelationship = (relationship: Partial<IOConnectionContext>) => createRelationship(relationship);
+
+  const onConnectionCallback = useCallback((edge: Edge) => {
+    // TODO: Once object props are nullable, remove empty strings
+    const objectBody: Partial<IObjectContext> = {
+      // TODO: once merging with Quan's, remove everything except the type
+      tag: `tag-tmp-${Math.floor(Math.random() * (100_000_000 - 0 + 1) + 0)}`,
+      name: '',
+      length: 0,
+      width: 0,
+      depth: 0,
+      diameter: 0,
+      type: edge.data.type,
+      pressureClass: 'PN10',
+      flange: 0,
+      lining: 0,
+      x: 0,
+      y: 0,
+    };
+
+    // TODO: display the pipeline's tag
+
+    postItem(objectBody).then((response) => {
+      // TODO: Check for errors
+      const newConnection: IOConnectionContext = {
+        pipeline: response.tag,
+        firstItem: edge.source,
+        secondItem: edge.target,
+      };
+
+      postRelationship(newConnection)
+      // TODO: Check for errors
+        .then((result) => {
+          const newEdge: Edge = {
+            id: result.pipeline.tag,
+            source: result.firstItem.tag,
+            target: result.secondItem.tag,
+            label: result.pipeline.tag,
+            type: 'straight',
+            style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
+            data: {
+              type: 'pipeline',
+            },
+          };
+
+          setEdges((edgesState) => edgesState.concat(newEdge));
+          // setCurrentNode(newEdge);
+        });
+    });
+  }, []);
+
   const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: typeProperties } = useAPIUtil<any>(getPropertiesCallback);
   const { data: objectEdges } = useAPIUtil<IOConnectionContext[]>(getEdgesCallback);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // const { data: postedPipeline } = useAPIUtil<any>(getPipelineCallback);
 
   useEffect(() => {
     if (!boardObjects) return;
@@ -148,6 +202,7 @@ function Home() {
               onDropNodeHandler={handleDropNode}
               onNodeClick={(node: Node) => setCurrentNode(node)}
               onEdgeClick={(edge: Edge) => setCurrentNode(edge)}
+              onEdgeConnect={(edge: Edge) => onConnectionCallback(edge)}
               onNodesDelete={(node: Node[]) => onObjectDeleteCallback(node)}
               onEdgesDelete={(edge: Edge[]) => onObjectDeleteCallback(edge)}
               onNodeMove={(node: Node) => onNodeMoveCallback(node)}
