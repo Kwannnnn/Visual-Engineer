@@ -87,3 +87,21 @@ Additionally, a sidecar reverse proxy Caddy container is deployed to proxy and s
 > To deploy this sidecar, run `az container create --resource-group 24HBOICTBVWBVE --file caddy-proxy-aci.yml` from the [azure directory](./azure/).
 
 This will deploy the container to [https://visualengineer-api-tls.westeurope.azurecontainer.io/](https://visualengineer-api-tls.westeurope.azurecontainer.io/).
+
+### Azure deployment 
+
+Requires the az cli. 
+Firstly, you have to login into the azure resource group
+
+> `docker login azure` will redirect you to the browser login page. <br>
+> `az acr login -n visualengineer`
+
+For the pourpose of deploying in azure you have to switch to the correct context.
+> Use the command `docker context use whateveryouwant` form the backend directory
+
+In order to change the azure container instances, after you finish the changes into the docker and docker-compose are the following steps:
+
+> `docker compose -f prod.docker-compose.yml down` - delete the previous container <br>
+> `docker compose -f prod.docker-compose.yml up -d` - build the new container with the contents of the docker-compose file
+
+
