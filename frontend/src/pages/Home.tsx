@@ -22,6 +22,8 @@ import {
 import transformObjectToNode from '../util/transformObjectToNode';
 import IObjectContext from '../typings/IObjectContext';
 import { IListing } from '../typings/IListing';
+import Modal from '../components/modal/Modal';
+import ModalType from '../components/modal/ModalType.enum';
 
 function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,6 +37,7 @@ function Home() {
   const [initialProperties, setInitialProperties] = useState<IListing[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [types, setTypes] = useState<[]>([]);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const getBoardObjectsCallback = useCallback(
     async () => getBoardObjects(currentBoardId),
@@ -54,32 +57,31 @@ function Home() {
     }
   }, []);
 
-  const onNodeDelete = useCallback(async (node: Node) => {
-    if (node.data.isDraft) {
-      const newNodes = initialNodes.filter((n) => n.data.tag !== node.data.tag);
+  const onNodeDelete = useCallback(async () => {
+    if (!currentNode) return;
+
+    if (currentNode.data.isDraft) {
+      const newNodes = initialNodes.filter((n) => n.data.tag !== currentNode.data.tag);
       setInitialNodes(newNodes);
       setCurrentNode(null);
       return;
     }
 
-    if (!currentNode) return;
-    if (node.data.tag !== currentNode.data.tag) return;
-
     let response500 = false;
     try {
-      await deleteBoardObject(currentBoardId, node.data.tag);
+      await deleteBoardObject(currentBoardId, currentNode.data.tag);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const { response } = err;
         if (response && (response.status === 500 || response.status === 0)) {
           response500 = true;
-          console.log('Cannot connect to the server');
+          setErrorMessage('Unable to connect to the server. Please try again later.');
         }
       }
     } finally {
       // Check whether there was a 500 error to avoid deleting the node from the frontend
       if (!response500) {
-        const newNodes = initialNodes.filter((n) => n.data.tag !== node.data.tag);
+        const newNodes = initialNodes.filter((n) => n.data.tag !== currentNode.data.tag);
         setInitialNodes(newNodes);
         setCurrentNode(null);
       }
@@ -157,7 +159,10 @@ function Home() {
 
   return (
     <ReactFlowProvider>
-      <div className="flex-1 min-h-0">
+      <div className={classNames('flex-1 h-full', {
+        'z-0': showModal,
+      })}
+      >
         <div className="grid grid-cols-20 h-full">
           <Toolbox
             className="hidden lg:block lg:min-w-sm lg:col-span-3"
@@ -178,7 +183,6 @@ function Home() {
               onDropNodeHandler={handleDropNode}
               onNodeClick={(node) => setCurrentNode(node)}
               onNodeMove={(node) => onNodeMoveCallback(node)}
-              onDeleteNode={(node) => onNodeDelete(node)}
               postInitialItem={postInitialItem}
             />
           </div>
@@ -190,10 +194,23 @@ function Home() {
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
             onFieldChange={(node, field, value) => onNodeFieldUpdateCallback(node, field, value)}
-            onDelete={(node) => onNodeDelete(node)}
+            onDelete={() => setShowModal(true)}
           />
         </div>
       </div>
+      {showModal && (
+        <Modal
+          showModal={showModal}
+          modalType={ModalType.Destructive}
+          className="modal fixed z-1 inset-0 bg-slate-50 bg-opacity-70"
+          buttonText="Delete"
+          title="Delete item"
+          description={`Are you sure you want to delete ${currentNode?.data.type}
+                        with tag ${currentNode?.data.tag}?`}
+          closeModal={() => setShowModal(false)}
+          onButtonClick={() => onNodeDelete()}
+        />
+      )}
     </ReactFlowProvider>
   );
 }
