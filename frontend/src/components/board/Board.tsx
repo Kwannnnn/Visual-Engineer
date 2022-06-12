@@ -29,6 +29,7 @@ interface NewBoardProps {
   onEdgesDelete: (edge: Edge[]) => void;
   onEdgeClick: (edge: Edge) => void;
   onNodeMove?: (node: Node) => void;
+  onEdgeConnect: (edge: Edge) => void;
 }
 
 // This string key must match the key in the nodeTypes object in order to render the correct
@@ -56,7 +57,7 @@ const getEdgeId = () => {
 
 function Board(props: NewBoardProps) {
   const {
-    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete, onEdgeClick, onEdgesDelete, onNodeMove,
+    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete, onEdgeClick, onEdgesDelete, onNodeMove, onEdgeConnect,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
@@ -97,10 +98,12 @@ function Board(props: NewBoardProps) {
         style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
         data: {
           type: 'pipeline',
+          isDraft: true,
         },
         className: getEdgeId(),
       };
 
+      onEdgeConnect(newConnection);
       setEdges((edgesState) => edgesState.concat(newConnection));
       onEdgeClick(newConnection);
     },
