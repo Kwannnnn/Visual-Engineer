@@ -1,6 +1,7 @@
 import axios from 'axios';
 import IBoard from '../../typings/IBoard';
 import IObjectContext from '../../typings/IObjectContext';
+import IOConnectionContext from '../../typings/IOConnectionContext';
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -33,11 +34,13 @@ export async function createBoard(properties: Partial<IBoard>) {
 }
 
 export async function createItem(boardId: number, properties: Partial<IObjectContext>) {
-  await axios.post(`${url}/v1/boards/${boardId}/objects/`, {
+  const result = await axios.post(`${url}/v1/boards/${boardId}/objects/`, {
     ...properties,
   })
     .then((response) => response.data)
     .catch((err) => err.data);
+
+  return result;
 }
 
 export async function updateBoard(id: number, properties: Partial<IBoard>) {
@@ -87,4 +90,14 @@ export async function getTypeProperties(type: string) {
 export async function getObjectEdges() {
   const result = await axios.get(`${url}/v2/relationships`);
   return result.data;
+}
+
+export async function createRelationship(tags: Partial<IOConnectionContext>) {
+  const result = await axios.post(`${url}/v2/relationships/`, {
+    ...tags,
+  })
+    .then((response) => response.data)
+    .catch((err) => err.data);
+
+  return result;
 }
