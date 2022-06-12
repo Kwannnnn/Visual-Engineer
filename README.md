@@ -87,35 +87,3 @@ Additionally, a sidecar reverse proxy Caddy container is deployed to proxy and s
 > To deploy this sidecar, run `az container create --resource-group 24HBOICTBVWBVE --file caddy-proxy-aci.yml` from the [azure directory](./azure/).
 
 This will deploy the container to [https://visualengineer-api-tls.westeurope.azurecontainer.io/](https://visualengineer-api-tls.westeurope.azurecontainer.io/).
-
-### Azure deployment 
-
-Requires the az cli. 
-
-**Login into the resource group**
-
-> `az login` will redirect you to the login page in your default browser. Now you are logged in to Azure CLI.<br>
-> `docker login azure` log in te same way to have access to deploy docker to azure <br>
-> `az acr login -n visualengineer`
-
-For the purpose of deploying in azure you have to create a new aci context and then switch to it.
-> To create a new context use `docker context create aci <context-name>` cUse the command `docker context use <context-name>` form the backend directory
-
-A .env file is needed in the azure directory.
-
-**Configuration for the database production:**
-
-POSTGRES_USER=USERNAME <br>
-POSTGRES_PASSWORD=PW <br>
-POSTGRES_DB=DATABASENAME 
-
-DOMAIN_NAME=visualengineer-api (the domain where the backend can be found) <br>
-IMAGE_TAG=main (the branch that is being deployed)
-
-**Creating the azure containers**
-
-In order to change the azure container instances, after you finish the changes into the docker and docker-compose are the following steps:
-
-> `docker compose -f prod.docker-compose.yml down` - delete the previous container <br>
-> `docker compose -f prod.docker-compose.yml up -d` - build the new container with the contents of the docker-compose file
-
