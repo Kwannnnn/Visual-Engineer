@@ -100,10 +100,7 @@ function Home() {
       y: 0,
     };
 
-    // TODO: display the pipeline's tag
-
     postItem(objectBody).then((response) => {
-      // TODO: Check for errors
       const newConnection: IOConnectionContext = {
         pipeline: response.tag,
         firstItem: edge.source,
@@ -111,7 +108,6 @@ function Home() {
       };
 
       postRelationship(newConnection)
-      // TODO: Check for errors
         .then((result) => {
           const newEdge: Edge = {
             id: result.pipeline.tag,
@@ -126,7 +122,6 @@ function Home() {
           };
 
           setEdges((edgesState) => edgesState.concat(newEdge));
-          // setCurrentNode(newEdge);
         });
     });
   }, []);
@@ -137,8 +132,6 @@ function Home() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: typeProperties } = useAPIUtil<any>(getPropertiesCallback);
   const { data: objectEdges } = useAPIUtil<IOConnectionContext[]>(getEdgesCallback);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // const { data: postedPipeline } = useAPIUtil<any>(getPipelineCallback);
 
   useEffect(() => {
     if (!boardObjects) return;
