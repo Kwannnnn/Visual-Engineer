@@ -14,11 +14,18 @@ import {
 import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
 import {
-  getBoardObjects, getObjectTypes, getTypeProperties, getObjectEdges, updateBoardObject, updateRelationship
+  createItem,
+  getBoardObjects,
+  getObjectTypes,
+  getTypeProperties,
+  updateBoardObject,
+  getObjectEdges,
+  updateRelationship
 } from '../util/api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
 import transformConnectionToEdge from '../util/transformConnectionToEdge';
 import IObjectContext from '../typings/IObjectContext';
+import { IListing } from '../typings/IListing';
 import IOConnectionContext from '../typings/IOConnectionContext';
 
 function Home() {
@@ -30,58 +37,81 @@ function Home() {
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
   const [currentNode, setCurrentNode] = useState<Node | Edge | null>(null);
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
-  const [initialProperties, setInitialProperties] = useState([]);
+  const [initialProperties, setInitialProperties] = useState<IListing[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [types, setTypes] = useState<[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
-  const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
+  const getBoardObjectsCallback = useCallback(
+    async () => getBoardObjects(currentBoardId),
+    [currentBoardId]
+  );
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
-  const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
-  const getEdgesCallback = useCallback(async () => getObjectEdges(), [currentBoardId]);
+  const getPropertiesCallback = useCallback(
+    async () => currentNode && getTypeProperties(currentNode.data.type),
+    [currentNode]
+  );
+  const getEdgesCallback = useCallback(
+    async () => getObjectEdges(),
+    [currentBoardId]
+  );
 
-  const onErrorCallback = useCallback((error: AxiosError, node: Node | Edge) => {
-    const { response } = error;
-    const { id } = node;
-    if (response && response.status === 404) {
-      node.data.isDraft = true;
-      setErrorMessage(`${node.data.type} ${id} does not exist in the database!
+  const onErrorCallback = useCallback(
+    (error: AxiosError, node: Node | Edge) => {
+      const { response } = error;
+      const { id } = node;
+      if (response && response.status === 404) {
+        node.data.isDraft = true;
+        setErrorMessage(`${node.data.type} ${id} does not exist in the database!
         It has been marked as draft`);
-      node.data.tag = undefined;
-      setCurrentNode(node);
-    }
-  }, []);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onObjectDeleteCallback = useCallback((items: Node[] | Edge[]) => {
-    items.forEach((item) => {
-      // TODO: Delete object from backend
-      if (item.id === currentNode?.id) {
-        setCurrentNode(null);
+        node.data.tag = undefined;
+        setCurrentNode(node);
       }
-    });
-  }, [currentNode]);
-  const onNodeMoveCallback = useCallback((node: Node) => {
-    const { x, y } = node.position;
+    },
+    []
+  );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const onObjectDeleteCallback = useCallback(
+    (items: Node[] | Edge[]) => {
+      items.forEach((item) => {
+        // TODO: Delete object from backend
+        if (item.id === currentNode?.id) {
+          setCurrentNode(null);
+        }
+      });
+    },
+    [currentNode]
+  );
+  const onNodeMoveCallback = useCallback(
+    (node: Node) => {
+      const { x, y } = node.position;
 
-    if (!node.data.tag) return;
-    updateBoardObject(currentBoardId, node.data.tag, {
-      x: Math.round(x * 1000) / 1000,
-      y: Math.round(y * 1000) / 1000,
-    }).catch((err: AxiosError) => {
-      onErrorCallback(err, node);
-    });
-  }, [currentBoardId, onErrorCallback]);
+      if (!node.data.tag) return;
+      updateBoardObject(currentBoardId, node.data.tag, {
+        x: Math.round(x * 1000) / 1000,
+        y: Math.round(y * 1000) / 1000,
+      }).catch((err: AxiosError) => {
+        onErrorCallback(err, node);
+      });
+    },
+    [currentBoardId, onErrorCallback]
+  );
 
-  const onNodeFieldUpdateCallback = useCallback((node: Node | Edge, field: string, value: string) => {
-    if (!node.data.tag) return;
-    updateBoardObject(currentBoardId, node.data.tag, {
-      [field]: value,
-    }).catch((err: AxiosError) => {
-      onErrorCallback(err, node);
-    });
-  }, [currentBoardId, onErrorCallback]);
+  const onNodeFieldUpdateCallback = useCallback(
+    (node: Node | Edge, field: string, value: string) => {
+      if (!node.data.tag) return;
+      updateBoardObject(currentBoardId, node.data.tag, {
+        [field]: value,
+      }).catch((err: AxiosError) => {
+        onErrorCallback(err, node);
+      });
+    },
+    [currentBoardId, onErrorCallback]
+  );
 
-  const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
+  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<
+    Partial<IObjectContext>[]
+  >(getBoardObjectsCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -139,6 +169,7 @@ function Home() {
     updateRelationship(pipelineTag, firstItem, secondItem);
     setEdges((els) => updateEdge(oldEdge, newConnection, els));
   };
+  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item });
 
   return (
     <ReactFlowProvider>
@@ -148,14 +179,22 @@ function Home() {
             className="hidden lg:block lg:min-w-sm lg:col-span-3"
             types={types}
           />
-          <div className={classNames('flex flex-col col-span-20', {
-            'lg:col-span-17': !currentNode,
-            'lg:col-span-12': currentNode,
-          })}
+          <div
+            className={classNames('flex flex-col col-span-20', {
+              'lg:col-span-17': !currentNode,
+              'lg:col-span-12': currentNode,
+            })}
           >
-            <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
-            { errorMessage && (
-              <AlertPane className="transition-opacity ease-in" message={errorMessage} />
+            <TabBar
+              currentBoardId={currentBoardId}
+              boards={boards}
+              onSelect={handleTab}
+            />
+            {errorMessage && (
+              <AlertPane
+                className="transition-opacity ease-in"
+                message={errorMessage}
+              />
             )}
             <Board
               initialNodes={initialNodes}
@@ -167,6 +206,7 @@ function Home() {
               onNodeMove={(node: Node) => onNodeMoveCallback(node)}
               onEdgeUpdate={handleEdgeUpdate}
               initialEdges={edges}
+              postItem={postItem}
             />
           </div>
           <PropertiesSidebar
@@ -177,6 +217,8 @@ function Home() {
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
             onFieldChange={(node: Node | Edge, field: string, value: string) => onNodeFieldUpdateCallback(node, field, value)}
+            postItem={postItem}
+            fetchBoardObjects={fetchBoardObjects}
           />
         </div>
       </div>

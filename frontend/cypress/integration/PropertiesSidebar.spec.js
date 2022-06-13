@@ -1,5 +1,5 @@
 import {
-  dragAndDropVessel, getPropertiesSidebar, getPropertiesSidebarList, dragAndDropPipeFitting
+  dragAndDropVessel, getPropertiesSidebar, getPropertiesSidebarList
 } from '../support/test-utils.js';
 
 beforeEach(() => {

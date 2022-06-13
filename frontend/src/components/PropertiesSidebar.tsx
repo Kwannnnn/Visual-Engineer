@@ -3,57 +3,55 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Edge, Node } from 'react-flow-renderer';
 import classNames from 'classnames';
+import { IListing } from '../typings/IListing';
+import IObjectContext from '../typings/IObjectContext';
 
-interface Listing {
-  name: string; // name of the property
-  type: string; // data type of the property
-  value?: string; // value of the property
-}
 interface PropertiesSidebarProps {
   className?: string;
-  initialProperties?: Listing[];
+  initialProperties: IListing[];
   currentNode: Node | Edge | null;
   onClose: () => void;
   onFieldChange?: (node: Node | Edge, field: string, value: string) => void;
+  postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
+  fetchBoardObjects: () => Promise<unknown>;
 }
 
 function getPropertyValue(node: Node | Edge | null, propName: string) {
   if (!node) return '';
 
   const propKey = Object.keys(node.data).find((key) => key === propName);
-  const value = propKey ? node.data[`${propKey}`] : '';
+
+  const value = node.data[`${propKey}`] ? node.data[`${propKey}`] : '';
 
   return value;
 }
 
-function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-  event.preventDefault();
-  // TODO: handle form submission (e.g. POST to server)
-}
-
 function PropertiesSidebar(props: PropertiesSidebarProps) {
   const {
-    className = '', initialProperties = [], onClose, currentNode, onFieldChange,
+    className = '', initialProperties = [], onClose, currentNode, onFieldChange, postItem, fetchBoardObjects,
   } = props;
 
-  const [propValues, setPropValues] = useState<Listing[]>([]);
+  const [propValues, setPropValues] = useState<IListing[]>([]);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    setPropValues(initialProperties);
+    if (!currentNode) return;
+    const newValues = initialProperties.map((prop) => ({
+      ...prop,
+      value: getPropertyValue(currentNode, prop.name),
+    }));
+    setPropValues(newValues);
   }, [initialProperties]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
-    const newProps: Listing[] = [];
-
-    propValues.forEach((item) => {
+    const newProps: IListing[] = propValues.map((item) => {
       if (item.name === event.target.name) {
         item.value = event.target.value; // update the prop state
         currentNode.data[`${item.name}`] = event.target.value; // update node state
       }
 
-      newProps.push(item);
+      return item;
     });
     setPropValues(newProps);
 
@@ -65,6 +63,38 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
       onFieldChange(currentNode, event.target.name, event.target.value);
     }, 1500);
     setTimer(delayDebounce);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // TODO: handle form submission (e.g. POST to server)
+    let item: Partial<IObjectContext> = {};
+
+    propValues.forEach((prop: IListing) => {
+      const tempItem = {
+        [prop.name]: prop.value,
+      };
+
+      if (prop.value !== '') item = { ...item, ...tempItem };
+    });
+
+    if (!currentNode) return;
+
+    const node = currentNode as Node;
+
+    if (node.position) {
+      item.x = node.position.x;
+      item.y = node.position.y;
+    } else {
+      item.x = 0;
+      item.y = 0;
+    }
+
+    item.type = currentNode.data.type;
+    await postItem(item);
+    await fetchBoardObjects();
+    const closeSidebar = onClose;
+    closeSidebar();
   };
 
   return (
@@ -124,7 +154,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
               p.value = value;
 
               return (
-                <label htmlFor={`sidebar-input-field-${p.name}`}>
+                <label key={p.name} htmlFor={`sidebar-input-field-${p.name}`}>
                   {p.name}
                   <input
                     name={p.name}
@@ -141,7 +171,6 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
         </div>
       </form>
     </aside>
-
   );
 }
 
