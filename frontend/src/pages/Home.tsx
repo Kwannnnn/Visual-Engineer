@@ -22,7 +22,7 @@ import {
 import transformObjectToNode from '../util/transformObjectToNode';
 import transformConnectionToEdge from '../util/transformConnectionToEdge';
 import IObjectContext from '../typings/IObjectContext';
-import { IListing } from '../typings/IListing';
+import { IPropertyListing } from '../typings/IPropertyListing';
 import IOConnectionContext from '../typings/IOConnectionContext';
 
 function Home() {
@@ -34,7 +34,9 @@ function Home() {
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
   const [currentNode, setCurrentNode] = useState<Node | Edge | null>(null);
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
-  const [initialProperties, setInitialProperties] = useState<IListing[]>([]);
+  const [initialProperties, setInitialProperties] = useState<
+    IPropertyListing[]
+  >([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [types, setTypes] = useState<[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -155,7 +157,10 @@ function Home() {
     setCurrentNode(node);
   };
 
-  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item });
+  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item }).catch((err: AxiosError) => {
+    setErrorMessage(err.message || 'Unknown error');
+    return Promise.reject();
+  });
 
   return (
     <ReactFlowProvider>
