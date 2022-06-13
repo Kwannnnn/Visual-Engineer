@@ -17,8 +17,8 @@ import {
 import transformObjectToNode from '../util/transformObjectToNode';
 import transformConnectionToEdge from '../util/transformConnectionToEdge';
 import IObjectContext from '../typings/IObjectContext';
-import IOConnectionContext from '../typings/IOConnectionContext';
 import { IListing } from '../typings/IListing';
+import IOConnectionContext from '../typings/IOConnectionContext';
 
 function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -39,69 +39,44 @@ function Home() {
     [currentBoardId]
   );
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
-  const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
-  const getEdgesCallback = useCallback(async () => getObjectEdges(), [currentBoardId]);
+  const getPropertiesCallback = useCallback(
+    async () => currentNode && getTypeProperties(currentNode.data.type),
+    [currentNode]
+  );
+  const getEdgesCallback = useCallback(
+    async () => getObjectEdges(),
+    [currentBoardId]
+  );
 
-  const onErrorCallback = useCallback((error: AxiosError, node: Node | Edge) => {
-    const { response } = error;
-    const { id } = node;
-    if (response && response.status === 404) {
-      node.data.isDraft = true;
-      setErrorMessage(`${node.data.type} ${id} does not exist in the database!
+  const onErrorCallback = useCallback(
+    (error: AxiosError, node: Node | Edge) => {
+      const { response } = error;
+      const { id } = node;
+      if (response && response.status === 404) {
+        node.data.isDraft = true;
+        setErrorMessage(`${node.data.type} ${id} does not exist in the database!
         It has been marked as draft`);
-      node.data.tag = undefined;
-      setCurrentNode(node);
-    }
-  }, []);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onObjectDeleteCallback = useCallback((items: Node[] | Edge[]) => {
-    items.forEach((item) => {
-      // TODO: Delete object from backend
-      if (item.id === currentNode?.id) {
-        setCurrentNode(null);
+        node.data.tag = undefined;
+        setCurrentNode(node);
       }
-    });
-  }, [currentNode]);
-  const onNodeMoveCallback = useCallback((node: Node) => {
-    const { x, y } = node.position;
+    },
+    []
+  );
 
-    if (!node.data.tag) return;
-    updateBoardObject(currentBoardId, node.data.tag, {
-      x: Math.round(x * 1000) / 1000,
-      y: Math.round(y * 1000) / 1000,
-    }).catch((err: AxiosError) => {
-      onErrorCallback(err, node);
-    });
-  }, [currentBoardId, onErrorCallback]);
-
-  const onNodeFieldUpdateCallback = useCallback((node: Node | Edge, field: string, value: string) => {
-    if (!node.data.tag) return;
-    updateBoardObject(currentBoardId, node.data.tag, {
-      [field]: value,
-    }).catch((err: AxiosError) => {
-      onErrorCallback(err, node);
-    });
-  }, [currentBoardId, onErrorCallback]);
-
-  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item });
-  const postRelationship = (relationship: Partial<IOConnectionContext>) => createRelationship(relationship);
+  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item }).catch((err: AxiosError) => {
+    setErrorMessage(err.message || 'Unknown error');
+    return Promise.reject();
+  });
+  const postRelationship = (relationship: Partial<IOConnectionContext>) => createRelationship(relationship).catch((err: AxiosError) => {
+    setErrorMessage(err.message || 'Unknown error');
+    return Promise.reject();
+  });
 
   const onConnectionCallback = useCallback((edge: Edge) => {
-    // TODO: Once object props are nullable, remove empty strings
     const objectBody: Partial<IObjectContext> = {
-      // TODO: once merging with Quan's, remove everything except the type
-      tag: `tag-tmp-${Math.floor(Math.random() * (100_000_000 - 0 + 1) + 0)}`,
-      name: '',
-      length: 0,
-      width: 0,
-      depth: 0,
-      diameter: 0,
       type: edge.data.type,
-      pressureClass: 'PN10',
-      flange: 0,
-      lining: 0,
-      x: 0,
-      y: 0,
+      x: 1,
+      y: 1,
     };
 
     postItem(objectBody).then((response) => {
@@ -112,7 +87,8 @@ function Home() {
       };
 
       postRelationship(newConnection)
-        .then((result) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .then((result: any) => {
           const newEdge: Edge = {
             id: result.pipeline.tag,
             source: result.firstItem.tag,
@@ -130,9 +106,48 @@ function Home() {
     });
   }, []);
 
-  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<Partial<IObjectContext>[]>(
-    getBoardObjectsCallback
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const onObjectDeleteCallback = useCallback(
+    (items: Node[] | Edge[]) => {
+      items.forEach((item) => {
+        // TODO: Delete object from backend
+        if (item.id === currentNode?.id) {
+          setCurrentNode(null);
+        }
+      });
+    },
+    [currentNode]
   );
+  const onNodeMoveCallback = useCallback(
+    (node: Node) => {
+      const { x, y } = node.position;
+
+      if (!node.data.tag) return;
+      updateBoardObject(currentBoardId, node.data.tag, {
+        x: Math.round(x * 1000) / 1000,
+        y: Math.round(y * 1000) / 1000,
+      }).catch((err: AxiosError) => {
+        onErrorCallback(err, node);
+      });
+    },
+    [currentBoardId, onErrorCallback]
+  );
+
+  const onNodeFieldUpdateCallback = useCallback(
+    (node: Node | Edge, field: string, value: string) => {
+      if (!node.data.tag) return;
+      updateBoardObject(currentBoardId, node.data.tag, {
+        [field]: value,
+      }).catch((err: AxiosError) => {
+        onErrorCallback(err, node);
+      });
+    },
+    [currentBoardId, onErrorCallback]
+  );
+
+  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<
+    Partial<IObjectContext>[]
+  >(getBoardObjectsCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -193,9 +208,16 @@ function Home() {
               'lg:col-span-12': currentNode,
             })}
           >
-            <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
-            { errorMessage && (
-              <AlertPane className="transition-opacity ease-in" message={errorMessage} />
+            <TabBar
+              currentBoardId={currentBoardId}
+              boards={boards}
+              onSelect={handleTab}
+            />
+            {errorMessage && (
+              <AlertPane
+                className="transition-opacity ease-in"
+                message={errorMessage}
+              />
             )}
             <Board
               initialNodes={initialNodes}
