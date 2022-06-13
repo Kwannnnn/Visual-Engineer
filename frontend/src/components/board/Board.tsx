@@ -52,12 +52,13 @@ function Board(props: NewBoardProps) {
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
-  // State containing the nodes of the board
 
+  // State containing the nodes of the board
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
 
   // State containing the edges of the board
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
   // State containing the React Flow Instance
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance>();
 
@@ -69,7 +70,7 @@ function Board(props: NewBoardProps) {
     setEdges(initialEdges ?? []);
   }, [initialEdges]);
 
-  // Whenever a edge gets created update the edges state
+  // Whenever an edge gets created update the edge's state
   // eslint-disable-next-line max-len
   const onConnect = useCallback(
     (params: Connection) => {
@@ -108,7 +109,6 @@ function Board(props: NewBoardProps) {
   // The callback that creates the node whenever a new node is dropped on the board
   const onDrop = useCallback(
     (event: React.DragEvent) => {
-      // TODO: improve those null checks
       if (!reactFlowInstance || !reactFlowWrapper || !reactFlowWrapper.current) return;
 
       event.preventDefault();
