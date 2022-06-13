@@ -108,7 +108,6 @@ function Board(props: NewBoardProps) {
   // The callback that creates the node whenever a new node is dropped on the board
   const onDrop = useCallback(
     (event: React.DragEvent) => {
-      // TODO: improve those null checks
       if (!reactFlowInstance || !reactFlowWrapper || !reactFlowWrapper.current) return;
 
       event.preventDefault();
