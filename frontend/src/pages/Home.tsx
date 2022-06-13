@@ -67,12 +67,12 @@ function Home() {
     []
   );
 
-  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item }).catch((err: AxiosError) => {
-    setErrorMessage(err.message || 'Unknown error');
+  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item }).catch((err) => {
+    setErrorMessage(err.response?.data?.message || 'Unknown error');
     return Promise.reject();
   });
-  const postRelationship = (relationship: Partial<IOConnectionContext>) => createRelationship(relationship).catch((err: AxiosError) => {
-    setErrorMessage(err.message || 'Unknown error');
+  const postRelationship = (relationship: Partial<IOConnectionContext>) => createRelationship(relationship).catch((err) => {
+    setErrorMessage(err.response?.data?.message || 'Unknown error');
     return Promise.reject();
   });
 
