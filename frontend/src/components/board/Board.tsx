@@ -1,8 +1,5 @@
 import React, {
-  useState,
-  useCallback,
-  useRef,
-  useEffect
+  useState, useCallback, useRef, useEffect
 } from 'react';
 import ReactFlow, {
   MiniMap,
@@ -18,6 +15,7 @@ import ReactFlow, {
   BackgroundVariant,
   ConnectionLineType
 } from 'react-flow-renderer';
+import IObjectContext from '../../typings/IObjectContext';
 import ItemNode from './ItemNode';
 
 interface NewBoardProps {
@@ -30,6 +28,7 @@ interface NewBoardProps {
   onEdgeClick: (edge: Edge) => void;
   onNodeMove?: (node: Node) => void;
   onEdgeConnect: (edge: Edge) => void;
+  postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
 }
 
 // This string key must match the key in the nodeTypes object in order to render the correct
@@ -39,15 +38,7 @@ const nodeTypes: NodeTypes = {
   itemNode: ItemNode,
 };
 
-let id = 0;
 let edgeID = 0;
-// Every node must have an unique id
-const getNodeId = () => {
-  const result = `itemNode_${id}`;
-  id += 1;
-  return result;
-};
-
 const getEdgeId = () => {
   // Used for Cypress to track unsaved item edges
   const result = `itemTmpEdge_${edgeID}`;
@@ -57,7 +48,16 @@ const getEdgeId = () => {
 
 function Board(props: NewBoardProps) {
   const {
-    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete, onEdgeClick, onEdgesDelete, onNodeMove, onEdgeConnect,
+    initialNodes,
+    initialEdges,
+    onDropNodeHandler,
+    onNodeClick,
+    onNodesDelete,
+    onNodeMove,
+    postItem,
+    onEdgeClick,
+    onEdgesDelete,
+    onEdgeConnect,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
@@ -134,18 +134,28 @@ function Board(props: NewBoardProps) {
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
-      const newNode = {
-        id: getNodeId(),
-        type: NODE_TYPE,
-        position,
-        data: {
-          type: name,
-          dataCY: getNodeId(),
-        },
-      };
 
-      setNodes((nodesState) => nodesState.concat(newNode));
-      if (onDropNodeHandler) onDropNodeHandler(newNode);
+      const initialItem: Partial<IObjectContext> = {
+        x: position.x,
+        y: position.y,
+        type: name,
+      };
+      postItem(initialItem).then((item) => {
+        const newNode = {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          id: item.tag!,
+          type: NODE_TYPE,
+          position,
+          data: {
+            type: name,
+            tag: item.tag,
+            dataCY: `itemNode-${item.tag}`,
+          },
+        };
+
+        setNodes((nodesState) => nodesState.concat(newNode));
+        if (onDropNodeHandler) onDropNodeHandler(newNode);
+      });
     },
     [reactFlowInstance]
   );

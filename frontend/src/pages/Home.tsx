@@ -18,6 +18,7 @@ import transformObjectToNode from '../util/transformObjectToNode';
 import transformConnectionToEdge from '../util/transformConnectionToEdge';
 import IObjectContext from '../typings/IObjectContext';
 import IOConnectionContext from '../typings/IOConnectionContext';
+import { IListing } from '../typings/IListing';
 
 function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,12 +29,15 @@ function Home() {
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
   const [currentNode, setCurrentNode] = useState<Node | Edge | null>(null);
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
-  const [initialProperties, setInitialProperties] = useState([]);
+  const [initialProperties, setInitialProperties] = useState<IListing[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [types, setTypes] = useState<[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
-  const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
+  const getBoardObjectsCallback = useCallback(
+    async () => getBoardObjects(currentBoardId),
+    [currentBoardId]
+  );
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
   const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
   const getEdgesCallback = useCallback(async () => getObjectEdges(), [currentBoardId]);
@@ -126,7 +130,9 @@ function Home() {
     });
   }, []);
 
-  const { data: boardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
+  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<Partial<IObjectContext>[]>(
+    getBoardObjectsCallback
+  );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -181,10 +187,11 @@ function Home() {
             className="hidden lg:block lg:min-w-sm lg:col-span-3"
             types={types}
           />
-          <div className={classNames('flex flex-col col-span-20', {
-            'lg:col-span-17': !currentNode,
-            'lg:col-span-12': currentNode,
-          })}
+          <div
+            className={classNames('flex flex-col col-span-20', {
+              'lg:col-span-17': !currentNode,
+              'lg:col-span-12': currentNode,
+            })}
           >
             <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
             { errorMessage && (
@@ -200,6 +207,7 @@ function Home() {
               onEdgesDelete={(edge: Edge[]) => onObjectDeleteCallback(edge)}
               onNodeMove={(node: Node) => onNodeMoveCallback(node)}
               initialEdges={edges}
+              postItem={postItem}
             />
           </div>
           <PropertiesSidebar
@@ -210,6 +218,8 @@ function Home() {
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
             onFieldChange={(node: Node | Edge, field: string, value: string) => onNodeFieldUpdateCallback(node, field, value)}
+            postItem={postItem}
+            fetchBoardObjects={fetchBoardObjects}
           />
         </div>
       </div>

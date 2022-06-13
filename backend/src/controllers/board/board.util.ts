@@ -1,9 +1,10 @@
 import {
-  Item, Pipeline, Blower, PipeFitting, Pump, Tank, Vessel,
+  Pipeline, Blower, PipeFitting, Pump, Tank, Vessel,
 } from '../../database/models';
 import ValidationError from '../../error/ValidationError';
 
 const propsToFilter = ['constructor', '__entity', '__meta', '__platform', '__factory', '__helper', 'toJSON'];
+const requiredAttributes = ['type', 'x', 'y'];
 
 export function getClass(type: string): any {
   switch (type) {
@@ -17,13 +18,11 @@ export function getClass(type: string): any {
   }
 }
 
-export function checkTypeSpecificAttributes(body: any): void {
+export function checkRequiredAttributes(body: any): void {
   const itemClass = getClass(body.type);
   const properties = Object
     .getOwnPropertyNames(itemClass.prototype)
     .filter((p) => !propsToFilter.includes(p));
-
-  properties.push('tag');
 
   Object.keys(body).forEach((key) => {
     if (!properties.includes(key)) {
@@ -31,23 +30,9 @@ export function checkTypeSpecificAttributes(body: any): void {
     }
   });
 
-  properties.forEach((p) => {
-    if (!Object.keys(body).includes(p) && p !== 'board') {
-      throw new ValidationError(`Missing field ${p}`, 400);
-    }
-  });
-}
-
-export function checkCommonItemAttributes(body: any): void {
-  const properties: string[] = Object
-    .getOwnPropertyNames(Item.prototype)
-    .filter((p) => !propsToFilter.includes(p));
-
-  properties.push('tag');
-
-  properties.forEach((p) => {
-    if (!Object.keys(body).includes(p) && p !== 'board') {
-      throw new ValidationError(`Missing field ${p}`, 400);
+  requiredAttributes.forEach((a) => {
+    if (!body[a]) {
+      throw new ValidationError(`Attribute ${a} is required`, 400);
     }
   });
 }
