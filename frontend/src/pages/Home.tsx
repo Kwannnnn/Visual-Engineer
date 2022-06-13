@@ -3,7 +3,7 @@ import {
   ReactFlowProvider, Node, Edge, updateEdge, Connection
 } from 'react-flow-renderer';
 import classNames from 'classnames';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import {
   AlertPane,
   PropertiesSidebar,
@@ -15,6 +15,7 @@ import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
 import {
   createItem,
+  deleteBoardObject,
   getBoardObjects,
   getObjectTypes,
   getTypeProperties,
@@ -27,6 +28,8 @@ import transformConnectionToEdge from '../util/transformConnectionToEdge';
 import IObjectContext from '../typings/IObjectContext';
 import { IListing } from '../typings/IListing';
 import IOConnectionContext from '../typings/IOConnectionContext';
+import Modal from '../components/modal/Modal';
+import ModalType from '../components/modal/ModalType.enum';
 
 function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -41,21 +44,14 @@ function Home() {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [types, setTypes] = useState<[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const getBoardObjectsCallback = useCallback(
     async () => getBoardObjects(currentBoardId),
     [currentBoardId]
   );
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
-  const getPropertiesCallback = useCallback(
-    async () => currentNode && getTypeProperties(currentNode.data.type),
-    [currentNode]
-  );
-  const getEdgesCallback = useCallback(
-    async () => getObjectEdges(),
-    [currentBoardId]
-  );
-
+  const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
   const onErrorCallback = useCallback(
     (error: AxiosError, node: Node | Edge) => {
       const { response } = error;
@@ -70,32 +66,49 @@ function Home() {
     },
     []
   );
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onObjectDeleteCallback = useCallback(
-    (items: Node[] | Edge[]) => {
-      items.forEach((item) => {
-        // TODO: Delete object from backend
-        if (item.id === currentNode?.id) {
-          setCurrentNode(null);
-        }
-      });
-    },
-    [currentNode]
-  );
-  const onNodeMoveCallback = useCallback(
-    (node: Node) => {
-      const { x, y } = node.position;
 
-      if (!node.data.tag) return;
-      updateBoardObject(currentBoardId, node.data.tag, {
-        x: Math.round(x * 1000) / 1000,
-        y: Math.round(y * 1000) / 1000,
-      }).catch((err: AxiosError) => {
-        onErrorCallback(err, node);
-      });
-    },
-    [currentBoardId, onErrorCallback]
-  );
+  const onNodeDelete = useCallback(async () => {
+    if (!currentNode) return;
+
+    if (currentNode.data.isDraft) {
+      const newNodes = initialNodes.filter((n) => n.data.tag !== currentNode.data.tag);
+      setInitialNodes(newNodes);
+      setCurrentNode(null);
+      return;
+    }
+
+    let response500 = false;
+    try {
+      await deleteBoardObject(currentBoardId, currentNode.data.tag);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const { response } = err;
+        if (response && (response.status === 500 || response.status === 0)) {
+          response500 = true;
+          setErrorMessage('Unable to connect to the server. Please try again later.');
+        }
+      }
+    } finally {
+      // Check whether there was a 500 error to avoid deleting the node from the frontend
+      if (!response500) {
+        const newNodes = initialNodes.filter((n) => n.data.tag !== currentNode.data.tag);
+        setInitialNodes(newNodes);
+        setCurrentNode(null);
+      }
+    }
+  }, [currentNode]);
+
+  const onNodeMoveCallback = useCallback((node: Node) => {
+    const { x, y } = node.position;
+
+    if (!node.data.tag) return;
+    updateBoardObject(currentBoardId, node.data.tag, {
+      x: Math.round(x * 1000) / 1000,
+      y: Math.round(y * 1000) / 1000,
+    }).catch((err: AxiosError) => {
+      onErrorCallback(err, node);
+    });
+  }, [currentBoardId, onErrorCallback]);
 
   const onNodeFieldUpdateCallback = useCallback(
     (node: Node | Edge, field: string, value: string) => {
@@ -107,6 +120,24 @@ function Home() {
       });
     },
     [currentBoardId, onErrorCallback]
+  );
+
+  const getEdgesCallback = useCallback(
+    async () => getObjectEdges(),
+    [currentBoardId]
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const onObjectDeleteCallback = useCallback(
+    (items: Node[] | Edge[]) => {
+      items.forEach((item) => {
+        // TODO: Delete object from backend
+        if (item.id === currentNode?.id) {
+          setCurrentNode(null);
+        }
+      });
+    },
+    [currentNode]
   );
 
   const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<
@@ -169,11 +200,15 @@ function Home() {
     updateRelationship(pipelineTag, firstItem, secondItem);
     setEdges((els) => updateEdge(oldEdge, newConnection, els));
   };
+
   const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item });
 
   return (
     <ReactFlowProvider>
-      <div className="flex-1 min-h-0">
+      <div className={classNames('flex-1 h-full', {
+        'z-0': showModal,
+      })}
+      >
         <div className="grid grid-cols-20 h-full">
           <Toolbox
             className="hidden lg:block lg:min-w-sm lg:col-span-3"
@@ -199,11 +234,10 @@ function Home() {
             <Board
               initialNodes={initialNodes}
               onDropNodeHandler={handleDropNode}
-              onNodeClick={(node: Node) => setCurrentNode(node)}
-              onEdgeClick={(edge: Edge) => setCurrentNode(edge)}
-              onNodesDelete={(node: Node[]) => onObjectDeleteCallback(node)}
-              onEdgesDelete={(edge: Edge[]) => onObjectDeleteCallback(edge)}
-              onNodeMove={(node: Node) => onNodeMoveCallback(node)}
+              onNodeClick={(node) => setCurrentNode(node)}
+              onEdgeClick={(edge) => setCurrentNode(edge)}
+              onEdgesDelete={(edge) => onObjectDeleteCallback(edge)}
+              onNodeMove={(node) => onNodeMoveCallback(node)}
               onEdgeUpdate={handleEdgeUpdate}
               initialEdges={edges}
               postItem={postItem}
@@ -216,12 +250,26 @@ function Home() {
             currentNode={currentNode}
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
-            onFieldChange={(node: Node | Edge, field: string, value: string) => onNodeFieldUpdateCallback(node, field, value)}
+            onFieldChange={(node, field, value) => onNodeFieldUpdateCallback(node, field, value)}
             postItem={postItem}
             fetchBoardObjects={fetchBoardObjects}
+            onDelete={() => setShowModal(true)}
           />
         </div>
       </div>
+      {showModal && (
+        <Modal
+          showModal={showModal}
+          modalType={ModalType.Destructive}
+          className="modal fixed z-1 inset-0 bg-slate-50 bg-opacity-70"
+          buttonText="Delete"
+          title="Delete item"
+          description={`Are you sure you want to delete ${currentNode?.data.type}
+                        with tag ${currentNode?.data.tag}?`}
+          closeModal={() => setShowModal(false)}
+          onButtonClick={() => onNodeDelete()}
+        />
+      )}
     </ReactFlowProvider>
   );
 }

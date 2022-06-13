@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Edge, Node } from 'react-flow-renderer';
@@ -14,6 +14,7 @@ interface PropertiesSidebarProps {
   onFieldChange?: (node: Node | Edge, field: string, value: string) => void;
   postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
   fetchBoardObjects: () => Promise<unknown>;
+  onDelete: (node: Node | Edge) => void;
 }
 
 function getPropertyValue(node: Node | Edge | null, propName: string) {
@@ -28,7 +29,7 @@ function getPropertyValue(node: Node | Edge | null, propName: string) {
 
 function PropertiesSidebar(props: PropertiesSidebarProps) {
   const {
-    className = '', initialProperties = [], onClose, currentNode, onFieldChange, postItem, fetchBoardObjects,
+    className = '', initialProperties = [], onClose, currentNode, onDelete, onFieldChange, postItem, fetchBoardObjects,
   } = props;
 
   const [propValues, setPropValues] = useState<IListing[]>([]);
@@ -42,6 +43,11 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     }));
     setPropValues(newValues);
   }, [initialProperties]);
+
+  const onDeleteHandler = useCallback(() => {
+    if (!currentNode) return;
+    onDelete(currentNode);
+  }, [currentNode]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
@@ -61,7 +67,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     // If the user is typing, we want to debounce the update to the node
     const delayDebounce = setTimeout(() => {
       onFieldChange(currentNode, event.target.name, event.target.value);
-    }, 1500);
+    }, 300);
     setTimer(delayDebounce);
   };
 
@@ -91,10 +97,10 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     }
 
     item.type = currentNode.data.type;
-    await postItem(item);
-    await fetchBoardObjects();
-    const closeSidebar = onClose;
-    closeSidebar();
+    // await postItem(item);
+    // await fetchBoardObjects();
+    // const closeSidebar = onClose;
+    // closeSidebar();
   };
 
   return (
@@ -141,6 +147,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
                 'w-full': !(currentNode && currentNode.data.isDraft),
               })}
               type="button"
+              onClick={() => onDeleteHandler()}
             >
               <p className="hidden md:inline"> Delete</p>
             </button>

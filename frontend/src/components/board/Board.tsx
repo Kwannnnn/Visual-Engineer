@@ -23,7 +23,6 @@ interface NewBoardProps {
   initialEdges?: Edge[];
   onDropNodeHandler?: (node: Node) => void;
   onNodeClick: (node: Node) => void;
-  onNodesDelete: (node: Node[]) => void;
   onEdgesDelete: (edge: Edge[]) => void;
   onEdgeClick: (edge: Edge) => void;
   onEdgeUpdate?: (oldEdge: Edge, newConnection: Connection) => void;
@@ -49,7 +48,15 @@ const getEdgeId = () => {
 
 function Board(props: NewBoardProps) {
   const {
-    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete, onEdgeClick, onEdgesDelete, onNodeMove, postItem, onEdgeUpdate,
+    initialNodes,
+    initialEdges,
+    onDropNodeHandler,
+    onNodeClick,
+    onEdgeClick,
+    onEdgesDelete,
+    onNodeMove,
+    postItem,
+    onEdgeUpdate,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
@@ -166,8 +173,8 @@ function Board(props: NewBoardProps) {
         onInit={setReactFlowInstance}
         onDrop={onDrop}
         onDragOver={onDragOver}
+        deleteKeyCode={null}
         onNodeClick={(e, n) => onNodeClick(n)}
-        onNodesDelete={(nd) => onNodesDelete(nd)}
         onEdgeClick={(e, n) => onEdgeClick(n)}
         onEdgesDelete={(ed) => onEdgesDelete(ed)}
         onEdgeUpdate={onEdgeUpdate}
