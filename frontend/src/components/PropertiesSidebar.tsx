@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Node } from 'react-flow-renderer';
+import { Edge, Node } from 'react-flow-renderer';
 import classNames from 'classnames';
 import { IListing } from '../typings/IListing';
 import IObjectContext from '../typings/IObjectContext';
@@ -9,14 +9,14 @@ import IObjectContext from '../typings/IObjectContext';
 interface PropertiesSidebarProps {
   className?: string;
   initialProperties: IListing[];
-  currentNode: Node | null;
+  currentNode: Node | Edge | null;
   onClose: () => void;
-  onFieldChange?: (node: Node, field: string, value: string) => void;
+  onFieldChange?: (node: Node | Edge, field: string, value: string) => void;
   postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
   fetchBoardObjects: () => Promise<unknown>;
 }
 
-function getPropertyValue(node: Node | null, propName: string) {
+function getPropertyValue(node: Node | Edge | null, propName: string) {
   if (!node) return '';
 
   const propKey = Object.keys(node.data).find((key) => key === propName);
@@ -80,8 +80,16 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
 
     if (!currentNode) return;
 
-    item.x = currentNode.position.x;
-    item.y = currentNode.position.y;
+    const node = currentNode as Node;
+
+    if (node.position) {
+      item.x = node.position.x;
+      item.y = node.position.y;
+    } else {
+      item.x = 0;
+      item.y = 0;
+    }
+
     item.type = currentNode.data.type;
     await postItem(item);
     await fetchBoardObjects();

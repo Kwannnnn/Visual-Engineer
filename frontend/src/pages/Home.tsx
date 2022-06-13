@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ReactFlowProvider, Node } from 'react-flow-renderer';
+import { ReactFlowProvider, Node, Edge } from 'react-flow-renderer';
 import classNames from 'classnames';
 import { AxiosError } from 'axios';
 import {
@@ -16,11 +16,14 @@ import {
   getBoardObjects,
   getObjectTypes,
   getTypeProperties,
-  updateBoardObject
+  updateBoardObject,
+  getObjectEdges
 } from '../util/api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
+import transformConnectionToEdge from '../util/transformConnectionToEdge';
 import IObjectContext from '../typings/IObjectContext';
 import { IListing } from '../typings/IListing';
+import IOConnectionContext from '../typings/IOConnectionContext';
 
 function Home() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,66 +32,88 @@ function Home() {
     { id: 2, name: 'PTPFu02' }
   ]);
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
-  const [currentNode, setCurrentNode] = useState<Node | null>(null);
+  const [currentNode, setCurrentNode] = useState<Node | Edge | null>(null);
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
   const [initialProperties, setInitialProperties] = useState<IListing[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [types, setTypes] = useState<[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
 
   const getBoardObjectsCallback = useCallback(
     async () => getBoardObjects(currentBoardId),
     [currentBoardId]
   );
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
-  const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
-  const onErrorCallback = useCallback((error: AxiosError, node: Node) => {
-    const { response } = error;
-    const { id } = node;
-    if (response && response.status === 404) {
-      node.data.isDraft = true;
-      setErrorMessage(`${node.data.type} ${id} does not exist in the database!
-        It has been marked as draft`);
-      node.data.tag = undefined;
-      setCurrentNode(node);
-    }
-  }, []);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onNodesDeleteCallback = useCallback((nodes: Node[]) => {
-    nodes.forEach((node) => {
-      // TODO: Delete node from backend
-      if (node.data.id === currentNode?.data.id) {
-        setCurrentNode(null);
-      }
-    });
-  }, []);
-  const onNodeMoveCallback = useCallback((node: Node) => {
-    const { x, y } = node.position;
-
-    if (!node.data.tag) return;
-    updateBoardObject(currentBoardId, node.data.tag, {
-      x: Math.round(x * 1000) / 1000,
-      y: Math.round(y * 1000) / 1000,
-    }).catch((err: AxiosError) => {
-      onErrorCallback(err, node);
-    });
-  }, [currentBoardId, onErrorCallback]);
-
-  const onNodeFieldUpdateCallback = useCallback((node: Node, field: string, value: string) => {
-    if (!node.data.tag) return;
-    updateBoardObject(currentBoardId, node.data.tag, {
-      [field]: value,
-    }).catch((err: AxiosError) => {
-      onErrorCallback(err, node);
-    });
-  }, [currentBoardId, onErrorCallback]);
-
-  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<Partial<IObjectContext>[]>(
-    getBoardObjectsCallback
+  const getPropertiesCallback = useCallback(
+    async () => currentNode && getTypeProperties(currentNode.data.type),
+    [currentNode]
   );
+  const getEdgesCallback = useCallback(
+    async () => getObjectEdges(),
+    [currentBoardId]
+  );
+
+  const onErrorCallback = useCallback(
+    (error: AxiosError, node: Node | Edge) => {
+      const { response } = error;
+      const { id } = node;
+      if (response && response.status === 404) {
+        node.data.isDraft = true;
+        setErrorMessage(`${node.data.type} ${id} does not exist in the database!
+        It has been marked as draft`);
+        node.data.tag = undefined;
+        setCurrentNode(node);
+      }
+    },
+    []
+  );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const onObjectDeleteCallback = useCallback(
+    (items: Node[] | Edge[]) => {
+      items.forEach((item) => {
+        // TODO: Delete object from backend
+        if (item.id === currentNode?.id) {
+          setCurrentNode(null);
+        }
+      });
+    },
+    [currentNode]
+  );
+  const onNodeMoveCallback = useCallback(
+    (node: Node) => {
+      const { x, y } = node.position;
+
+      if (!node.data.tag) return;
+      updateBoardObject(currentBoardId, node.data.tag, {
+        x: Math.round(x * 1000) / 1000,
+        y: Math.round(y * 1000) / 1000,
+      }).catch((err: AxiosError) => {
+        onErrorCallback(err, node);
+      });
+    },
+    [currentBoardId, onErrorCallback]
+  );
+
+  const onNodeFieldUpdateCallback = useCallback(
+    (node: Node | Edge, field: string, value: string) => {
+      if (!node.data.tag) return;
+      updateBoardObject(currentBoardId, node.data.tag, {
+        [field]: value,
+      }).catch((err: AxiosError) => {
+        onErrorCallback(err, node);
+      });
+    },
+    [currentBoardId, onErrorCallback]
+  );
+
+  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<
+    Partial<IObjectContext>[]
+  >(getBoardObjectsCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: typeProperties } = useAPIUtil<any>(getPropertiesCallback);
+  const { data: objectEdges } = useAPIUtil<IOConnectionContext[]>(getEdgesCallback);
 
   useEffect(() => {
     if (!boardObjects) return;
@@ -96,6 +121,12 @@ function Home() {
 
     setInitialNodes(nodes);
   }, [boardObjects]);
+
+  useEffect(() => {
+    if (!objectEdges || !boardObjects) return;
+    const connections = transformConnectionToEdge(objectEdges, boardObjects);
+    setEdges(connections);
+  }, [objectEdges, boardObjects]);
 
   useEffect(() => {
     if (!objectTypes) return;
@@ -140,16 +171,26 @@ function Home() {
               'lg:col-span-12': currentNode,
             })}
           >
-            <TabBar currentBoardId={currentBoardId} boards={boards} onSelect={handleTab} />
-            { errorMessage && (
-              <AlertPane className="transition-opacity ease-in" message={errorMessage} />
+            <TabBar
+              currentBoardId={currentBoardId}
+              boards={boards}
+              onSelect={handleTab}
+            />
+            {errorMessage && (
+              <AlertPane
+                className="transition-opacity ease-in"
+                message={errorMessage}
+              />
             )}
             <Board
               initialNodes={initialNodes}
               onDropNodeHandler={handleDropNode}
               onNodeClick={(node: Node) => setCurrentNode(node)}
-              onNodesDelete={(node: Node[]) => onNodesDeleteCallback(node)}
+              onEdgeClick={(edge: Edge) => setCurrentNode(edge)}
+              onNodesDelete={(node: Node[]) => onObjectDeleteCallback(node)}
+              onEdgesDelete={(edge: Edge[]) => onObjectDeleteCallback(edge)}
               onNodeMove={(node: Node) => onNodeMoveCallback(node)}
+              initialEdges={edges}
               postItem={postItem}
             />
           </div>
@@ -160,7 +201,7 @@ function Home() {
             currentNode={currentNode}
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
-            onFieldChange={(node: Node, field: string, value: string) => onNodeFieldUpdateCallback(node, field, value)}
+            onFieldChange={(node: Node | Edge, field: string, value: string) => onNodeFieldUpdateCallback(node, field, value)}
             postItem={postItem}
             fetchBoardObjects={fetchBoardObjects}
           />
