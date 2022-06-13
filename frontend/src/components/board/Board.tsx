@@ -27,6 +27,7 @@ interface NewBoardProps {
   onEdgeClick: (edge: Edge) => void;
   onEdgeUpdate?: (oldEdge: Edge, newConnection: Connection) => void;
   onNodeMove?: (node: Node) => void;
+  onEdgeConnect: (type: string, firstItemTag: string, secondItemTag: string) => void;
   postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
 }
 
@@ -35,15 +36,6 @@ interface NewBoardProps {
 const NODE_TYPE = 'itemNode';
 const nodeTypes: NodeTypes = {
   itemNode: ItemNode,
-};
-
-let edgeID = 0;
-
-const getEdgeId = () => {
-  // Used for Cypress to track unsaved item edges
-  const result = `itemTmpEdge_${edgeID}`;
-  edgeID += 1;
-  return result;
 };
 
 function Board(props: NewBoardProps) {
@@ -57,6 +49,7 @@ function Board(props: NewBoardProps) {
     onNodeMove,
     postItem,
     onEdgeUpdate,
+    onEdgeConnect,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
@@ -77,35 +70,11 @@ function Board(props: NewBoardProps) {
     setEdges(initialEdges ?? []);
   }, [initialEdges]);
 
-  // Whenever a edge gets created update the edges state
-  // eslint-disable-next-line max-len
-  const onConnect = useCallback(
-    (params: Connection) => {
-      const newConnection: Edge = {
-        id: `${params.source}_${params.target}`,
-        source: params.source ?? '',
-        target: params.target ?? '',
-        label: 'Draft Pipeline',
-        labelBgPadding: [8, 4],
-        labelBgBorderRadius: 4,
-        labelBgStyle: {
-          cursor: 'pointer', fill: '#FFCC00', color: '#fff',
-        },
-        type: 'straight',
-        sourceHandle: params.sourceHandle ?? '',
-        targetHandle: params.targetHandle ?? '',
-        style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
-        data: {
-          type: 'pipeline',
-        },
-        className: getEdgeId(),
-      };
-
-      setEdges((edgesState) => edgesState.concat(newConnection));
-      onEdgeClick(newConnection);
-    },
-    [setEdges]
-  );
+  // Whenever an edge gets created make the API request from the Home page
+  const onConnect = useCallback((params: Connection) => {
+    if (!(params.source && params.target)) return;
+    onEdgeConnect('pipeline', params.source, params.target);
+  }, [setEdges]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -137,7 +106,7 @@ function Board(props: NewBoardProps) {
         y: position.y,
         type: name,
       };
-      postItem(initialItem).then((item) => {
+      postItem(initialItem).then((item) => { // onFullfilled
         const newNode = {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           id: item.tag!,
@@ -152,6 +121,8 @@ function Board(props: NewBoardProps) {
 
         setNodes((nodesState) => nodesState.concat(newNode));
         if (onDropNodeHandler) onDropNodeHandler(newNode);
+      }, () => { // onRejected
+
       });
     },
     [reactFlowInstance]

@@ -15,6 +15,7 @@ import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
 import {
   createItem,
+  createRelationship,
   deleteBoardObject,
   getBoardObjects,
   getObjectTypes,
@@ -26,7 +27,7 @@ import {
 import transformObjectToNode from '../util/transformObjectToNode';
 import transformConnectionToEdge from '../util/transformConnectionToEdge';
 import IObjectContext from '../typings/IObjectContext';
-import { IListing } from '../typings/IListing';
+import { IPropertyListing } from '../typings/IPropertyListing';
 import IOConnectionContext from '../typings/IOConnectionContext';
 import Modal from '../components/modal/Modal';
 import ModalType from '../components/modal/ModalType.enum';
@@ -40,40 +41,119 @@ function Home() {
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
   const [currentNode, setCurrentNode] = useState<Node | Edge | null>(null);
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
-  const [initialProperties, setInitialProperties] = useState<IListing[]>([]);
+  const [initialProperties, setInitialProperties] = useState<IPropertyListing[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [types, setTypes] = useState<[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const getBoardObjectsCallback = useCallback(
-    async () => getBoardObjects(currentBoardId),
-    [currentBoardId]
-  );
+  const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
+  const getEdgesCallback = useCallback(async () => getObjectEdges(), [currentBoardId]);
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
   const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
-  const onErrorCallback = useCallback(
-    (error: AxiosError, node: Node | Edge) => {
-      const { response } = error;
-      const { id } = node;
-      if (response && response.status === 404) {
-        node.data.isDraft = true;
-        setErrorMessage(`${node.data.type} ${id} does not exist in the database!
+  const onErrorCallback = useCallback((error: AxiosError, node: Node | Edge) => {
+    const { response } = error;
+    const { id } = node;
+    if (response && response.status === 404) {
+      node.data.isDraft = true;
+      setErrorMessage(`${node.data.type} ${id} does not exist in the database!
         It has been marked as draft`);
-        node.data.tag = undefined;
-        setCurrentNode(node);
-      }
+      node.data.tag = undefined;
+      setCurrentNode(node);
+    }
+  }, []);
+
+  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: typeProperties } = useAPIUtil<any>(getPropertiesCallback);
+  const { data: objectEdges } = useAPIUtil<IOConnectionContext[]>(getEdgesCallback);
+
+  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item }).catch((err: AxiosError) => {
+    setErrorMessage(err.message || 'Unknown error');
+    return Promise.reject();
+  });
+  const postRelationship = (relationship: Partial<IOConnectionContext>) => createRelationship(relationship).catch((err: AxiosError) => {
+    setErrorMessage(err.message || 'Unknown error');
+    return Promise.reject();
+  });
+
+  const onConnectionCallback = useCallback((type: string, source: string, target: string) => {
+    const objectBody: Partial<IObjectContext> = {
+      type,
+      x: 1,
+      y: 1,
+    };
+
+    postItem(objectBody).then((response) => {
+      const newConnection: IOConnectionContext = {
+        pipeline: response.tag,
+        firstItem: source,
+        secondItem: target,
+      };
+
+      postRelationship(newConnection)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .then((result: any) => {
+          const newEdge: Edge = {
+            id: result.pipeline.tag,
+            source: result.firstItem.tag,
+            target: result.secondItem.tag,
+            label: result.pipeline.tag,
+            type: 'straight',
+            style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
+            data: {
+              type: 'pipeline',
+              tag: result.pipeline.tag,
+            },
+          };
+          setEdges((edgesState) => edgesState.concat(newEdge));
+          setCurrentNode(newEdge);
+        }).catch((err: AxiosError) => {
+          const draftConnection: Edge = {
+            id: `${source}_${target}`,
+            source: source ?? '',
+            target: target ?? '',
+            label: 'Draft Pipeline',
+            labelBgPadding: [8, 4],
+            labelBgBorderRadius: 4,
+            labelBgStyle: {
+              cursor: 'pointer', fill: '#FFCC00', color: '#fff',
+            },
+            type: 'straight',
+            style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
+            data: {
+              type: 'pipeline',
+              isDraft: true,
+            },
+          };
+          setEdges((edgesState) => edgesState.concat(draftConnection));
+          onErrorCallback(err, draftConnection);
+          setCurrentNode(draftConnection);
+        });
+    });
+  }, []);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const onObjectDeleteCallback = useCallback(
+    (items: Node[] | Edge[]) => {
+      items.forEach((item) => {
+        // TODO: Delete object from backend
+        if (item.id === currentNode?.id) {
+          setCurrentNode(null);
+        }
+      });
     },
-    []
+    [currentNode]
   );
 
   const onNodeDelete = useCallback(async () => {
     if (!currentNode) return;
 
     if (currentNode.data.isDraft) {
-      const newNodes = initialNodes.filter((n) => n.data.tag !== currentNode.data.tag);
-      setInitialNodes(newNodes);
       setCurrentNode(null);
+      fetchBoardObjects();
       return;
     }
 
@@ -121,33 +201,6 @@ function Home() {
     },
     [currentBoardId, onErrorCallback]
   );
-
-  const getEdgesCallback = useCallback(
-    async () => getObjectEdges(),
-    [currentBoardId]
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onObjectDeleteCallback = useCallback(
-    (items: Node[] | Edge[]) => {
-      items.forEach((item) => {
-        // TODO: Delete object from backend
-        if (item.id === currentNode?.id) {
-          setCurrentNode(null);
-        }
-      });
-    },
-    [currentNode]
-  );
-
-  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<
-    Partial<IObjectContext>[]
-  >(getBoardObjectsCallback);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: typeProperties } = useAPIUtil<any>(getPropertiesCallback);
-  const { data: objectEdges } = useAPIUtil<IOConnectionContext[]>(getEdgesCallback);
 
   useEffect(() => {
     if (!boardObjects) return;
@@ -201,8 +254,6 @@ function Home() {
     setEdges((els) => updateEdge(oldEdge, newConnection, els));
   };
 
-  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item });
-
   return (
     <ReactFlowProvider>
       <div className={classNames('flex-1 h-full', {
@@ -239,6 +290,7 @@ function Home() {
               onEdgesDelete={(edge) => onObjectDeleteCallback(edge)}
               onNodeMove={(node) => onNodeMoveCallback(node)}
               onEdgeUpdate={handleEdgeUpdate}
+              onEdgeConnect={(type, source, target) => onConnectionCallback(type, source, target)}
               initialEdges={edges}
               postItem={postItem}
             />
@@ -251,8 +303,8 @@ function Home() {
             initialProperties={initialProperties}
             onClose={() => setCurrentNode(null)}
             onFieldChange={(node, field, value) => onNodeFieldUpdateCallback(node, field, value)}
-            postItem={postItem}
-            fetchBoardObjects={fetchBoardObjects}
+            // postItem={postItem}
+            // fetchBoardObjects={fetchBoardObjects}
             onDelete={() => setShowModal(true)}
           />
         </div>
