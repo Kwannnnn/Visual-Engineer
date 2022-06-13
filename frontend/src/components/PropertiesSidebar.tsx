@@ -73,7 +73,6 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // TODO: handle form submission (e.g. POST to server)
     let item: Partial<IObjectContext> = {};
 
     propValues.forEach((prop: IPropertyListing) => {
