@@ -1,0 +1,35 @@
+api-version: 2021-03-01
+location: westeurope
+name: ve-proxy
+properties:
+  containers:
+    - name: caddy
+      properties:
+        image: caddy:latest
+        command:
+          [
+            "caddy",
+            "reverse-proxy",
+            "--from",
+            "visualengineer-api-tls.westeurope.azurecontainer.io",
+            "--to",
+            "visualengineer-api.westeurope.azurecontainer.io:3000",
+          ]
+        ports:
+          - port: 80
+            protocol: TCP
+          - port: 443
+            protocol: TCP
+        resources:
+          requests:
+            cpu: 0.5
+            memoryInGB: 0.5
+  ipAddress:
+    ports:
+      - port: 443
+        protocol: TCP
+    type: Public
+    dnsNameLabel: visualengineer-api-tls
+  osType: Linux
+tags: null
+type: Microsoft.ContainerInstance/containerGroups
