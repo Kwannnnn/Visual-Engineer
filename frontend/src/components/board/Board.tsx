@@ -140,7 +140,7 @@ function Board(props: NewBoardProps) {
         y: position.y,
         type: name,
       };
-      postItem(initialItem).then((item) => {
+      postItem(initialItem).then((item) => { // onFullfilled
         const newNode = {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           id: item.tag!,
@@ -155,6 +155,8 @@ function Board(props: NewBoardProps) {
 
         setNodes((nodesState) => nodesState.concat(newNode));
         if (onDropNodeHandler) onDropNodeHandler(newNode);
+      }, () => { // onRejected
+
       });
     },
     [reactFlowInstance]
