@@ -106,12 +106,16 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
           })}
           >
             { currentNode && currentNode.data.isDraft && (
-            <button id="save-component-btn" type="submit" className="rounded-lg w-1/2 p-2 shadow-sm hover:shadow-md border border-green-700 hover:bg-green-700 text-green-700 hover:text-white py-2 cursor-pointer mt-auto">
-              <p className="hidden md:inline"> Publish</p>
+            <button
+              data-cy="save-item-btn"
+              type="submit"
+              className="rounded-lg w-1/2 p-2 shadow-sm hover:shadow-md border border-green-700 hover:bg-green-700 text-green-700 hover:text-white py-2 cursor-pointer mt-auto"
+            >
+              <p className="hidden md:inline">Publish</p>
             </button>
             )}
             <button
-              id="delete-component-btn"
+              data-cy="delete-item-btn"
               className={classNames('rounded-lg p-2 shadow-sm hover:shadow-md border border-red-700 hover:bg-red-700 text-red-700 hover:text-white py-2 cursor-pointer', {
                 'w-1/2': currentNode && currentNode.data.isDraft,
                 'w-full': !(currentNode && currentNode.data.isDraft),
@@ -119,7 +123,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
               type="button"
               onClick={() => onDeleteHandler()}
             >
-              <p className="hidden md:inline"> Delete</p>
+              <p className="hidden md:inline">Delete</p>
             </button>
           </div>
         </div>
