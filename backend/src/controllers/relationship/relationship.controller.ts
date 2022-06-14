@@ -17,10 +17,10 @@ export const getOneRelationship = async (
   req: TypedRequest<RelationshipParams, any>,
   res: Response,
 ) => {
-  const { pipelineTag } = req.params;
+  const pipelineId: number =+req.params;
 
   try {
-    const relationship = await DI.relationshipRepository.findOne(pipelineTag);
+    const relationship = await DI.relationshipRepository.findOne(pipelineId);
 
     if (!relationship) {
       return res.status(404).json({
@@ -61,17 +61,17 @@ export const deleteRelationship = async (
   req: TypedRequest<RelationshipParams, any>,
   res: Response,
 ) => {
-  const { pipelineTag } = req.params;
+  const pipelineId: number =+req.params;
 
   try {
-    const pipeline: any = await DI.itemRepository.findOne(pipelineTag);
+    const pipeline: any = await DI.itemRepository.findOne(pipelineId);
     if (!pipeline) {
       return res.status(404).json({
         message: 'Pipeline not found',
       });
     }
 
-    const relationship = await DI.relationshipRepository.findOne(pipelineTag);
+    const relationship = await DI.relationshipRepository.findOne(pipelineId);
     if (!relationship) {
       return res.status(404).json({
         message: 'Relationship not found',

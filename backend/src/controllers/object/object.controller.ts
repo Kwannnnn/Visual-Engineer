@@ -12,11 +12,11 @@ export const getAll = async (req: Request, res: Response) => {
   res.send(items);
 };
 
-export const getByTag = async (req: Request, res: Response) => {
-  const { tag } = req.params;
+export const getById = async (req: Request, res: Response) => {
+  const id: number = +req.params;
 
   try {
-    const item = await DI.itemRepository.findOne({ tag });
+    const item = await DI.itemRepository.findOne({ id });
 
     if (!item) {
       return res.status(404).json({

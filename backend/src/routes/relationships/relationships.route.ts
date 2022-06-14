@@ -33,13 +33,13 @@ const relationshipRouter: Router = Router();
 relationshipRouter.get('/', relationshipController.getAllRelationships);
 
 /**
- * @api {get} /api/v2/relationships/:pipelineTag Get a specific relationship
+ * @api {get} /api/v2/relationships/:pipelineId Get a specific relationship
  * @apiDescription Returns a resource response containing the specified relationship
  * @apiVersion 2.0.0
  * @apiName GetRelationship
  * @apiGroup Relationship
  *
- * @apiParam {String} pipelineTag Relationship identifier
+ * @apiParam {String} pipelineId Relationship identifier
  *
  * @apiSuccess (Success 200) {Relationship} relationship A resource response containing a
  * relationship
@@ -136,7 +136,7 @@ relationshipRouter.post(
   validate([
     body('pipeline')
       .exists()
-      .withMessage('Pipeline tag is missing!'),
+      .withMessage('Pipeline id is missing!'),
     body(['firstItem', 'secondItem'])
       .exists()
       .withMessage('Two items are needed to create a relationship.'),
@@ -150,7 +150,7 @@ relationshipRouter.post(
 );
 
 /**
- * @api {patch} /api/v2/relationships/:pipelineTag Update an existing relationship
+ * @api {patch} /api/v2/relationships/:pipelineId Update an existing relationship
  * @apiDescription Change the relationship between two items
  * @apiVersion 2.0.0
  * @apiName PatchRelationship
@@ -170,7 +170,7 @@ relationshipRouter.post(
  *      "secondItem": "456-ji0q-rt4g"
  *    }
  *
- * @apiError RelationshipNotFound Relationship with tag <code>{pipelineTag}</code> does not exist
+ * @apiError RelationshipNotFound Relationship with id <code>{pipelineId}</code> does not exist
  * @apiErrorExample RelationshipNotFound:
  *     HTTP/1.1 404 Not Found
  *     {
@@ -184,11 +184,11 @@ relationshipRouter.post(
  *       "message": "Mandatory fields in request body are missing"
  *     }
  *
- * @apiError NonMatchingPipelines Pipeline tags in request body and parameter do not match
+ * @apiError NonMatchingPipelines Pipeline IDs in request body and parameter do not match
  * @apiErrorExample NonMatchingPipelines:
  *     HTTP/1.1 400 BAD REQUEST
  *     {
- *       "message": "Pipeline tag in request body does not match"
+ *       "message": "Pipeline ID in request body does not match"
  *     }
  *
  * @apiError ConnectItemToItself Items to connect are the same
@@ -220,7 +220,7 @@ relationshipRouter.post(
  *     }
  */
 relationshipRouter.patch(
-  '/:pipelineTag',
+  '/:pipelineId',
   middleware.isRelationshipValid,
   middleware.isRequestBodyValid,
   middleware.areConnectedItemsTheSame,
@@ -230,26 +230,26 @@ relationshipRouter.patch(
 );
 
 /**
- * @api {delete} /api/v2/relationships/:pipelineTag Delete a relationship
+ * @api {delete} /api/v2/relationships/:pipelineId Delete a relationship
  * @apiDescription Returns a successful deletion message or a 404
  * error message if the pipeline or relationship does not exist
  * @apiVersion 2.0.0
  * @apiName DeleteRelationship
  * @apiGroup Relationship
  *
- * @apiParam {String} pipelineTag Relationship identifier
+ * @apiParam {String} pipelineId Relationship identifier
  *
  * @apiSuccessExample Success-Response:
  *      HTTP/1.1 204 No Content
  *
- * @apiError PipelineNotFound Pipeline with tag <code>{pipelineTag}</code> does not exist
+ * @apiError PipelineNotFound Pipeline with ID <code>{pipelineId}</code> does not exist
  * @apiErrorExample ItemNotFound:
  *     HTTP/1.1 404 Not Found
  *     {
  *       "message": "Pipeline not found"
  *     }
  *
- * @apiError RelationshipNotFound Relationship with tag <code>{pipelineTag}</code> does not exist
+ * @apiError RelationshipNotFound Relationship with ID <code>{pipelineId}</code> does not exist
  * @apiErrorExample RelationshipNotFound:
  *     HTTP/1.1 404 Not Found
  *     {

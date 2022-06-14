@@ -1,7 +1,7 @@
 import Item from '../../database/models/Item';
 
 export interface RelationshipParams {
-  pipelineTag: string;
+  pipelineId: number;
 }
 
 export interface RelationshipBody {

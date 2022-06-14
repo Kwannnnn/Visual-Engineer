@@ -9,7 +9,7 @@ export async function isPipelineValid(
 ) {
   const pipeline = await DI
     .itemRepository
-    .findOne({ tag: req.body!.pipeline });
+    .findOne({ id: req.body!.pipeline });
 
   if (!pipeline) {
     return res.status(404).json({
@@ -27,11 +27,11 @@ export async function isRelationshipValid(
   res: Response,
   next: NextFunction,
 ) {
-  const { pipelineTag } = req.params;
+  const pipelineId = req.params;
 
   const relationship = await DI
     .relationshipRepository
-    .findOne(pipelineTag);
+    .findOne(pipelineId);
 
   if (!relationship) {
     return res.status(404).json({
@@ -63,7 +63,7 @@ export async function areItemsValid(
 ) {
   const firstItem = await DI
     .itemRepository
-    .findOne({ tag: req.body!.firstItem });
+    .findOne({ id: req.body!.firstItem });
 
   if (!firstItem) {
     return res.status(404).json({
