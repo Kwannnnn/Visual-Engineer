@@ -186,23 +186,24 @@ router.post('/', boardController.postBoard);
  * @apiGroup Board
  *
  * @apiParam {Number} id Board identifier
- * @apiBody {String} tag Unique tag of the object
- * @apiBody {String} name Name of the object
- * @apiBody {Float} length Length of the object
- * @apiBody {Float} width Width of the object
- * @apiBody {Float} depth Depth of the object
- * @apiBody {Float} diameter Diameter of the object
  * @apiBody {String} type Type of the object
- * @apiBody {String} flange Flange property if object is of type 'Pipeline'
- * @apiBody {String} lining Lining property if object is of type 'Pipeline'
- * @apiBody {Float} emptyMass Empty mass property if object is of type 'MechanicalEquipment'
- * @apiBody {Float} head Head property if object is of type 'MechanicalEquipment'
- * @apiBody {Float} filledMass Filled mass property if object is of type 'MechanicalEquipment'
- * @apiBody {Float} netVolume Net volume property if object is of type 'MechanicalEquipment'
- * @apiBody {Float} grossVolume Gross volume property if object is of type 'MechanicalEquipment'
- * @apiBody {Float} preliminaryPower Preliminary power property
+ * @apiBody {Float} x X coordinate of the object on the board
+ * @apiBody {Float} y Y coordinate of the object on the board
+ * @apiBody {String} [name] Name of the object
+ * @apiBody {Float} [length] Length of the object
+ * @apiBody {Float} [width] Width of the object
+ * @apiBody {Float} [depth] Depth of the object
+ * @apiBody {Float} [diameter] Diameter of the object
+ * @apiBody {String} [flange] Flange property if object is of type 'Pipeline'
+ * @apiBody {String} [lining] Lining property if object is of type 'Pipeline'
+ * @apiBody {Float} [emptyMass] Empty mass property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} [head] Head property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} [filledMass] Filled mass property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} [netVolume] Net volume property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} [grossVolume] Gross volume property if object is of type 'MechanicalEquipment'
+ * @apiBody {Float} [preliminaryPower] Preliminary power property
  *                  if object is of type 'RotatingEquipment'
- * @apiBody {Float} finalPower Final power property if object is of type 'RotatingEquipment'
+ * @apiBody {Float} [finalPower] Final power property if object is of type 'RotatingEquipment'
  *
  * @apiSuccess (Success 201) {Object} object representing the newly added object
  * @apiSuccessExample Success-Response:
@@ -222,6 +223,8 @@ router.post('/', boardController.postBoard);
  *          "grossVolume": 23.7,
  *          "preliminaryPower": 454,
  *          "finalPower": 600,
+ *          "x": 102.38,
+ *          "y": 199.5,
  *          "board": {
  *              "id": 1,
  *              "name": "asd"
