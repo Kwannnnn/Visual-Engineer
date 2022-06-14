@@ -200,6 +200,7 @@ function Home() {
       </div>
       {showModal && (
         <Modal
+          dataCY="delete-item-modal"
           showModal={showModal}
           modalType={ModalType.Destructive}
           className="modal fixed z-1 inset-0 bg-slate-50 bg-opacity-70"
