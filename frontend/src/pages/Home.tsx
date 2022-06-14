@@ -136,7 +136,6 @@ function Home() {
   // Use effects
   useEffect(() => {
     if (!boardObjects) return;
-    console.log('fetching board objects', boardObjects);
     const nodes = transformObjectToNode(boardObjects);
     setInitialNodes(nodes);
   }, [boardObjects]);
