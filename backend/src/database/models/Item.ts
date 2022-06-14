@@ -35,12 +35,12 @@ export default abstract class Item {
     this.y = y;
   }
 
-  @PrimaryKey({nullable: false})
-    id!: string;
+  @PrimaryKey({ autoincrement: true })
+    id!: number;
 
   @Property({ nullable: false })
     type!: string;
-  
+
   @Property({ nullable: false })
   @ObjectProperty(PropertyType.STRING)
     tag!: string;

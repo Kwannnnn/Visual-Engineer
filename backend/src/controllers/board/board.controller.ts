@@ -150,7 +150,7 @@ export const patchBoardObjects = async (
 
     const { items } = board;
 
-    const item = await DI.itemRepository.findOne({ tag: objectId });
+    const item = await DI.itemRepository.findOne(objectId);
 
     if (!item || !items.contains(item)) {
       return res.status(404).json({
@@ -218,7 +218,7 @@ export const deleteBoard = async (req: TypedRequest<BoardParams, any>, res: Resp
 
 export const deleteObjectFromBoard = async (req: Request, res: Response) => {
   const id: number = +req.params.id;
-  const { tag } = req.params;
+  const objectId: number = +req.params;
 
   try {
     const board = await DI.boardRepository.findOne(id);
@@ -231,7 +231,7 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
     await board.items.init();
 
     const items = board.items.getItems();
-    const item = items.find((ItemIns) => ItemIns.tag === tag);
+    const item = items.find((ItemIns) => ItemIns.id === objectId);
 
     if (!item) {
       return res.status(404).json({

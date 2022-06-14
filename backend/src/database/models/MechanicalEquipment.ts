@@ -7,7 +7,7 @@ import Item from './Item';
 })
 export default abstract class MechanicalEquipment extends Item {
   constructor(
-    // tag: string,
+    tag: string,
     type: string,
     x: number,
     y: number,
@@ -22,7 +22,7 @@ export default abstract class MechanicalEquipment extends Item {
     netVolume?: number,
     grossVolume?: number,
   ) {
-    super(type, x, y, name, length, width, depth, diameter);
+    super(type, tag, x, y, name, length, width, depth, diameter);
     this.emptyMass = emptyMass;
     this.head = head;
     this.filledMass = filledMass;

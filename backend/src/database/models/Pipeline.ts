@@ -7,7 +7,7 @@ import PressureClass from './PressureClass.enum';
 @Entity({ discriminatorValue: 'pipeline' })
 export default class Pipeline extends PipeItem {
   constructor(
-    // tag: string,
+    tag: string,
     type: string,
     x: number,
     y: number,
@@ -20,7 +20,7 @@ export default class Pipeline extends PipeItem {
     flange?: string,
     lining?: string,
   ) {
-    super(type, x, y, name, length, width, depth, diameter, pressureClass);
+    super(type, tag, x, y, name, length, width, depth, diameter, pressureClass);
     this.flange = flange;
     this.lining = lining;
   }

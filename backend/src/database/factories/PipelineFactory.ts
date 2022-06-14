@@ -8,7 +8,6 @@ export default class PipelineFactory extends Factory<Pipeline> {
 
   definition(faker: Faker): Partial<Pipeline> {
     return {
-      id: faker.datatype.uuid(),
       tag: faker.datatype.string(),
       name: faker.datatype.string(),
       length: faker.datatype.float(),

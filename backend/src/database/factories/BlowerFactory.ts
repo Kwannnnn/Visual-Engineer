@@ -7,7 +7,6 @@ export default class BlowerFactory extends Factory<Blower> {
 
   definition(faker: Faker): Partial<Blower> {
     return {
-      id: faker.datatype.uuid(),
       tag: faker.datatype.string(),
       name: faker.datatype.string(),
       length: faker.datatype.float(),
