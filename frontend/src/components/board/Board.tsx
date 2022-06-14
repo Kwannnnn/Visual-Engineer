@@ -38,14 +38,6 @@ const nodeTypes: NodeTypes = {
   itemNode: ItemNode,
 };
 
-let edgeID = 0;
-const getEdgeId = () => {
-  // Used for Cypress to track unsaved item edges
-  const result = `itemTmpEdge_${edgeID}`;
-  edgeID += 1;
-  return result;
-};
-
 function Board(props: NewBoardProps) {
   const {
     initialNodes,

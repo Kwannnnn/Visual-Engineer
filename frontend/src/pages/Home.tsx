@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  ReactFlowProvider, Node, Edge, useEdgesState
+  ReactFlowProvider, Node, Edge
 } from 'react-flow-renderer';
 import classNames from 'classnames';
 import { AxiosError } from 'axios';
