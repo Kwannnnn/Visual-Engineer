@@ -13,7 +13,10 @@ export const getAll = async (req: Request, res: Response) => {
   res.json(boards);
 };
 
-export const getById = async (req: TypedRequest<BoardParams, any>, res: Response) => {
+export const getById = async (
+  req: TypedRequest<BoardParams, any>,
+  res: Response,
+  ) => {
   const { id } = req.params;
 
   try {
@@ -33,7 +36,10 @@ export const getById = async (req: TypedRequest<BoardParams, any>, res: Response
   }
 };
 
-export const getBoardObjects = async (req: TypedRequest<BoardParams, any>, res: Response) => {
+export const getBoardObjects = async (
+  req: TypedRequest<BoardParams, any>,
+  res: Response,
+  ) => {
   const { id } = req.params;
 
   try {
@@ -107,7 +113,10 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
   }
 };
 
-export const patchById = async (req: TypedRequest<BoardParams, PatchBoardBody>, res: Response) => {
+export const patchById = async (
+  req: TypedRequest<BoardParams, PatchBoardBody>,
+  res: Response,
+  ) => {
   const { id } = req.params;
 
   try {
@@ -190,7 +199,10 @@ export const patchBoardObjects = async (
   }
 };
 
-export const deleteBoard = async (req: TypedRequest<BoardParams, any>, res: Response) => {
+export const deleteBoard = async (
+  req: TypedRequest<BoardParams, any>,
+  res: Response,
+  ) => {
   const id: number = +req.params.id;
 
   try {
@@ -217,7 +229,7 @@ export const deleteBoard = async (req: TypedRequest<BoardParams, any>, res: Resp
 };
 
 export const deleteObjectFromBoard = async (
-  req: TypedRequest<BoardObjectParams, PatchBoardObject>,
+  req: TypedRequest<BoardObjectParams, any>,
   res: Response,
   ) => {
   const { id, objectId } = req.params;
