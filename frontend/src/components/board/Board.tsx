@@ -27,7 +27,7 @@ interface NewBoardProps {
   onEdgesDelete: (edge: Edge[]) => void;
   onEdgeClick: (edge: Edge) => void;
   onNodeMove?: (node: Node) => void;
-  onEdgeConnect: (edge: Edge) => void;
+  onEdgeConnect: (type: string, firstItemTag: string, secondItemTag: string) => void;
   postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
 }
 
@@ -79,36 +79,10 @@ function Board(props: NewBoardProps) {
   }, [initialEdges]);
 
   // Whenever a edge gets created update the edges state
-  // eslint-disable-next-line max-len
-  const onConnect = useCallback(
-    (params: Connection) => {
-      const newConnection: Edge = {
-        id: `${params.source}_${params.target}`,
-        source: params.source ?? '',
-        target: params.target ?? '',
-        label: 'Draft Pipeline',
-        labelBgPadding: [8, 4],
-        labelBgBorderRadius: 4,
-        labelBgStyle: {
-          cursor: 'pointer', fill: '#FFCC00', color: '#fff',
-        },
-        type: 'straight',
-        sourceHandle: params.sourceHandle ?? '',
-        targetHandle: params.targetHandle ?? '',
-        style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
-        data: {
-          type: 'pipeline',
-          isDraft: true,
-        },
-        className: getEdgeId(),
-      };
-
-      onEdgeConnect(newConnection);
-      setEdges((edgesState) => edgesState.concat(newConnection));
-      onEdgeClick(newConnection);
-    },
-    [setEdges]
-  );
+  const onConnect = useCallback((params: Connection) => {
+    if (!(params.source && params.target)) return;
+    onEdgeConnect('pipeline', params.source, params.target);
+  }, [setEdges]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();

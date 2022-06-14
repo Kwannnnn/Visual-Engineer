@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ReactFlowProvider, Node, Edge } from 'react-flow-renderer';
+import {
+  ReactFlowProvider, Node, Edge, useEdgesState
+} from 'react-flow-renderer';
 import classNames from 'classnames';
 import { AxiosError } from 'axios';
 import {
@@ -74,18 +76,18 @@ function Home() {
     return Promise.reject();
   });
 
-  const onConnectionCallback = useCallback((edge: Edge) => {
+  const onConnectionCallback = useCallback((type: string, source: string, target: string) => {
     const objectBody: Partial<IObjectContext> = {
-      type: edge.data.type,
-      x: 1,
-      y: 1,
+      type,
+      x: 0,
+      y: 0,
     };
 
     postItem(objectBody).then((response) => {
       const newConnection: IOConnectionContext = {
         pipeline: response.tag,
-        firstItem: edge.source,
-        secondItem: edge.target,
+        firstItem: source,
+        secondItem: target,
       };
 
       postRelationship(newConnection)
@@ -100,10 +102,34 @@ function Home() {
             style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
             data: {
               type: 'pipeline',
+              tag: result.pipeline.tag,
             },
           };
 
           setEdges((edgesState) => edgesState.concat(newEdge));
+          setCurrentNode(newEdge);
+        }).catch((err: AxiosError) => {
+          const draftConnection: Edge = {
+            id: `${source}_${target}`,
+            source: source ?? '',
+            target: target ?? '',
+            label: 'Draft Pipeline',
+            labelBgPadding: [8, 4],
+            labelBgBorderRadius: 4,
+            labelBgStyle: {
+              cursor: 'pointer', fill: '#FFCC00', color: '#fff',
+            },
+            type: 'straight',
+            style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
+            data: {
+              type: 'pipeline',
+              isDraft: true,
+            },
+          };
+
+          setEdges((edgesState) => edgesState.concat(draftConnection));
+          onErrorCallback(err, draftConnection);
+          setCurrentNode(draftConnection);
         });
     });
   }, []);
@@ -226,7 +252,7 @@ function Home() {
               onDropNodeHandler={handleDropNode}
               onNodeClick={(node: Node) => setCurrentNode(node)}
               onEdgeClick={(edge: Edge) => setCurrentNode(edge)}
-              onEdgeConnect={(edge: Edge) => onConnectionCallback(edge)}
+              onEdgeConnect={(type, source, target) => onConnectionCallback(type, source, target)}
               onNodesDelete={(node: Node[]) => onObjectDeleteCallback(node)}
               onEdgesDelete={(edge: Edge[]) => onObjectDeleteCallback(edge)}
               onNodeMove={(node: Node) => onNodeMoveCallback(node)}
