@@ -4,7 +4,6 @@ import { TypedRequest } from '../../routes/util/typed-request';
 import { Relationship } from '../../database/models';
 import ValidationError from '../../error/ValidationError';
 import { RelationshipParams, RelationshipRequestBody } from '../../routes/relationships/relationships.types';
-import { pipeline } from 'stream';
 
 export const getAllRelationships = async (
   req: Request,
@@ -97,6 +96,7 @@ export const deleteRelationship = async (
 
   try {
     const pipeline: any = await DI.itemRepository.findOne(pipelineId);
+    
     if (!pipeline) {
       return res.status(404).json({
         message: 'Pipeline not found',
