@@ -14,7 +14,7 @@ import Board from './Board';
 })
 export default abstract class Item {
   constructor(
-    // tag: string,
+    tag: string,
     type: string,
     x: number,
     y: number,
@@ -35,11 +35,15 @@ export default abstract class Item {
     this.y = y;
   }
 
-  @PrimaryKey({ nullable: false })
-    tag!: string;
+  @PrimaryKey({nullable: false})
+    id!: string;
 
   @Property({ nullable: false })
     type!: string;
+  
+  @Property({ nullable: false })
+  @ObjectProperty(PropertyType.STRING)
+    tag!: string;
 
   @Property({ nullable: true })
   @ObjectProperty(PropertyType.STRING)

@@ -8,7 +8,8 @@ export default class PipeFittingFactory extends Factory<PipeFitting> {
 
   definition(faker: Faker): Partial<PipeFitting> {
     return {
-      tag: faker.datatype.uuid(),
+      id: faker.datatype.uuid(),
+      tag: faker.datatype.string(),
       name: faker.datatype.string(),
       length: faker.datatype.float(),
       width: faker.datatype.float(),
