@@ -210,8 +210,8 @@ function Home() {
             <Board
               initialNodes={initialNodes}
               onDropNodeHandler={handleDropNode}
-              onNodeClick={(node) => setCurrentNode(node)}
-              onEdgeClick={(edge) => setCurrentNode(edge)}
+              onNodeClick={(node) => node.id !== currentNode?.id && setCurrentNode(node)}
+              onEdgeClick={(edge) => edge.id !== currentNode?.id && setCurrentNode(edge)}
               onNodeMove={onNodeMoveHandler}
               initialEdges={edges}
               postItem={postItem}
