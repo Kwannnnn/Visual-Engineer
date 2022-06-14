@@ -14,7 +14,6 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const getById = async (req: Request, res: Response) => {
   const id = req.params;
-  console.log(id);
 
   try {
     const item = await DI.itemRepository.findOne(id);

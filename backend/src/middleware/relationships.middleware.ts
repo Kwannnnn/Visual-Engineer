@@ -31,7 +31,7 @@ export async function isRelationshipValid(
 
   const relationship = await DI
     .relationshipRepository
-    .findOne({pipeline: pipelineId });
+    .findOne({ pipeline: pipelineId });
 
   if (!relationship) {
     return res.status(404).json({

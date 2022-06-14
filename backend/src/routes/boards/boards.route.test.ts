@@ -9,6 +9,7 @@ let app: Express.Application;
 
 const exampleItem = {
   name: 'Cleaner',
+  tag: 'CL01',
   length: 2.52,
   width: 2.35,
   depth: 1.47,
@@ -172,7 +173,7 @@ describe('PATCH Board endpoints', () => {
       const object1 = sampleBoards[0].items[0];
 
       const response = await request(app)
-        .patch(`/api/v1/boards/${board1.id}/objects/${object1.tag}`)
+        .patch(`/api/v1/boards/${board1.id}/objects/${object1.id}`)
         .send({
           length: 5,
         });
@@ -193,7 +194,7 @@ describe('PATCH Board endpoints', () => {
       const board1 = sampleBoards[0];
 
       const response = await request(app)
-        .patch(`/api/v1/boards/${board1.id}/objects/sometag`)
+        .patch(`/api/v1/boards/${board1.id}/objects/4000`)
         .send({});
 
       expect(response.statusCode).toEqual(404);
@@ -204,9 +205,9 @@ describe('PATCH Board endpoints', () => {
       const object1 = sampleBoards[0].items[0];
 
       const response = await request(app)
-        .patch(`/api/v1/boards/${board1.id}/objects/${object1.tag}`)
+        .patch(`/api/v1/boards/${board1.id}/objects/${object1.id}`)
         .send({
-          tag: 'new-p1-tag',
+          id: '4000',
         });
 
       expect(response.statusCode).toEqual(400);
@@ -215,7 +216,7 @@ describe('PATCH Board endpoints', () => {
           errors: [
             {
               msg: 'Illegal field',
-              param: 'tag',
+              param: 'id',
               location: 'body',
             },
           ],
@@ -228,7 +229,7 @@ describe('PATCH Board endpoints', () => {
       const pumpObject = sampleBoards[0].items[2];
 
       const response = await request(app)
-        .patch(`/api/v1/boards/${board1.id}/objects/${pumpObject.tag}`)
+        .patch(`/api/v1/boards/${board1.id}/objects/${pumpObject.id}`)
         .send({
           flange: 'some-flange',
         });
@@ -271,7 +272,7 @@ describe('PATCH Board endpoints', () => {
         it('should return 204', async () => {
           const board = sampleBoards[0];
           const item = board.items.getItems()[0];
-          const response = await request(app).delete(`/api/v1/boards/${board.id}/objects/${item.tag}`);
+          const response = await request(app).delete(`/api/v1/boards/${board.id}/objects/${item.id}`);
           expect(response.status).toEqual(204);
           const check = await request(app).get(`/api/v1/boards/${board.id}/objects`);
           expect(check.status).toEqual(200);
@@ -283,7 +284,7 @@ describe('PATCH Board endpoints', () => {
         it('should return a success message', async () => {
           const board = sampleBoards[0];
           await board.items.init();
-          const response = await request(app).delete(`/api/v1/boards/${board.id}/objects/blah123`);
+          const response = await request(app).delete(`/api/v1/boards/${board.id}/objects/4000`);
           expect(response.status).toEqual(404);
         });
       });
@@ -291,7 +292,7 @@ describe('PATCH Board endpoints', () => {
 
     describe('given the board does not exist', () => {
       it('should return 404', async () => {
-        const response = await request(app).delete('/api/v1/boards/4000/objects/blah123');
+        const response = await request(app).delete('/api/v1/boards/4000/objects/4000');
         expect(response.status).toEqual(404);
       });
     });
