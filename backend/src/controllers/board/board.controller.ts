@@ -158,7 +158,7 @@ export const patchBoardObjects = async (
       });
     }
 
-    const hiddenFields = ['__gettersDefined', 'board', 'tag'];
+    const hiddenFields = ['__gettersDefined', 'board', 'id'];
 
     const properties = Object.getOwnPropertyNames(item).filter(((p) => !hiddenFields.includes(p)));
 
