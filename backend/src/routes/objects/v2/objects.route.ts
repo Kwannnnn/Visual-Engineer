@@ -57,7 +57,7 @@ const objectsRouter: Router = Router();
 objectsRouter.get('/types/:type/properties', objectController.getTypeProperties);
 
 /**
- * @api {get} /api/v1/objects/types Get all object types
+ * @api {get} /api/v2/objects/types Get all object types
  * @apiDescription Returns a resource response containing all object types in the system and their
  *                 hierachy.
  * @apiVersion 2.0.0

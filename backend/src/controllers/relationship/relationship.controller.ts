@@ -22,7 +22,6 @@ export const getOneRelationship = async (
 
   try {
     const relationship = await DI.relationshipRepository.findOne(pipelineId);
-    console.log(relationship);
 
     if (!relationship) {
       return res.status(404).json({
@@ -59,6 +58,37 @@ export const postRelationship = async (
   }
 };
 
+export const patchRelationship = async (
+  req: TypedRequest<any, RelationshipRequestBody>,
+  res: Response,
+) => {
+  const { pipelineId } = req.params;
+
+  try {
+    const relationship = await DI.relationshipRepository.findOne(pipelineId);
+
+    const firstItem = req.body!.firstItem!;
+    const secondItem = req.body!.secondItem!;
+
+    relationship!.firstItem = firstItem;
+    relationship!.secondItem = secondItem;
+
+    await DI.relationshipRepository.persistAndFlush(relationship!);
+
+    res.status(201);
+    return res.json(relationship);
+  } catch (e: any) {
+    if (e instanceof ValidationError) {
+      return res.status(e.statusCode).json({
+        message: e.message,
+      });
+    }
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+
 export const deleteRelationship = async (
   req: TypedRequest<RelationshipParams, any>,
   res: Response,
@@ -84,37 +114,6 @@ export const deleteRelationship = async (
 
     return res.status(204).send();
   } catch (e: any) {
-    return res.status(400).json({
-      message: e.message,
-    });
-  }
-};
-
-export const patchRelationship = async (
-  req: TypedRequest<any, RelationshipRequestBody>,
-  res: Response,
-) => {
-  const { pipelineTag } = req.params;
-
-  try {
-    const relationship = await DI.relationshipRepository.findOne(pipelineTag);
-
-    const firstItem = req.body!.firstItem!;
-    const secondItem = req.body!.secondItem!;
-
-    relationship!.firstItem = firstItem;
-    relationship!.secondItem = secondItem;
-
-    await DI.relationshipRepository.persistAndFlush(relationship!);
-
-    res.status(201);
-    return res.json(relationship);
-  } catch (e: any) {
-    if (e instanceof ValidationError) {
-      return res.status(e.statusCode).json({
-        message: e.message,
-      });
-    }
     return res.status(400).json({
       message: e.message,
     });

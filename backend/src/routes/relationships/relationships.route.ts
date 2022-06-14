@@ -19,13 +19,13 @@ const relationshipRouter: Router = Router();
  * HTTP/1.1 200 OK
  *    [
  *      {
- *        "pipeline": "122-12sa-gi2",
- *        "firstItem": "345-hg2-wru3"
- *        "secondItem": "321-ji0q-112"
+ *        "pipeline": "35",
+ *        "firstItem": "34"
+ *        "secondItem": "32"
  *      },
- *        "pipeline": "as2-887d-gi2",
- *        "firstItem": "34we-h62-yru3"
- *        "secondItem": "09i1-jjkq-1n12"
+ *        "pipeline": "15",
+ *        "firstItem": "33"
+ *        "secondItem": "9"
  *      {
  *      }
  *    ]
@@ -46,12 +46,12 @@ relationshipRouter.get('/', relationshipController.getAllRelationships);
  * @apiSuccessExample Success-Response:
  * HTTP/1.1 200 OK
  *    {
- *      "pipeline": "122-12sa-gi2",
- *      "firstItem": "345-hg2-wru3"
- *      "secondItem": "321-ji0q-112"
+ *      "pipeline": "35",
+ *      "firstItem": "34"
+ *      "secondItem": "32"
  *    }
  *
- * @apiError RelationshipNotFound Relationship with tag <code>{pipelineTag}</code> does not exist
+ * @apiError RelationshipNotFound Relationship with ID <code>{pipelineId}</code> does not exist
  * @apiErrorExample RelationshipNotFound:
  *     HTTP/1.1 404 Not Found
  *     {
@@ -68,24 +68,24 @@ relationshipRouter.get('/:pipelineId', relationshipController.getOneRelationship
  * @apiName PostRelationship
  * @apiGroup Relationship
  *
- * @apiBody {String} pipeline Pipeline tag identifier
- * @apiBody {String} firstItem First connected item identifier
- * @apiBody {String} secondItem Second connected item identifier
+ * @apiBody {Integer} pipeline Pipeline identifier
+ * @apiBody {Integer} firstItem First connected item identifier
+ * @apiBody {Integer} secondItem Second connected item identifier
  *
  * @apiSuccess (Success 201) {Relationship} object representing the newly added relationship.
  * @apiSuccessExample Success-Response:
  * HTTP/1.1 201 CREATED
  *    {
- *      "pipeline": "122-12sa-gi2",
- *      "firstItem": "345-hg2-wru3"
- *      "secondItem": "321-ji0q-112"
+ *      "pipeline": "35",
+ *      "firstItem": "34"
+ *      "secondItem": "32"
  *    }
  *
- * @apiError PipelineTagMissing The request body is missing the pipeline tag.
- * @apiErrorExample PipelineTagMissing:
+ * @apiError PipelineTagMissing The request body is missing the pipeline ID.
+ * @apiErrorExample PipelineIDMissing:
  *     HTTP/1.1 400 Bad Request
  *     {
- *       "message": "Pipeline tag is missing."
+ *       "message": "Pipeline ID is missing."
  *     }
  *
  * @apiError ItemMissing The request body is missing one or both to-be-connected items.
@@ -156,18 +156,18 @@ relationshipRouter.post(
  * @apiName PatchRelationship
  * @apiGroup Relationship
  *
- * @apiParam {String} pipelineTag Relationship identifier
- * @apiBody {String} firstItem First connected item identifier
- * @apiBody {String} secondItem Second connected item identifier
+ * @apiParam {Integer} pipelineId Relationship identifier
+ * @apiBody {Integer} firstItem First connected item identifier
+ * @apiBody {Integer} secondItem Second connected item identifier
  *
  * @apiSuccess (Success 201) {Relationship} relationship A resource response containing the
  * updated relationship
  * @apiSuccessExample Success-Response:
  * HTTP/1.1 201 CREATED
  *    {
- *      "pipeline": "122-12sa-gi2",
- *      "firstItem": "345-hg2-wru3"
- *      "secondItem": "456-ji0q-rt4g"
+ *      "pipeline": "35",
+ *      "firstItem": "34",
+ *      "secondItem": "32"
  *    }
  *
  * @apiError RelationshipNotFound Relationship with id <code>{pipelineId}</code> does not exist
@@ -237,13 +237,13 @@ relationshipRouter.patch(
  * @apiName DeleteRelationship
  * @apiGroup Relationship
  *
- * @apiParam {String} pipelineId Relationship identifier
+ * @apiParam {Integer} pipelineId Relationship identifier
  *
  * @apiSuccessExample Success-Response:
  *      HTTP/1.1 204 No Content
  *
  * @apiError PipelineNotFound Pipeline with ID <code>{pipelineId}</code> does not exist
- * @apiErrorExample ItemNotFound:
+ * @apiErrorExample PipelineNotFound:
  *     HTTP/1.1 404 Not Found
  *     {
  *       "message": "Pipeline not found"

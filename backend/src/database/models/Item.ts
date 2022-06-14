@@ -2,7 +2,6 @@
 import {
   Property, PrimaryKey, ManyToOne, Entity,
 } from '@mikro-orm/core';
-import { v4 } from 'uuid';
 import { ObjectProperty, PropertyType } from '../../util/properties';
 // eslint-disable-next-line
 import Board from './Board';
@@ -24,7 +23,7 @@ export default abstract class Item {
     depth?: number,
     diameter?: number,
   ) {
-    this.tag = v4();
+    this.tag = tag;
     this.name = name;
     this.length = length;
     this.width = width;
