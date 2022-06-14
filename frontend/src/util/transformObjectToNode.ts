@@ -9,6 +9,7 @@ export default function transformObjectToNode(objects: Partial<IObjectContext>[]
       tag, type, x, y,
     } = object;
     if (!(tag && type && x && y)) return;
+    if (type === 'pipeline') return;
 
     const node: Node = {
       id: tag,

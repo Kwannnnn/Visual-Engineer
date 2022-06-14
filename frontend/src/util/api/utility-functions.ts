@@ -37,7 +37,9 @@ export async function createItem(boardId: number, properties: Partial<IObjectCon
     ...properties,
   })
     .then((response) => response.data)
-    .catch((err) => err.data);
+    .catch((err) => {
+      throw err;
+    });
 
   return result;
 }
@@ -81,5 +83,10 @@ export async function getObjectTypes() {
 
 export async function getTypeProperties(type: string) {
   const result = await axios.get(`${url}/v2/objects/types/${type}/properties`);
+  return result.data;
+}
+
+export async function getObjectEdges() {
+  const result = await axios.get(`${url}/v2/relationships`);
   return result.data;
 }

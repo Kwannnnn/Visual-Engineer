@@ -6,13 +6,14 @@ import ReactFlow, {
   Controls,
   Node,
   Edge,
-  addEdge,
   useNodesState,
   useEdgesState,
   ReactFlowInstance,
   Connection,
   NodeTypes,
-  Background
+  Background,
+  BackgroundVariant,
+  ConnectionLineType
 } from 'react-flow-renderer';
 import IObjectContext from '../../typings/IObjectContext';
 import ItemNode from './ItemNode';
@@ -22,8 +23,9 @@ interface NewBoardProps {
   initialEdges?: Edge[];
   onDropNodeHandler?: (node: Node) => void;
   onNodeClick: (node: Node) => void;
+  onEdgeClick: (edge: Edge) => void;
   onNodeMove?: (node: Node) => void;
-  postInitialItem: (x: number, y: number, type: string) => Promise<Partial<IObjectContext>>;
+  postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
 }
 
 // This string key must match the key in the nodeTypes object in order to render the correct
@@ -33,23 +35,34 @@ const nodeTypes: NodeTypes = {
   itemNode: ItemNode,
 };
 
+let edgeID = 0;
+
+const getEdgeId = () => {
+  // Used for Cypress to track unsaved item edges
+  const result = `itemTmpEdge_${edgeID}`;
+  edgeID += 1;
+  return result;
+};
+
 function Board(props: NewBoardProps) {
   const {
     initialNodes,
     initialEdges,
     onDropNodeHandler,
     onNodeClick,
+    onEdgeClick,
     onNodeMove,
-    postInitialItem,
+    postItem,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
-  // State containing the nodes of the board
 
+  // State containing the nodes of the board
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
 
   // State containing the edges of the board
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges ?? []);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
   // State containing the React Flow Instance
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance>();
 
@@ -57,12 +70,40 @@ function Board(props: NewBoardProps) {
     setNodes(initialNodes ?? []);
   }, [initialNodes]);
 
-  // Whenever a edge gets created update the edges state
+  useEffect(() => {
+    setEdges(initialEdges ?? []);
+  }, [initialEdges]);
+
+  // Whenever an edge gets created update the edge's state
   // eslint-disable-next-line max-len
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    (params: Connection) => {
+      const newConnection: Edge = {
+        id: `${params.source}_${params.target}`,
+        source: params.source ?? '',
+        target: params.target ?? '',
+        label: 'Draft Pipeline',
+        labelBgPadding: [8, 4],
+        labelBgBorderRadius: 4,
+        labelBgStyle: {
+          cursor: 'pointer', fill: '#FFCC00', color: '#fff',
+        },
+        type: 'straight',
+        sourceHandle: params.sourceHandle ?? '',
+        targetHandle: params.targetHandle ?? '',
+        style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
+        data: {
+          type: 'pipeline',
+        },
+        className: getEdgeId(),
+      };
+
+      setEdges((edgesState) => edgesState.concat(newConnection));
+      onEdgeClick(newConnection);
+    },
     [setEdges]
   );
+
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     // eslint-disable-next-line no-param-reassign
@@ -72,7 +113,6 @@ function Board(props: NewBoardProps) {
   // The callback that creates the node whenever a new node is dropped on the board
   const onDrop = useCallback(
     (event: React.DragEvent) => {
-      // TODO: improve those null checks
       if (!reactFlowInstance || !reactFlowWrapper || !reactFlowWrapper.current) return;
 
       event.preventDefault();
@@ -88,7 +128,12 @@ function Board(props: NewBoardProps) {
         y: event.clientY - reactFlowBounds.top,
       });
 
-      postInitialItem(position.x, position.y, name).then((item) => {
+      const initialItem: Partial<IObjectContext> = {
+        x: position.x,
+        y: position.y,
+        type: name,
+      };
+      postItem(initialItem).then((item) => { // onFullfilled
         const newNode = {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           id: item.tag!,
@@ -103,6 +148,8 @@ function Board(props: NewBoardProps) {
 
         setNodes((nodesState) => nodesState.concat(newNode));
         if (onDropNodeHandler) onDropNodeHandler(newNode);
+      }, () => { // onRejected
+
       });
     },
     [reactFlowInstance]
@@ -126,11 +173,14 @@ function Board(props: NewBoardProps) {
         onDragOver={onDragOver}
         deleteKeyCode={null}
         onNodeClick={(e, n) => onNodeClick(n)}
+        onEdgeClick={(e, n) => onEdgeClick(n)}
+        fitView
+        connectionLineType={ConnectionLineType.Straight}
         onNodeDragStop={(e, n) => onNodeDragStop(e, n)}
       >
         <MiniMap />
         <Controls />
-        <Background />
+        <Background variant={BackgroundVariant.Lines} color="#dfdfdf" gap={25} />
       </ReactFlow>
     </div>
   );
