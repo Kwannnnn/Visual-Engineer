@@ -27,11 +27,11 @@ export async function isRelationshipValid(
   res: Response,
   next: NextFunction,
 ) {
-  const pipelineId = req.params;
+  const { pipelineId } = req.params;
 
   const relationship = await DI
     .relationshipRepository
-    .findOne(pipelineId);
+    .findOne({pipeline: pipelineId });
 
   if (!relationship) {
     return res.status(404).json({
@@ -75,7 +75,7 @@ export async function areItemsValid(
 
   const secondItem = await DI
     .itemRepository
-    .findOne({ tag: req.body!.secondItem });
+    .findOne({ id: req.body!.secondItem });
 
   if (!secondItem) {
     return res.status(404).json({

@@ -5,9 +5,9 @@ export interface RelationshipParams {
 }
 
 export interface RelationshipBody {
-  pipeline: string;
-  firstItem: string;
-  secondItem: string;
+  pipeline: number;
+  firstItem: number;
+  secondItem: number;
 }
 
 export interface RelationshipRequestBody {
