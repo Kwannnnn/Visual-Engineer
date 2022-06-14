@@ -58,7 +58,7 @@ relationshipRouter.get('/', relationshipController.getAllRelationships);
  *       "message": "Relationship not found"
  *     }
  */
-relationshipRouter.get('/:pipelineTag', relationshipController.getOneRelationship);
+relationshipRouter.get('/:pipelineId', relationshipController.getOneRelationship);
 
 /**
  * @api {post} /api/v2/relationships Post a relationship
@@ -136,7 +136,7 @@ relationshipRouter.post(
   validate([
     body('pipeline')
       .exists()
-      .withMessage('Pipeline id is missing!'),
+      .withMessage('Pipeline ID is missing!'),
     body(['firstItem', 'secondItem'])
       .exists()
       .withMessage('Two items are needed to create a relationship.'),
@@ -256,6 +256,6 @@ relationshipRouter.patch(
  *       "message": "Relationship not found"
  *     }
  */
-relationshipRouter.delete('/:pipelineTag', relationshipController.deleteRelationship);
+relationshipRouter.delete('/:pipelineId', relationshipController.deleteRelationship);
 
 export default relationshipRouter;

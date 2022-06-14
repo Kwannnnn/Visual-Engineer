@@ -4,6 +4,7 @@ import { TypedRequest } from '../../routes/util/typed-request';
 import { Relationship } from '../../database/models';
 import ValidationError from '../../error/ValidationError';
 import { RelationshipParams, RelationshipRequestBody } from '../../routes/relationships/relationships.types';
+import { pipeline } from 'stream';
 
 export const getAllRelationships = async (
   req: Request,
@@ -17,10 +18,11 @@ export const getOneRelationship = async (
   req: TypedRequest<RelationshipParams, any>,
   res: Response,
 ) => {
-  const pipelineId: number =+req.params;
+  const { pipelineId } = req.params;
 
   try {
     const relationship = await DI.relationshipRepository.findOne(pipelineId);
+    console.log(relationship);
 
     if (!relationship) {
       return res.status(404).json({
@@ -61,7 +63,7 @@ export const deleteRelationship = async (
   req: TypedRequest<RelationshipParams, any>,
   res: Response,
 ) => {
-  const pipelineId: number =+req.params;
+  const { pipelineId } = req.params;
 
   try {
     const pipeline: any = await DI.itemRepository.findOne(pipelineId);
