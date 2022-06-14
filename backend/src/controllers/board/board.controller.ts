@@ -216,10 +216,12 @@ export const deleteBoard = async (req: TypedRequest<BoardParams, any>, res: Resp
   }
 };
 
-export const deleteObjectFromBoard = async (req: Request, res: Response) => {
-  const id: number = +req.params.id;
-  const objectId: number = +req.params;
-
+export const deleteObjectFromBoard = async (
+  req: TypedRequest<BoardObjectParams, PatchBoardObject>,
+  res: Response,
+  ) => {
+  const { id, objectId } = req.params;
+  
   try {
     const board = await DI.boardRepository.findOne(id);
 
@@ -230,8 +232,7 @@ export const deleteObjectFromBoard = async (req: Request, res: Response) => {
     }
     await board.items.init();
 
-    const items = board.items.getItems();
-    const item = items.find((ItemIns) => ItemIns.id === objectId);
+    const item = await DI.itemRepository.findOne(objectId);
 
     if (!item) {
       return res.status(404).json({
