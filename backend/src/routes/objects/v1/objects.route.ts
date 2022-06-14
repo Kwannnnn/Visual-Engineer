@@ -60,6 +60,6 @@ objectsRouter.get('/', objectController.getAll);
  *       "message": "Item not found"
  *     }
  */
-objectsRouter.get('/:tag', objectController.getById);
+objectsRouter.get('/:id', objectController.getById);
 
 export default objectsRouter;
