@@ -12,4 +12,4 @@ RUN chmod +x ./wait-for.sh
 
 RUN chmod +x ./init.sh
 
-CMD ./init.sh
+CMD  ./wait-for.sh postgres:5432 -- ./init.sh

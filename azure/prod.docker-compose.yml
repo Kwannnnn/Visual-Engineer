@@ -20,6 +20,8 @@ services:
       dockerfile: init.Dockerfile
     environment:
       DATABASE_URL: postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres:5432/$POSTGRES_DB
+    depends_on:
+      - postgres
   backend:
     image: registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/backend:$IMAGE_TAG
     container_name: ve-backend
