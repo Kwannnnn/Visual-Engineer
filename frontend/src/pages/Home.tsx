@@ -93,16 +93,18 @@ function Home() {
       postRelationship(newConnection)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .then((result: any) => {
+          const pipelineTag = result.pipeline.tag;
           const newEdge: Edge = {
-            id: result.pipeline.tag,
+            id: pipelineTag,
             source: result.firstItem.tag,
             target: result.secondItem.tag,
-            label: result.pipeline.tag,
+            label: pipelineTag,
             type: 'straight',
             style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
             data: {
               type: 'pipeline',
-              tag: result.pipeline.tag,
+              tag: pipelineTag,
+              dataCY: `pipelineEdge-${pipelineTag}`,
             },
           };
 
