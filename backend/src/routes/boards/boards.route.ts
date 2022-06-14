@@ -292,7 +292,7 @@ router.delete('/:id', boardController.deleteBoard);
  *       "message": "Item not found"
  *     }
  */
-router.delete('/:id/objects/:tag', boardController.deleteObjectFromBoard);
+router.delete('/:id/objects/:objectId', boardController.deleteObjectFromBoard);
 
 export default router;
 
