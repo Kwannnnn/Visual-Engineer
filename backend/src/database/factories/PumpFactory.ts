@@ -7,7 +7,8 @@ export default class PumpFactory extends Factory<Pump> {
 
   definition(faker: Faker): Partial<Pump> {
     return {
-      tag: faker.datatype.uuid(),
+      id: faker.datatype.uuid(),
+      tag: faker.datatype.string(),
       name: faker.datatype.string(),
       length: faker.datatype.float(),
       width: faker.datatype.float(),

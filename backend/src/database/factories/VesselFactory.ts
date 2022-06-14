@@ -7,7 +7,8 @@ export default class VesselFactory extends Factory<Vessel> {
 
   definition(faker: Faker): Partial<Vessel> {
     return {
-      tag: faker.datatype.uuid(),
+      id: faker.datatype.uuid(),
+      tag: faker.datatype.string(),
       name: faker.datatype.string(),
       length: faker.datatype.float(),
       width: faker.datatype.float(),
