@@ -13,7 +13,7 @@ export const getAll = async (req: Request, res: Response) => {
 };
 
 export const getById = async (req: Request, res: Response) => {
-  const id = req.params;
+  const { id } = req.params;
 
   try {
     const item = await DI.itemRepository.findOne(id);

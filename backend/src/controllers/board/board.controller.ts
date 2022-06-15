@@ -159,7 +159,7 @@ export const patchBoardObjects = async (
 
     const { items } = board;
 
-    const item = await DI.itemRepository.findOne(objectId);
+    const item = await DI.itemRepository.findOne({ id: objectId });
 
     if (!item || !items.contains(item)) {
       return res.status(404).json({

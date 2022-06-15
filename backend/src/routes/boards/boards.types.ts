@@ -9,7 +9,7 @@ export interface BoardParams {
 export type PatchBoardBody = Pick<Board, 'name'>;
 
 export interface BoardObjectParams extends BoardParams {
-  objectId: number;
+  objectId: string;
 }
 interface IPatchBoardObject extends Pipeline, PipeFitting, Pump, Blower, Tank, Vessel {
 
