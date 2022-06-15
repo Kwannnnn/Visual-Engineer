@@ -30,7 +30,7 @@ import IOConnectionContext from '../typings/IOConnectionContext';
 
 function Home() {
   // States
-  const [currentBoardId, setCurrentBoardId] = useState<number>(1);
+  const [currentBoardId, setCurrentBoardId] = useState<number>(0);
   const [currentNode, setCurrentNode] = useState<Node | Edge | null>(null);
   const [initialNodes, setInitialNodes] = useState<Node[]>([]);
   const [initialProperties, setInitialProperties] = useState<IPropertyListing[]>([]);
@@ -39,13 +39,10 @@ function Home() {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [edges, setEdges] = useState<Edge[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [boards, setBoards] = useState<IBoard[]>([
-    { id: 1, name: 'PTPFu01' },
-    { id: 2, name: 'PTPFu02' }
-  ]);
+  const [boards, setBoards] = useState<IBoard[]>([]);
 
   // Utility functions callbacks
-  const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
+  const getBoardObjectsCallback = useCallback(async () => currentBoardId !== 0 && getBoardObjects(currentBoardId), [currentBoardId]);
   const getEdgesCallback = useCallback(async () => getObjectEdges(), [currentBoardId]);
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
   const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
@@ -163,6 +160,16 @@ function Home() {
       }, 5000);
     }
   }, [errorMessage]);
+
+  useEffect(() => {
+    const boardsLocalStorage: IBoard[] = JSON.parse(localStorage.getItem('boards') || '[]');
+    setBoards(boardsLocalStorage);
+  }, []);
+
+  useEffect(() => {
+    const currentBoard: number = parseInt((localStorage.getItem('currentBoard') || '1'), 10);
+    setCurrentBoardId(currentBoard);
+  }, []);
 
   const handleTab = (id: number) => {
     setCurrentNode(null);
