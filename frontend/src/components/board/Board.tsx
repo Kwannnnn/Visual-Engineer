@@ -34,6 +34,7 @@ interface NewBoardProps {
   onEdgeClick: (edge: Edge) => void;
   onEdgeUpdate?: (oldEdge: Edge, newConnection: Connection) => void;
   onNodeMove?: (node: Node) => void;
+  onEdgeConnect: (type: string, firstItemTag: string, secondItemTag: string) => void;
   postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
 }
 
@@ -44,23 +45,15 @@ const nodeTypes: NodeTypes = {
   itemNode: ItemNode,
 };
 
-let edgeID = 0;
-
-const getEdgeId = () => {
-  // Used for Cypress to track unsaved item edges
-  const result = `itemTmpEdge_${edgeID}`;
-  edgeID += 1;
-  return result;
-};
-
 function Board(props: NewBoardProps) {
   const {
     initialNodes,
     initialEdges,
     onDropNodeHandler,
     onNodeClick,
-    onEdgeClick,
     onNodeMove,
+    onEdgeConnect,
+    onEdgeClick,
     postItem,
     onEdgeUpdate,
   } = props;
@@ -91,35 +84,11 @@ function Board(props: NewBoardProps) {
     setEdges(initialEdges ?? []);
   }, [initialEdges]);
 
-  // Whenever an edge gets created update the edge's state
-  // eslint-disable-next-line max-len
-  const onConnect = useCallback(
-    (params: Connection) => {
-      const newConnection: Edge = {
-        id: `${params.source}_${params.target}`,
-        source: params.source ?? '',
-        target: params.target ?? '',
-        label: 'Draft Pipeline',
-        labelBgPadding: [8, 4],
-        labelBgBorderRadius: 4,
-        labelBgStyle: {
-          cursor: 'pointer', fill: '#FFCC00', color: '#fff',
-        },
-        type: 'floating',
-        sourceHandle: params.sourceHandle ?? '',
-        targetHandle: params.targetHandle ?? '',
-        style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
-        data: {
-          type: 'pipeline',
-        },
-        className: getEdgeId(),
-      };
-
-      setEdges((edgesState) => edgesState.concat(newConnection));
-      onEdgeClick(newConnection);
-    },
-    [setEdges]
-  );
+  // Whenever a edge gets created update the edges state
+  const onConnect = useCallback((params: Connection) => {
+    if (!(params.source && params.target)) return;
+    onEdgeConnect('pipeline', params.source, params.target);
+  }, [setEdges]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
