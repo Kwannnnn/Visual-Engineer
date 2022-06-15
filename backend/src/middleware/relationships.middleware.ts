@@ -56,23 +56,6 @@ export function isRequestBodyValid(
   return next();
 }
 
-export function arePipelinesMatching(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  const { pipelineTag } = req.params;
-
-  if (!req.body!.pipeline || pipelineTag !== req.body!.pipeline) {
-    return res.status(400).json({
-
-      message: 'Pipeline tag in request body does not match',
-    });
-  }
-
-  return next();
-}
-
 export async function areItemsValid(
   req: Request,
   res: Response,

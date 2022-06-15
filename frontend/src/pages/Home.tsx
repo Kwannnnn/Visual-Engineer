@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ReactFlowProvider, Node, Edge } from 'react-flow-renderer';
+import {
+  ReactFlowProvider, Node, Edge, updateEdge, Connection
+} from 'react-flow-renderer';
 import classNames from 'classnames';
 import axios, { AxiosError } from 'axios';
 import {
@@ -18,7 +20,8 @@ import {
   getObjectTypes,
   getTypeProperties,
   updateBoardObject,
-  getObjectEdges
+  getObjectEdges,
+  updateRelationship
 } from '../util/api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
 import transformConnectionToEdge from '../util/transformConnectionToEdge';
@@ -32,8 +35,8 @@ function Home() {
   // States
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
   const [currentNode, setCurrentNode] = useState<Node | Edge | null>(null);
-  const [initialNodes, setInitialNodes] = useState<Node[]>([]);
-  const [initialProperties, setInitialProperties] = useState<IPropertyListing[]>([]);
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [properties, setProperties] = useState<IPropertyListing[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [types, setTypes] = useState<[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -81,8 +84,8 @@ function Home() {
 
     if (currentNode.data.isDraft) {
       setCurrentNode(null);
-      const newNodes = initialNodes.filter((n) => n.data.tag !== currentNode.data.tag);
-      setInitialNodes(newNodes);
+      const newNodes = nodes.filter((n) => n.data.tag !== currentNode.data.tag);
+      setNodes(newNodes);
       return;
     }
 
@@ -99,8 +102,8 @@ function Home() {
     }
 
     setCurrentNode(null);
-    const newNodes = initialNodes.filter((n) => n.data.tag !== currentNode.data.tag);
-    setInitialNodes(newNodes);
+    const newNodes = nodes.filter((n) => n.data.tag !== currentNode.data.tag);
+    setNodes(newNodes);
   }, [currentNode]);
 
   /**
@@ -136,8 +139,8 @@ function Home() {
   // Use effects
   useEffect(() => {
     if (!boardObjects) return;
-    const nodes = transformObjectToNode(boardObjects);
-    setInitialNodes(nodes);
+    const transformedNodes = transformObjectToNode(boardObjects);
+    setNodes(transformedNodes);
   }, [boardObjects]);
 
   useEffect(() => {
@@ -153,7 +156,7 @@ function Home() {
 
   useEffect(() => {
     if (!typeProperties) return;
-    setInitialProperties(typeProperties);
+    setProperties(typeProperties);
   }, [typeProperties]);
 
   useEffect(() => {
@@ -171,6 +174,18 @@ function Home() {
 
   const handleDropNode = (node: Node) => {
     setCurrentNode(node);
+  };
+
+  const handleEdgeUpdate = (oldEdge: Edge, newConnection: Connection) => {
+    const pipelineTag = oldEdge.id;
+    const firstItem = newConnection.source;
+    const secondItem = newConnection.target;
+
+    if (!firstItem || !secondItem) {
+      return;
+    }
+    updateRelationship(pipelineTag, firstItem, secondItem);
+    setEdges((els) => updateEdge(oldEdge, newConnection, els));
   };
 
   const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item }).catch((err) => {
@@ -207,8 +222,9 @@ function Home() {
               />
             )}
             <Board
-              initialNodes={initialNodes}
+              initialNodes={nodes}
               onDropNodeHandler={handleDropNode}
+              onEdgeUpdate={handleEdgeUpdate}
               onNodeClick={(node) => node.id !== currentNode?.id && setCurrentNode(node)}
               onEdgeClick={(edge) => edge.id !== currentNode?.id && setCurrentNode(edge)}
               onNodeMove={onNodeMoveHandler}
@@ -221,7 +237,7 @@ function Home() {
               'lg:block lg:col-span-5': currentNode,
             })}
             currentNode={currentNode}
-            initialProperties={initialProperties}
+            initialProperties={properties}
             onClose={() => setCurrentNode(null)}
             onFieldChange={onFieldChangeHandler}
             postItem={postItem}

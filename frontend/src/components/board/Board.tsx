@@ -24,6 +24,7 @@ interface NewBoardProps {
   onDropNodeHandler?: (node: Node) => void;
   onNodeClick: (node: Node) => void;
   onEdgeClick: (edge: Edge) => void;
+  onEdgeUpdate?: (oldEdge: Edge, newConnection: Connection) => void;
   onNodeMove?: (node: Node) => void;
   postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
 }
@@ -53,6 +54,7 @@ function Board(props: NewBoardProps) {
     onEdgeClick,
     onNodeMove,
     postItem,
+    onEdgeUpdate,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
@@ -174,6 +176,7 @@ function Board(props: NewBoardProps) {
         deleteKeyCode={null}
         onNodeClick={(e, n) => onNodeClick(n)}
         onEdgeClick={(e, n) => onEdgeClick(n)}
+        onEdgeUpdate={onEdgeUpdate}
         fitView
         connectionLineType={ConnectionLineType.Straight}
         onNodeDragStop={(e, n) => onNodeDragStop(e, n)}
