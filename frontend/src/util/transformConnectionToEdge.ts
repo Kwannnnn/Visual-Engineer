@@ -21,7 +21,7 @@ export default function transformConnectionToEdge(allEdges: Partial<IOConnection
       source: firstItem,
       target: secondItem,
       label: pipeline,
-      type: 'straight',
+      type: 'floating',
       labelStyle: { cursor: 'pointer' },
       labelBgStyle: { cursor: 'pointer' },
       style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },

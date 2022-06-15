@@ -1,5 +1,5 @@
 import React, {
-  useState, useCallback, useRef, useEffect
+  useState, useCallback, useRef, useEffect, createContext, useMemo
 } from 'react';
 import ReactFlow, {
   MiniMap,
@@ -13,10 +13,18 @@ import ReactFlow, {
   NodeTypes,
   Background,
   BackgroundVariant,
-  ConnectionLineType
+  ConnectionLineType,
+  EdgeTypes
 } from 'react-flow-renderer';
 import IObjectContext from '../../typings/IObjectContext';
 import ItemNode from './ItemNode';
+import FloatingEdge from './edge/FloatingEdge';
+
+interface IDragContext {
+  connecting: boolean;
+}
+
+export const DragContext = createContext<IDragContext>({ connecting: false });
 
 interface NewBoardProps {
   initialNodes?: Node[];
@@ -68,6 +76,13 @@ function Board(props: NewBoardProps) {
   // State containing the React Flow Instance
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance>();
 
+  const [connecting, setConnecting] = useState(false);
+
+  const dragValue = useMemo(
+    () => ({ connecting, setConnecting }),
+    [connecting, setConnecting]
+  );
+
   useEffect(() => {
     setNodes(initialNodes ?? []);
   }, [initialNodes]);
@@ -90,7 +105,7 @@ function Board(props: NewBoardProps) {
         labelBgStyle: {
           cursor: 'pointer', fill: '#FFCC00', color: '#fff',
         },
-        type: 'straight',
+        type: 'floating',
         sourceHandle: params.sourceHandle ?? '',
         targetHandle: params.targetHandle ?? '',
         style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
@@ -161,30 +176,44 @@ function Board(props: NewBoardProps) {
     if (onNodeMove) onNodeMove(node);
   }, [onNodeMove]);
 
+  const edgeTypes: EdgeTypes = {
+    floating: FloatingEdge,
+  };
+
   return (
     <div className="w-full h-full" data-cy="board" ref={reactFlowWrapper}>
-      <ReactFlow
-        nodeTypes={nodeTypes}
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onInit={setReactFlowInstance}
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        deleteKeyCode={null}
-        onNodeClick={(e, n) => onNodeClick(n)}
-        onEdgeClick={(e, n) => onEdgeClick(n)}
-        onEdgeUpdate={onEdgeUpdate}
-        fitView
-        connectionLineType={ConnectionLineType.Straight}
-        onNodeDragStop={(e, n) => onNodeDragStop(e, n)}
-      >
-        <MiniMap />
-        <Controls />
-        <Background variant={BackgroundVariant.Lines} color="#dfdfdf" gap={25} />
-      </ReactFlow>
+      <DragContext.Provider value={dragValue}>
+        <ReactFlow
+          nodeTypes={nodeTypes}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onInit={setReactFlowInstance}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          deleteKeyCode={null}
+          onNodeClick={(e, n) => onNodeClick(n)}
+          onEdgeClick={(e, n) => onEdgeClick(n)}
+          onEdgeUpdate={onEdgeUpdate}
+          edgeTypes={edgeTypes}
+          fitView
+          connectionLineType={ConnectionLineType.Straight}
+        // connectionLineComponent={FloatingConnectionLine}
+          onNodeDragStop={(e, n) => onNodeDragStop(e, n)}
+          onConnectStart={() => {
+            setConnecting(true);
+          }}
+          onConnectEnd={() => {
+            setConnecting(false);
+          }}
+        >
+          <MiniMap />
+          <Controls />
+          <Background variant={BackgroundVariant.Lines} color="#dfdfdf" gap={25} />
+        </ReactFlow>
+      </DragContext.Provider>
     </div>
   );
 }
