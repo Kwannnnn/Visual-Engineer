@@ -72,7 +72,6 @@ describe('Board', () => {
         cy.get('@label')
           .should('contain', 'vessel');
       });
-
     });
   });
 

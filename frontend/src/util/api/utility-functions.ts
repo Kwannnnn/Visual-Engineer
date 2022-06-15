@@ -69,10 +69,8 @@ export async function deleteBoard(id: number) {
     .catch((err) => err.data);
 }
 
-export async function deleteBoardObject(id: number, tag: string) {
-  await axios.delete(`${url}/v1/boards/${id}/objects/${tag}`)
-    .then((response) => response.data)
-    .catch((err) => err.data);
+export async function deleteBoardObject(id: number, tag:string) {
+  await axios.delete(`${url}/v1/boards/${id}/objects/${tag}`);
 }
 
 export async function getObjectTypes() {

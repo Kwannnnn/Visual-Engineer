@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Edge, Node } from 'react-flow-renderer';
@@ -11,6 +11,7 @@ interface PropertiesSidebarProps {
   initialProperties: IPropertyListing[];
   currentNode: Node | Edge | null;
   onClose: () => void;
+  onDelete: (node: Node | Edge) => void;
   onFieldChange?: (node: Node | Edge, field: string, value: string) => void;
   postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
   fetchBoardObjects: () => Promise<unknown>;
@@ -33,6 +34,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     onClose,
     currentNode,
     onFieldChange,
+    onDelete,
     postItem,
     fetchBoardObjects,
   } = props;
@@ -48,6 +50,11 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     }));
     setPropValues(newValues);
   }, [initialProperties]);
+
+  const onDeleteHandler = useCallback(() => {
+    if (!currentNode) return;
+    onDelete(currentNode);
+  }, [currentNode]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentNode) return;
@@ -145,27 +152,25 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
               'mt-4': currentNode && currentNode.data.isDraft,
             })}
           >
-            {currentNode && currentNode.data.isDraft && (
-              <button
-                id="save-component-btn"
-                type="submit"
-                className="rounded-lg w-1/2 p-2 shadow-sm hover:shadow-md border border-green-700 hover:bg-green-700 text-green-700 hover:text-white py-2 cursor-pointer mt-auto"
-              >
-                <p className="hidden md:inline"> Publish</p>
-              </button>
+            { currentNode && currentNode.data.isDraft && (
+            <button
+              data-cy="save-item-btn"
+              type="submit"
+              className="rounded-lg w-1/2 p-2 shadow-sm hover:shadow-md border border-green-700 hover:bg-green-700 text-green-700 hover:text-white py-2 cursor-pointer mt-auto"
+            >
+              <p className="hidden md:inline">Publish</p>
+            </button>
             )}
             <button
-              id="delete-component-btn"
-              className={classNames(
-                'rounded-lg p-2 shadow-sm hover:shadow-md border border-red-700 hover:bg-red-700 text-red-700 hover:text-white py-2 cursor-pointer',
-                {
-                  'w-1/2': currentNode && currentNode.data.isDraft,
-                  'w-full': !(currentNode && currentNode.data.isDraft),
-                }
-              )}
+              data-cy="delete-item-btn"
+              className={classNames('rounded-lg p-2 shadow-sm hover:shadow-md border border-red-700 hover:bg-red-700 text-red-700 hover:text-white py-2 cursor-pointer', {
+                'w-1/2': currentNode && currentNode.data.isDraft,
+                'w-full': !(currentNode && currentNode.data.isDraft),
+              })}
               type="button"
+              onClick={() => onDeleteHandler()}
             >
-              <p className="hidden md:inline"> Delete</p>
+              <p className="hidden md:inline">Delete</p>
             </button>
           </div>
         </div>
