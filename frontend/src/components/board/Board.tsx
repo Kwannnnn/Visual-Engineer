@@ -174,7 +174,6 @@ function Board(props: NewBoardProps) {
         deleteKeyCode={null}
         onNodeClick={(e, n) => onNodeClick(n)}
         onEdgeClick={(e, n) => onEdgeClick(n)}
-        fitView
         connectionLineType={ConnectionLineType.Straight}
         onNodeDragStop={(e, n) => onNodeDragStop(e, n)}
       >
