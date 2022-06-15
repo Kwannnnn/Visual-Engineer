@@ -183,6 +183,7 @@ function Home() {
 
   const handleTab = (id: number) => {
     setCurrentBoardId(id);
+    setCurrentNode(null);
     localStorage.setItem('currentBoard', id.toString());
   };
 
@@ -192,6 +193,7 @@ function Home() {
 
     setBoards(newBoards);
     setCurrentBoardId(newCurrentBoard || 0);
+    setCurrentNode(null);
     localStorage.setItem('boards', JSON.stringify(newBoards));
 
     if (newCurrentBoard) {
