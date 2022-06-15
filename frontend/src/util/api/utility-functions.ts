@@ -37,7 +37,9 @@ export async function createItem(boardId: number, properties: Partial<IObjectCon
     ...properties,
   })
     .then((response) => response.data)
-    .catch((err) => err.data);
+    .catch((err) => {
+      throw err;
+    });
 
   return result;
 }
@@ -68,9 +70,7 @@ export async function deleteBoard(id: number) {
 }
 
 export async function deleteBoardObject(id: number, tag:string) {
-  await axios.delete(`${url}/v1/boards/${id}/objects/${tag}`)
-    .then((response) => response.data)
-    .catch((err) => err.data);
+  await axios.delete(`${url}/v1/boards/${id}/objects/${tag}`);
 }
 
 export async function getObjectTypes() {
