@@ -136,10 +136,16 @@ relationshipRouter.post(
   validate([
     body('pipeline')
       .exists()
-      .withMessage('Pipeline ID is missing!'),
+      .withMessage({
+        message: 'Pipeline ID is missing!',
+        statusCode: 400,
+      }),
     body(['firstItem', 'secondItem'])
       .exists()
-      .withMessage('Two items are needed to create a relationship.'),
+      .withMessage({
+        message: 'Two items are needed to create a relationship.',
+        statusCode: 400,
+      }),
   ]),
   middleware.isPipelineValid,
   middleware.areItemsValid,
