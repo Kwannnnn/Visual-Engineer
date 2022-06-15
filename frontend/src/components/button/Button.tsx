@@ -5,11 +5,12 @@ import ButtonRole from './ButtonRole.enum';
 interface ButtonProps {
   label: string;
   role: ButtonRole;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 function Button(props: ButtonProps) {
-  const { label, role, onClick } = props;
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const { label, role, onClick = () => {} } = props;
   return (
     <button
       className={classNames('font-medium font-sm py-2 px-4 rounded-md focus:outline-none focus:shadow-outline', {
