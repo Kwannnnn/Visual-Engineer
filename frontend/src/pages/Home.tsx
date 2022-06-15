@@ -35,8 +35,8 @@ function Home() {
   // States
   const [currentBoardId, setCurrentBoardId] = useState<number>(1);
   const [currentNode, setCurrentNode] = useState<Node | Edge | null>(null);
-  const [initialNodes, setInitialNodes] = useState<Node[]>([]);
-  const [initialProperties, setInitialProperties] = useState<IPropertyListing[]>([]);
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [properties, setProperties] = useState<IPropertyListing[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [types, setTypes] = useState<[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -84,8 +84,8 @@ function Home() {
 
     if (currentNode.data.isDraft) {
       setCurrentNode(null);
-      const newNodes = initialNodes.filter((n) => n.data.tag !== currentNode.data.tag);
-      setInitialNodes(newNodes);
+      const newNodes = nodes.filter((n) => n.data.tag !== currentNode.data.tag);
+      setNodes(newNodes);
       return;
     }
 
@@ -102,8 +102,8 @@ function Home() {
     }
 
     setCurrentNode(null);
-    const newNodes = initialNodes.filter((n) => n.data.tag !== currentNode.data.tag);
-    setInitialNodes(newNodes);
+    const newNodes = nodes.filter((n) => n.data.tag !== currentNode.data.tag);
+    setNodes(newNodes);
   }, [currentNode]);
 
   /**
@@ -139,8 +139,8 @@ function Home() {
   // Use effects
   useEffect(() => {
     if (!boardObjects) return;
-    const nodes = transformObjectToNode(boardObjects);
-    setInitialNodes(nodes);
+    const transformedNodes = transformObjectToNode(boardObjects);
+    setNodes(transformedNodes);
   }, [boardObjects]);
 
   useEffect(() => {
@@ -156,7 +156,7 @@ function Home() {
 
   useEffect(() => {
     if (!typeProperties) return;
-    setInitialProperties(typeProperties);
+    setProperties(typeProperties);
   }, [typeProperties]);
 
   useEffect(() => {
@@ -222,7 +222,7 @@ function Home() {
               />
             )}
             <Board
-              initialNodes={initialNodes}
+              initialNodes={nodes}
               onDropNodeHandler={handleDropNode}
               onEdgeUpdate={handleEdgeUpdate}
               onNodeClick={(node) => node.id !== currentNode?.id && setCurrentNode(node)}
@@ -237,7 +237,7 @@ function Home() {
               'lg:block lg:col-span-5': currentNode,
             })}
             currentNode={currentNode}
-            initialProperties={initialProperties}
+            initialProperties={properties}
             onClose={() => setCurrentNode(null)}
             onFieldChange={onFieldChangeHandler}
             postItem={postItem}
