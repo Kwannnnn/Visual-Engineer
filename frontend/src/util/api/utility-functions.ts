@@ -5,9 +5,8 @@ import IObjectContext from '../../typings/IObjectContext';
 const url = process.env.REACT_APP_API_URL;
 
 export async function getAllBoards() {
-  await axios.get(`${url}/v1/boards`)
-    .then((response) => response.data)
-    .catch((err) => err.data);
+  const response = await axios.get(`${url}/v1/boards`);
+  return response.data;
 }
 
 export async function getBoardById(id: number) {
