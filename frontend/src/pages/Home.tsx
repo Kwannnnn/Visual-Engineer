@@ -45,7 +45,7 @@ function Home() {
 
   // Utility functions callbacks
   const getBoardObjectsCallback = useCallback(async () => currentBoardId !== 0 && getBoardObjects(currentBoardId), [currentBoardId]);
-  const getEdgesCallback = useCallback(async () => getObjectEdges(), [currentBoardId]);
+  const getEdgesCallback = useCallback(async () => currentBoardId !== 0 && getObjectEdges(), [currentBoardId]);
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
   const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
 
