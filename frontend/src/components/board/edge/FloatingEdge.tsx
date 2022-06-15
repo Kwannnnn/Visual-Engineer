@@ -7,7 +7,7 @@ import getEdgeParams from '../../../util/FloatingEdgeCalculator';
 
 function FloatingEdge(props: FloatingEdgeProps) {
   const {
-    id, source, target, markerEnd, style, data, markerStart,
+    source, target, markerEnd, style, data, markerStart,
   } = props;
   const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]));
   const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]));
