@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import {
   faSearch,
   faPlus,
@@ -17,13 +17,21 @@ export default function Navbar() {
         <button className="lg:hidden text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer" type="button">
           <FontAwesomeIcon icon={faTableColumns} size="lg" />
         </button>
-        <header className="mx-auto sm:mx-0">
-          <img
-            src={logo}
-            alt="Witeveen+Bos Logo"
-            className="h-12 w-auto"
-          />
-        </header>
+        <div className="flex items-center space-x-10">
+          <header className="mx-auto sm:mx-0">
+            <img
+              src={logo}
+              alt="Witeveen+Bos Logo"
+              className="h-12 w-auto"
+            />
+          </header>
+          <NavLink
+            className="font-medium text-slate-500 hover:text-slate-700"
+            to="/projects"
+          >
+            Projects
+          </NavLink>
+        </div>
         <button className="lg:hidden text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer" type="button">
           <FontAwesomeIcon icon={faBars} size="lg" />
         </button>
