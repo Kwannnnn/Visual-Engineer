@@ -52,5 +52,5 @@ export const dragAndDropPipeFitting = () => {
 
 export const connectTankToPipeFitting = () => {
   cy.get('[data-cy=right-itemNode-T01]').click();
-  cy.get('[data-cy=left-itemNode-PF02]').click();
+  cy.get('[data-cy=left-itemNode-PU01]').click();
 }
