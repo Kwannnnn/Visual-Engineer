@@ -26,7 +26,7 @@ interface NewBoardProps {
   onEdgeClick: (edge: Edge) => void;
   onEdgeUpdate?: (oldEdge: Edge, newConnection: Connection) => void;
   onNodeMove?: (node: Node) => void;
-  onEdgeConnect: (type: string, firstItemTag: string, secondItemTag: string) => void;
+  onEdgeConnect: (type: string, firstItemId: string, secondItemId: string) => void;
   postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
 }
 
@@ -107,13 +107,15 @@ function Board(props: NewBoardProps) {
       postItem(initialItem).then((item) => { // onFullfilled
         const newNode = {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          id: item.tag!,
+          id: item.id!,
+          tag: item.tag,
           type: NODE_TYPE,
           position,
           data: {
             type: name,
+            id: item.id,
             tag: item.tag,
-            dataCY: `itemNode-${item.tag}`,
+            dataCY: `itemNode-${item.id}`,
           },
         };
 

@@ -6,15 +6,15 @@ export default function transformObjectToNode(objects: Partial<IObjectContext>[]
 
   objects.forEach((object) => {
     const {
-      tag, type, x, y,
+      id, tag, type, x, y,
     } = object;
-    if (!(tag && type && x && y)) return;
+    if (!(id && type && x && y)) return;
     if (type === 'pipeline') return;
 
     const node: Node = {
-      id: tag,
+      id,
       type: 'itemNode',
-      data: { dataCY: `itemNode-${tag}`, type, ...object },
+      data: { dataCY: `itemNode-${id}`, type, ...object },
       position: { x, y },
     };
     nodes.push(node);

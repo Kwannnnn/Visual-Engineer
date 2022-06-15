@@ -138,14 +138,14 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
               onClick={onClose}
             />
           </div>
-          {currentNode && !currentNode.data.isDraft && (
+          {/* {currentNode && !currentNode.data.isDraft && (
             <input
               type="text"
               value={currentNode?.data.tag}
               className="rounded-lg w-full mt-2 mb-3 border border-gray-300 bg-zinc-200 text-slate-400 px-3 py-2 cursor-not-allowed"
               disabled
             />
-          )}
+          )} */}
 
           <div
             className={classNames('flex space-x-2 w-full mb-4', {

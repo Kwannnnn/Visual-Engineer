@@ -94,9 +94,9 @@ export async function getObjectEdges() {
   return result.data;
 }
 
-export async function createRelationship(tags: Partial<IOConnectionContext>) {
+export async function createRelationship(ids: Partial<IOConnectionContext>) {
   const result = await axios.post(`${url}/v2/relationships/`, {
-    ...tags,
+    ...ids,
   })
     .then((response) => response.data)
     .catch((err) => err.data);
