@@ -4,6 +4,7 @@ import {
 } from 'react-flow-renderer';
 import classNames from 'classnames';
 import axios, { AxiosError } from 'axios';
+import { useNavigate } from 'react-router-dom';
 import {
   AlertPane,
   PropertiesSidebar,
@@ -32,6 +33,7 @@ import { IPropertyListing } from '../typings/IPropertyListing';
 import IOConnectionContext from '../typings/IOConnectionContext';
 
 function Home() {
+  const navigate = useNavigate();
   // States
   const [currentBoardId, setCurrentBoardId] = useState<number>(0);
   const [currentNode, setCurrentNode] = useState<Node | Edge | null>(null);
@@ -46,7 +48,7 @@ function Home() {
 
   // Utility functions callbacks
   const getBoardObjectsCallback = useCallback(async () => currentBoardId !== 0 && getBoardObjects(currentBoardId), [currentBoardId]);
-  const getEdgesCallback = useCallback(async () => getObjectEdges(), [currentBoardId]);
+  const getEdgesCallback = useCallback(async () => currentBoardId !== 0 && getObjectEdges(), [currentBoardId]);
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
   const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
 
@@ -170,13 +172,38 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    const currentBoard: number = parseInt((localStorage.getItem('currentBoard') || '1'), 10);
+    const currentBoardLocalStorage = localStorage.getItem('currentBoard');
+    if (!currentBoardLocalStorage) return;
+
+    const currentBoard: number = parseInt(currentBoardLocalStorage, 10);
     setCurrentBoardId(currentBoard);
   }, []);
 
+  useEffect(() => {
+    if (localStorage.getItem('currentBoard')) return;
+    navigate('/projects');
+  }, [currentBoardId]);
+
   const handleTab = (id: number) => {
-    setCurrentNode(null);
     setCurrentBoardId(id);
+    setCurrentNode(null);
+    localStorage.setItem('currentBoard', id.toString());
+  };
+
+  const handleCloseTab = (id: number) => {
+    const newBoards = boards.filter((b) => b.id !== id);
+    const newCurrentBoard = newBoards.at(newBoards.length - 1)?.id;
+
+    setBoards(newBoards);
+    setCurrentBoardId(newCurrentBoard || 0);
+    setCurrentNode(null);
+    localStorage.setItem('boards', JSON.stringify(newBoards));
+
+    if (newCurrentBoard) {
+      localStorage.setItem('currentBoard', newCurrentBoard.toString());
+    } else {
+      localStorage.removeItem('currentBoard');
+    }
   };
 
   const handleDropNode = (node: Node) => {
@@ -221,6 +248,7 @@ function Home() {
               currentBoardId={currentBoardId}
               boards={boards}
               onSelect={handleTab}
+              onClose={handleCloseTab}
             />
             {errorMessage && (
               <AlertPane

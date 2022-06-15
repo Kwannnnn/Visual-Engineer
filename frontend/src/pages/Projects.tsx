@@ -27,7 +27,10 @@ function Projects() {
   return (
     <div className="flex-1 bg-slate-100 flex flex-col px-6 py-12">
       <div className="container mx-auto">
-        <h2 className="text-2xl font-bold text-slate-800 mb-6">Projects</h2>
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">Projects</h2>
+        <p className="mb-8 text-slate-500">This is a list of all existing projects in the system.
+          You can open a project by clicking one of the entries below.
+        </p>
         <div>
           <div>
             <div className="grid grid-cols-12 text-slate-400 font-semibold mb-2">
