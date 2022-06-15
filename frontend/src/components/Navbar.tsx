@@ -10,7 +10,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import logo from '../assets/images/logo.svg';
 
-export default function Navbar() {
+interface NavbarProps {
+  createNewProject: () => void;
+}
+
+export default function Navbar(props: NavbarProps) {
+  const { createNewProject } = props;
+
   return (
     <>
       <div className="flex justify-between items-center bg-slate-200 border-b border-slate-200 px-5 py-7">
@@ -38,7 +44,11 @@ export default function Navbar() {
         <nav className="hidden lg:block">
           <ul className="flex items-center space-x-5">
             <li>
-              <button className="py-2 px-5 text-sm shadow-md font-medium text-white focus:outline-none bg-wb-blue hover:bg-sky-600 rounded-xl" type="button">
+              <button
+                className="py-2 px-5 text-sm shadow-md font-medium text-white focus:outline-none bg-wb-blue hover:bg-sky-600 rounded-xl"
+                type="button"
+                onClick={createNewProject}
+              >
                 <FontAwesomeIcon icon={faPlus} className="pr-2" />
                 New Project
               </button>
