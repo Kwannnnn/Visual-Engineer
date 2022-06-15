@@ -33,11 +33,15 @@ export async function createBoard(properties: Partial<IBoard>) {
 }
 
 export async function createItem(boardId: number, properties: Partial<IObjectContext>) {
-  await axios.post(`${url}/v1/boards/${boardId}/objects/`, {
+  const result = await axios.post(`${url}/v1/boards/${boardId}/objects/`, {
     ...properties,
   })
     .then((response) => response.data)
-    .catch((err) => err.data);
+    .catch((err) => {
+      throw err;
+    });
+
+  return result;
 }
 
 export async function updateBoard(id: number, properties: Partial<IBoard>) {
@@ -65,7 +69,7 @@ export async function deleteBoard(id: number) {
     .catch((err) => err.data);
 }
 
-export async function deleteBoardObject(id: number, tag:string) {
+export async function deleteBoardObject(id: number, tag: string) {
   await axios.delete(`${url}/v1/boards/${id}/objects/${tag}`)
     .then((response) => response.data)
     .catch((err) => err.data);

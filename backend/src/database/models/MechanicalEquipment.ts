@@ -7,22 +7,22 @@ import Item from './Item';
 })
 export default abstract class MechanicalEquipment extends Item {
   constructor(
-    tag: string,
-    name: string,
-    length: number,
-    width: number,
-    depth: number,
-    diameter: number,
-    emptyMass: number,
-    head: number,
-    filledMass: number,
-    netVolume: number,
-    grossVolume: number,
+    // tag: string,
     type: string,
     x: number,
     y: number,
+    name?: string,
+    length?: number,
+    width?: number,
+    depth?: number,
+    diameter?: number,
+    emptyMass?: number,
+    head?: number,
+    filledMass?: number,
+    netVolume?: number,
+    grossVolume?: number,
   ) {
-    super(tag, name, length, width, depth, diameter, type, x, y);
+    super(type, x, y, name, length, width, depth, diameter);
     this.emptyMass = emptyMass;
     this.head = head;
     this.filledMass = filledMass;
@@ -32,21 +32,21 @@ export default abstract class MechanicalEquipment extends Item {
 
   @Property({ nullable: true, type: 'float' })
   @ObjectProperty(PropertyType.NUMBER)
-    emptyMass!: number;
+    emptyMass?: number;
 
   @Property({ nullable: true, type: 'float' })
   @ObjectProperty(PropertyType.NUMBER)
-    head!: number;
+    head?: number;
 
   @Property({ nullable: true, type: 'float' })
   @ObjectProperty(PropertyType.NUMBER)
-    filledMass!: number;
+    filledMass?: number;
 
   @Property({ nullable: true, type: 'float' })
   @ObjectProperty(PropertyType.NUMBER)
-    netVolume!: number;
+    netVolume?: number;
 
   @Property({ nullable: true, type: 'float' })
   @ObjectProperty(PropertyType.NUMBER)
-    grossVolume!: number;
+    grossVolume?: number;
 }

@@ -30,59 +30,101 @@ describe('ItemNode', () => {
 
 describe('Board', () => {
   describe('When "Vessel" is dragged and dropped from the Toolbox', () => {
-    const dataTransfer = new DataTransfer();
+    it('should send a POST request with the new item', () => {
+      cy.intercept('POST', '/api/*/boards/*/objects').as('postVessel');
+
+      dragAndDropVessel();
+
+      cy.wait('@postVessel').then(({ request, response }) => {
+        const { type, x, y } = request.body;
+        expect(response.statusCode).to.eq(201);
+        expect(response.body).property('type').to.be.equal(type);
+        expect(response.body).property('x').to.be.equal(x);
+        expect(response.body).property('y').to.be.equal(y);
+        expect(response.body).property('tag').to.exist;
+      });
+    });
+
     it('should render on the Board', () => {
-      getVessel();
+      cy.intercept('POST', '/api/*/boards/*/objects').as('postVessel');
 
-      cy.get('@vessel')
-        .should('exist')
-        .trigger('dragstart', { dataTransfer });
+      dragAndDropVessel();
 
-      cy.get('[data-cy=board]')
-        .should('exist')
-        .trigger('drop', { dataTransfer });
+      cy.wait('@postVessel').then(({ request, response }) => {
+        const { type, x, y } = request.body;
+        expect(response.statusCode).to.eq(201);
+        expect(response.body).property('type').to.be.equal(type);
+        expect(response.body).property('x').to.be.equal(x);
+        expect(response.body).property('y').to.be.equal(y);
+        expect(response.body).property('tag').to.exist;
 
-      cy.get('[data-cy=itemNode_1]')
-        .should('exist')
-        .and('be.visible');
+        const vesselTag = response.body.tag;
 
-      cy.get('[data-cy=itemNode_1]')
-        .find('div')
-        .last().as('label');
+        cy.get(`[data-cy=itemNode-${vesselTag}]`)
+          .should('exist')
+          .and('be.visible')
+          .as('boardVessel');
 
-      cy.get('@label')
-        .should('contain', 'vessel');
+        cy.get('@boardVessel')
+          .find('div')
+          .last().as('label');
+
+        cy.get('@label')
+          .should('contain', 'vessel');
+      });
+
     });
   });
 
   describe('When "Vessel" and "PipeLine" are connected', () => {
-    const dataTransfer = new DataTransfer();
-
     it('should render an edge on the board', () => {
       getVessel(); // Get a reference to the Vessel sidebar item
       getPipeFitting(); // Get a reference to the PipeFitting sidebar item
       getBoard(); // Get a reference to the Board
 
-      dragAndDropVessel(); // Drag the Vessel sidebar item to the Board
-      dragAndDropPipeFitting(); // Drag the PipeFitting sidebar item to the Board
+      cy.intercept('POST', '/api/*/boards/*/objects').as('postVessel');
 
-      // Get reference to the vessel node on the board
-      cy.get('[data-cy=itemNode_1]')
-        .should('exist')
-        .and('be.visible')
-        .as('boardVessel');
+      dragAndDropVessel();
 
-      // Get reference to the pipe fitting node on the board
-      cy.get('[data-cy=itemNode_3]')
-        .should('exist')
-        .and('be.visible')
-        .as('boardPipeFitting');
+      cy.wait('@postVessel').then(({ request, response }) => {
+        const { type, x, y } = request.body;
+        expect(response.statusCode).to.eq(201);
+        expect(response.body).property('type').to.be.equal(type);
+        expect(response.body).property('x').to.be.equal(x);
+        expect(response.body).property('y').to.be.equal(y);
+        expect(response.body).property('tag').to.exist;
 
-      cy.get('[data-cy=right-itemNode_1]')
-        .trigger('dragstart', { dataTransfer, force: true });
+        const vesselTag = response.body.tag;
+        cy.get(`[data-cy=itemNode-${vesselTag}]`)
+          .should('exist')
+          .and('be.visible')
+          .as('boardVessel');
 
-      cy.get('[data-cy=left-itemNode_3]')
-        .trigger('drop', { dataTransfer });
+        dragAndDropPipeFitting();
+
+        cy.wait('@postVessel').then(({ request, response }) => {
+          const { type, x, y } = request.body;
+          expect(response.statusCode).to.eq(201);
+          expect(response.body).property('type').to.be.equal(type);
+          expect(response.body).property('x').to.be.equal(x);
+          expect(response.body).property('y').to.be.equal(y);
+          expect(response.body).property('tag').to.exist;
+          const pipeFittingTag = response.body.tag;
+
+          cy.get(`[data-cy=itemNode-${pipeFittingTag}]`)
+            .should('exist')
+            .and('be.visible')
+            .as('boardPipeFitting');
+
+          const dataTransfer = new DataTransfer();
+
+          cy.get(`[data-cy=right-itemNode-${vesselTag}]`)
+            .trigger('dragstart', { dataTransfer, force: true });
+
+          cy.get(`[data-cy=left-itemNode-${pipeFittingTag}]`)
+            .trigger('drop', { dataTransfer });
+        });
+      });
     });
   });
 });

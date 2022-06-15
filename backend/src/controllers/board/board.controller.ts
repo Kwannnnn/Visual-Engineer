@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import DI from '../../DI';
 import { Item, Board } from '../../database/models';
 import ValidationError from '../../error/ValidationError';
-import { checkCommonItemAttributes, checkTypeSpecificAttributes, getClass } from './board.util';
+import { checkRequiredAttributes, getClass } from './board.util';
 import {
   BoardObjectParams, BoardParams, FieldError, PatchBoardBody, PatchBoardObject,
 } from '../../routes/boards/boards.types';
@@ -84,8 +84,7 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
       throw new ValidationError(`Board with id ${id} not found`, 404);
     }
 
-    checkCommonItemAttributes(req.body);
-    checkTypeSpecificAttributes(req.body);
+    checkRequiredAttributes(req.body);
 
     const itemClass = getClass(req.body.type);
     const item: Item = DI.em.create(itemClass, req.body);

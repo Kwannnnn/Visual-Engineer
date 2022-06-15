@@ -1,8 +1,5 @@
 import React, {
-  useState,
-  useCallback,
-  useRef,
-  useEffect
+  useState, useCallback, useRef, useEffect
 } from 'react';
 import ReactFlow, {
   MiniMap,
@@ -18,6 +15,7 @@ import ReactFlow, {
   BackgroundVariant,
   ConnectionLineType
 } from 'react-flow-renderer';
+import IObjectContext from '../../typings/IObjectContext';
 import ItemNode from './ItemNode';
 
 interface NewBoardProps {
@@ -29,6 +27,7 @@ interface NewBoardProps {
   onEdgesDelete: (edge: Edge[]) => void;
   onEdgeClick: (edge: Edge) => void;
   onNodeMove?: (node: Node) => void;
+  postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
 }
 
 // This string key must match the key in the nodeTypes object in order to render the correct
@@ -38,14 +37,7 @@ const nodeTypes: NodeTypes = {
   itemNode: ItemNode,
 };
 
-let id = 0;
 let edgeID = 0;
-// Every node must have an unique id
-const getNodeId = () => {
-  const result = `itemNode_${id}`;
-  id += 1;
-  return result;
-};
 
 const getEdgeId = () => {
   // Used for Cypress to track unsaved item edges
@@ -56,16 +48,17 @@ const getEdgeId = () => {
 
 function Board(props: NewBoardProps) {
   const {
-    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete, onEdgeClick, onEdgesDelete, onNodeMove,
+    initialNodes, initialEdges, onDropNodeHandler, onNodeClick, onNodesDelete, onEdgeClick, onEdgesDelete, onNodeMove, postItem,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
-  // State containing the nodes of the board
 
+  // State containing the nodes of the board
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
 
   // State containing the edges of the board
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
   // State containing the React Flow Instance
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance>();
 
@@ -77,7 +70,7 @@ function Board(props: NewBoardProps) {
     setEdges(initialEdges ?? []);
   }, [initialEdges]);
 
-  // Whenever a edge gets created update the edges state
+  // Whenever an edge gets created update the edge's state
   // eslint-disable-next-line max-len
   const onConnect = useCallback(
     (params: Connection) => {
@@ -116,7 +109,6 @@ function Board(props: NewBoardProps) {
   // The callback that creates the node whenever a new node is dropped on the board
   const onDrop = useCallback(
     (event: React.DragEvent) => {
-      // TODO: improve those null checks
       if (!reactFlowInstance || !reactFlowWrapper || !reactFlowWrapper.current) return;
 
       event.preventDefault();
@@ -131,18 +123,30 @@ function Board(props: NewBoardProps) {
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
-      const newNode = {
-        id: getNodeId(),
-        type: NODE_TYPE,
-        position,
-        data: {
-          type: name,
-          dataCY: getNodeId(),
-        },
-      };
 
-      setNodes((nodesState) => nodesState.concat(newNode));
-      if (onDropNodeHandler) onDropNodeHandler(newNode);
+      const initialItem: Partial<IObjectContext> = {
+        x: position.x,
+        y: position.y,
+        type: name,
+      };
+      postItem(initialItem).then((item) => { // onFullfilled
+        const newNode = {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          id: item.tag!,
+          type: NODE_TYPE,
+          position,
+          data: {
+            type: name,
+            tag: item.tag,
+            dataCY: `itemNode-${item.tag}`,
+          },
+        };
+
+        setNodes((nodesState) => nodesState.concat(newNode));
+        if (onDropNodeHandler) onDropNodeHandler(newNode);
+      }, () => { // onRejected
+
+      });
     },
     [reactFlowInstance]
   );

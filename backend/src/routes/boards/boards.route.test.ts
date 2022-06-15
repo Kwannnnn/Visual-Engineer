@@ -1,6 +1,5 @@
 import request from 'supertest';
 import { ISeedManager } from '@mikro-orm/core';
-import { v4 as uuidv4 } from 'uuid';
 import setup from '../../index';
 import DI from '../../DI';
 import DatabaseSeeder from '../../database/seeders/DatabaseSeeder';
@@ -9,7 +8,6 @@ import { sampleBoards } from '../../database/seeders/BoardSeeder';
 let app: Express.Application;
 
 const exampleItem = {
-  tag: uuidv4(),
   name: 'Cleaner',
   length: 2.52,
   width: 2.35,
@@ -122,8 +120,8 @@ describe('POST Board endpoints', () => {
       expect(response.statusCode).toEqual(404);
     });
 
-    test('should return 400 when one or more object attributes are missing', async () => {
-      const { length, width, ...otherProps } = exampleItem;
+    test('should return 400 when one or more required object attributes are missing {type, x, y}', async () => {
+      const { x, type, ...otherProps } = exampleItem;
       const response = await request(app)
         .post('/api/v1/boards/1/objects')
         .send({ otherProps });
