@@ -64,27 +64,29 @@ router.get('/:id', boardController.getById);
  *
  * @apiSuccess (Success 200) {Object[]} objects List of object items of a specific board
  * @apiSuccessExample Success-Response:
-*      HTTP/1.1 200 OK
+ *     HTTP/1.1 200 OK
  *      [
  *       {
- *          "tag": "112-3sa2-da2",
+ *          "id": "112-3sa2-da2",
+ *          "tag": "BL01",
  *          "name": "Blower",
- *          "length": "4",
- *          "width": "5.3",
- *          "depth": "2.3",
- *          "diameter": "2",
- *          "x": "12.3",
- *          "y": "4.45"
+ *          "length": "23",
+ *          "width": "23",
+ *          "depth": "23",
+ *          "diameter": "23",
+ *          "x": "50",
+ *          "y": "50"
  *       },
  *       {
- *          "tag": "113-7d87-aa2",
+ *          "id": "113-7d87-aa2",
+ *          "tag": "PU01",
  *          "name": "Pump",
  *          "length": "37",
  *          "width": "37",
  *          "depth": "37",
  *          "diameter": "37",
- *          "x": "4.2",
- *          "y": "7.5"
+ *          "x": "25",
+ *          "y": "25"
  *       }
  *     ]
  * @apiUse BoardNotFoundError
@@ -124,15 +126,22 @@ router.patch('/:id', validate([
  * @apiGroup Board
  *
  * @apiParam {Integer} id Board identifier
- * @apiParam {String} objectId Object tag
+ * @apiParam {String} objectId Object ID
  *
  * @apiSuccess (Success 200) {Object} object The updated board object
  * @apiSuccessExample Success-Response:
 *      HTTP/1.1 200 OK
  *       {
- *          "tag": "112-3sa2-da2",
+ *          "id": "112-3sa2-da2",
+ *          "tag": "BL01",
  *          "name": "Blower",
- *          "length": "30",
+ *          "length": "23",
+ *          "width": "23",
+ *          "depth": "23",
+ *          "diameter": "23",
+ *          "x": "50",
+ *          "y": "50"
+ *       },
  *       }
  * @apiUse BoardNotFoundError
  * @apiUse ObjectNotFoundError
@@ -187,6 +196,7 @@ router.post('/', boardController.postBoard);
  *
  * @apiParam {Number} id Board identifier
  * @apiBody {String} type Type of the object
+ * @apiBody {String} [tag] tag Tag of the object
  * @apiBody {Float} x X coordinate of the object on the board
  * @apiBody {Float} y Y coordinate of the object on the board
  * @apiBody {String} [name] Name of the object
@@ -209,6 +219,7 @@ router.post('/', boardController.postBoard);
  * @apiSuccessExample Success-Response:
  * * HTTP/1.1 201 CREATED
  *       {
+ *          "id": "bui4-d23-d32y"
  *          "tag": "#583FA293",
  *          "name": "Cleaner",
  *          "length": 2.52,
@@ -268,7 +279,7 @@ router.post('/:id/objects', boardController.postObjectToBoard);
 router.delete('/:id', boardController.deleteBoard);
 
 /**
- * @api {delete} /api/v1/boards/:id/objects/:tag Delete an item from a board
+ * @api {delete} /api/v1/boards/:id/objects/:objectId Delete an item from a board
  * @apiDescription Returns a successful deletion message or a 404
  * error message if the board or item does not exist
  * @apiVersion 1.0.0
@@ -276,7 +287,7 @@ router.delete('/:id', boardController.deleteBoard);
  * @apiGroup Board
  *
  * @apiParam {Integer} id Board identifier
- * @apiParam {String} tag Item identifier
+ * @apiParam {String} objectId Object identifier
  *
  * @apiSuccessExample Success-Response:
  *      HTTP/1.1 204 No Content
@@ -288,7 +299,7 @@ router.delete('/:id', boardController.deleteBoard);
  *       "message": "Board not found"
  *     }
  *
- * @apiError ItemNotFound Item with id <code>{tag}</code> does not exist
+ * @apiError ItemNotFound Item with id <code>{objectId}</code> does not exist
  * @apiErrorExample ItemNotFound:
  *     HTTP/1.1 404 Not Found
  *     {

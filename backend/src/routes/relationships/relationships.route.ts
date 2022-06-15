@@ -19,13 +19,13 @@ const relationshipRouter: Router = Router();
  * HTTP/1.1 200 OK
  *    [
  *      {
- *        "pipeline": "35",
- *        "firstItem": "34"
- *        "secondItem": "32"
+ *        "pipeline": "35u-218d-s21",
+ *        "firstItem": "34-s1-32fd"
+ *        "secondItem": "d3d2-32s-er"
  *      },
- *        "pipeline": "15",
- *        "firstItem": "33"
- *        "secondItem": "9"
+ *        "pipeline": "15n-du3-2y8",
+ *        "firstItem": "r33-jds8-o2"
+ *        "secondItem": "ddp-0ww-2s9"
  *      {
  *      }
  *    ]
@@ -46,9 +46,9 @@ relationshipRouter.get('/', relationshipController.getAllRelationships);
  * @apiSuccessExample Success-Response:
  * HTTP/1.1 200 OK
  *    {
- *      "pipeline": "35",
- *      "firstItem": "34"
- *      "secondItem": "32"
+ *      "pipeline": "35u-218d-s21",
+ *      "firstItem": "34-s1-32fd"
+ *      "secondItem": "d3d2-32s-er"
  *    }
  *
  * @apiError RelationshipNotFound Relationship with ID <code>{pipelineId}</code> does not exist
@@ -68,20 +68,20 @@ relationshipRouter.get('/:pipelineId', relationshipController.getOneRelationship
  * @apiName PostRelationship
  * @apiGroup Relationship
  *
- * @apiBody {Integer} pipeline Pipeline identifier
- * @apiBody {Integer} firstItem First connected item identifier
- * @apiBody {Integer} secondItem Second connected item identifier
+ * @apiBody {String} pipeline Pipeline identifier
+ * @apiBody {String} firstItem First connected item identifier
+ * @apiBody {String} secondItem Second connected item identifier
  *
  * @apiSuccess (Success 201) {Relationship} object representing the newly added relationship.
  * @apiSuccessExample Success-Response:
  * HTTP/1.1 201 CREATED
  *    {
- *      "pipeline": "35",
- *      "firstItem": "34"
- *      "secondItem": "32"
+ *      "pipeline": "35u-218d-s21",
+ *      "firstItem": "34-s1-32fd"
+ *      "secondItem": "d3d2-32s-er"
  *    }
  *
- * @apiError PipelineTagMissing The request body is missing the pipeline ID.
+ * @apiError PipelineIdMissing The request body is missing the pipeline ID.
  * @apiErrorExample PipelineIDMissing:
  *     HTTP/1.1 400 Bad Request
  *     {
@@ -156,18 +156,18 @@ relationshipRouter.post(
  * @apiName PatchRelationship
  * @apiGroup Relationship
  *
- * @apiParam {Integer} pipelineId Relationship identifier
- * @apiBody {Integer} firstItem First connected item identifier
- * @apiBody {Integer} secondItem Second connected item identifier
+ * @apiParam {String} pipelineId Relationship identifier
+ * @apiBody {String} firstItem First connected item identifier
+ * @apiBody {String} secondItem Second connected item identifier
  *
  * @apiSuccess (Success 201) {Relationship} relationship A resource response containing the
  * updated relationship
  * @apiSuccessExample Success-Response:
  * HTTP/1.1 201 CREATED
  *    {
- *      "pipeline": "35",
- *      "firstItem": "34",
- *      "secondItem": "32"
+ *      "pipeline": "35u-218d-s21",
+ *      "firstItem": "34-s1-32fd"
+ *      "secondItem": "d3d2-32s-er"
  *    }
  *
  * @apiError RelationshipNotFound Relationship with id <code>{pipelineId}</code> does not exist
@@ -237,7 +237,7 @@ relationshipRouter.patch(
  * @apiName DeleteRelationship
  * @apiGroup Relationship
  *
- * @apiParam {Integer} pipelineId Relationship identifier
+ * @apiParam {String} pipelineId Relationship identifier
  *
  * @apiSuccessExample Success-Response:
  *      HTTP/1.1 204 No Content
