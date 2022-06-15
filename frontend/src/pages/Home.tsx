@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  ReactFlowProvider, Node, Edge, updateEdge, Connection
+  ReactFlowProvider,
+  Node,
+  Edge,
+  updateEdge,
+  Connection
 } from 'react-flow-renderer';
 import classNames from 'classnames';
 import axios, { AxiosError } from 'axios';
@@ -47,13 +51,24 @@ function Home() {
   const [boards, setBoards] = useState<IBoard[]>([]);
 
   // Utility functions callbacks
-  const getBoardObjectsCallback = useCallback(async () => currentBoardId !== 0 && getBoardObjects(currentBoardId), [currentBoardId]);
-  const getEdgesCallback = useCallback(async () => currentBoardId !== 0 && getObjectEdges(), [currentBoardId]);
+  const getBoardObjectsCallback = useCallback(
+    async () => currentBoardId !== 0 && getBoardObjects(currentBoardId),
+    [currentBoardId]
+  );
+  const getEdgesCallback = useCallback(
+    async () => currentBoardId !== 0 && getObjectEdges(),
+    [currentBoardId]
+  );
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
-  const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
+  const getPropertiesCallback = useCallback(
+    async () => currentNode && getTypeProperties(currentNode.data.type),
+    [currentNode]
+  );
 
   // API Util Hooks
-  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
+  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<
+    Partial<IObjectContext>[]
+  >(getBoardObjectsCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -94,7 +109,9 @@ function Home() {
       if (axios.isAxiosError(err)) {
         const { response } = err;
         if (response && (response.status === 500 || response.status === 0)) {
-          setErrorMessage('Unable to connect to the server. Please try again later.');
+          setErrorMessage(
+            'Unable to connect to the server. Please try again later.'
+          );
           return;
         }
       }
@@ -110,30 +127,36 @@ function Home() {
    * It updates the position of the node in the database. On error it will call the
    * onErrorHandler function.
    */
-  const onNodeMoveHandler = useCallback((node: Node) => {
-    const { x, y } = node.position;
+  const onNodeMoveHandler = useCallback(
+    (node: Node) => {
+      const { x, y } = node.position;
 
-    if (!node.data.tag) return;
-    updateBoardObject(currentBoardId, node.data.tag, {
-      x: Math.round(x * 1000) / 1000,
-      y: Math.round(y * 1000) / 1000,
-    }).catch((err: AxiosError) => {
-      onErrorHandler(err, node);
-    });
-  }, [currentBoardId, onErrorHandler]);
+      if (!node.data.tag) return;
+      updateBoardObject(currentBoardId, node.data.tag, {
+        x: Math.round(x * 1000) / 1000,
+        y: Math.round(y * 1000) / 1000,
+      }).catch((err: AxiosError) => {
+        onErrorHandler(err, node);
+      });
+    },
+    [currentBoardId, onErrorHandler]
+  );
 
   /**
    * This function is called when a field of a Node/Edge has been updated in the
    * Properties Sidebar. It updates the changed field of the node/edge in the database.
    */
-  const onFieldChangeHandler = useCallback((node: Node | Edge, field: string, value: string) => {
-    if (!node.data.tag) return;
-    updateBoardObject(currentBoardId, node.data.tag, {
-      [field]: value,
-    }).catch((err: AxiosError) => {
-      onErrorHandler(err, node);
-    });
-  }, [currentBoardId, onErrorHandler]);
+  const onFieldChangeHandler = useCallback(
+    (node: Node | Edge, field: string, value: string) => {
+      if (!node.data.tag) return;
+      updateBoardObject(currentBoardId, node.data.tag, {
+        [field]: value,
+      }).catch((err: AxiosError) => {
+        onErrorHandler(err, node);
+      });
+    },
+    [currentBoardId, onErrorHandler]
+  );
 
   // Use effects
   useEffect(() => {
@@ -167,7 +190,9 @@ function Home() {
   }, [errorMessage]);
 
   useEffect(() => {
-    const boardsLocalStorage: IBoard[] = JSON.parse(localStorage.getItem('boards') || '[]');
+    const boardsLocalStorage: IBoard[] = JSON.parse(
+      localStorage.getItem('boards') || '[]'
+    );
     setBoards(boardsLocalStorage);
   }, []);
 
@@ -229,9 +254,10 @@ function Home() {
 
   return (
     <ReactFlowProvider>
-      <div className={classNames('flex-1 h-full', {
-        'z-0': showModal,
-      })}
+      <div
+        className={classNames('flex-1 h-full', {
+          'z-0': showModal,
+        })}
       >
         <div className="grid grid-cols-20 h-full">
           <Toolbox
@@ -289,11 +315,14 @@ function Home() {
           className="modal fixed z-1 inset-0 bg-slate-50 bg-opacity-70"
           buttonText="Delete"
           title="Delete item"
-          description={`Are you sure you want to delete ${currentNode?.data.type}
-                        with tag ${currentNode?.data.tag}?`}
           closeModal={() => setShowModal(false)}
           onButtonClick={onNodeDeleteHandler}
-        />
+        >
+          <p className="text-sm text-gray-500 mt-1.5">
+            {`Are you sure you want to delete ${currentNode?.data.type}
+                        with tag ${currentNode?.data.tag}?`}
+          </p>
+        </Modal>
       )}
     </ReactFlowProvider>
   );

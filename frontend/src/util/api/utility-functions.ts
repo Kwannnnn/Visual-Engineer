@@ -24,11 +24,15 @@ export async function getBoardObjects(id: number) {
 }
 
 export async function createBoard(properties: Partial<IBoard>) {
-  await axios.post(`${url}/v1/boards/`, {
+  const result = await axios.post(`${url}/v1/boards/`, {
     ...properties,
   })
     .then((response) => response.data)
-    .catch((err) => err.data);
+    .catch((err) => {
+      throw err;
+    });
+
+  return result;
 }
 
 export async function createItem(boardId: number, properties: Partial<IObjectContext>) {
