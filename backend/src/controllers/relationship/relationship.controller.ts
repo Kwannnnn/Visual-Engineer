@@ -96,7 +96,7 @@ export const deleteRelationship = async (
 
   try {
     const pipeline: any = await DI.itemRepository.findOne(pipelineId);
-    
+
     if (!pipeline) {
       return res.status(404).json({
         message: 'Pipeline not found',
