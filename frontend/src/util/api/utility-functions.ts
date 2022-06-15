@@ -103,3 +103,15 @@ export async function createRelationship(tags: Partial<IOConnectionContext>) {
 
   return result;
 }
+
+export async function updateRelationship(
+  pipelineTag: string,
+  firstItem: string,
+  secondItem: string
+) {
+  const response = await axios.patch(`${url}/v2/relationships/${pipelineTag}`, {
+    firstItem,
+    secondItem,
+  });
+  return response.data;
+}

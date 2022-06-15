@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import DI from '../../DI';
 import { TypedRequest } from '../../routes/util/typed-request';
-import checkItemsRelationship from './relationship.util';
 import { Relationship } from '../../database/models';
 import ValidationError from '../../error/ValidationError';
 import { RelationshipParams, RelationshipRequestBody } from '../../routes/relationships/relationships.types';
@@ -42,11 +41,6 @@ export const postRelationship = async (
   res: Response,
 ) => {
   try {
-    const firstItem = req.body?.firstItem;
-    const secondItem = req.body?.secondItem;
-
-    checkItemsRelationship(firstItem, secondItem);
-
     const relationship: Relationship = DI.em.create(Relationship, req.body!);
     await DI.relationshipRepository.persist(relationship).flush();
 
@@ -108,8 +102,6 @@ export const patchRelationship = async (
 
     relationship!.firstItem = firstItem;
     relationship!.secondItem = secondItem;
-
-    checkItemsRelationship(firstItem, secondItem);
 
     await DI.relationshipRepository.persistAndFlush(relationship!);
 

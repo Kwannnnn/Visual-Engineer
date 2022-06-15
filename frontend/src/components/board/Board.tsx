@@ -23,9 +23,8 @@ interface NewBoardProps {
   initialEdges?: Edge[];
   onDropNodeHandler?: (node: Node) => void;
   onNodeClick: (node: Node) => void;
-  onNodesDelete: (node: Node[]) => void;
-  onEdgesDelete: (edge: Edge[]) => void;
   onEdgeClick: (edge: Edge) => void;
+  onEdgeUpdate?: (oldEdge: Edge, newConnection: Connection) => void;
   onNodeMove?: (node: Node) => void;
   onEdgeConnect: (type: string, firstItemTag: string, secondItemTag: string) => void;
   postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
@@ -44,21 +43,21 @@ function Board(props: NewBoardProps) {
     initialEdges,
     onDropNodeHandler,
     onNodeClick,
-    onNodesDelete,
     onNodeMove,
-    postItem,
-    onEdgeClick,
-    onEdgesDelete,
     onEdgeConnect,
+    onEdgeClick,
+    postItem,
+    onEdgeUpdate,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
-  // State containing the nodes of the board
 
+  // State containing the nodes of the board
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
 
   // State containing the edges of the board
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
   // State containing the React Flow Instance
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance>();
 
@@ -85,7 +84,6 @@ function Board(props: NewBoardProps) {
   // The callback that creates the node whenever a new node is dropped on the board
   const onDrop = useCallback(
     (event: React.DragEvent) => {
-      // TODO: improve those null checks
       if (!reactFlowInstance || !reactFlowWrapper || !reactFlowWrapper.current) return;
 
       event.preventDefault();
@@ -144,10 +142,10 @@ function Board(props: NewBoardProps) {
         onInit={setReactFlowInstance}
         onDrop={onDrop}
         onDragOver={onDragOver}
+        deleteKeyCode={null}
         onNodeClick={(e, n) => onNodeClick(n)}
-        onNodesDelete={(nd) => onNodesDelete(nd)}
         onEdgeClick={(e, n) => onEdgeClick(n)}
-        onEdgesDelete={(ed) => onEdgesDelete(ed)}
+        onEdgeUpdate={onEdgeUpdate}
         fitView
         connectionLineType={ConnectionLineType.Straight}
         onNodeDragStop={(e, n) => onNodeDragStop(e, n)}

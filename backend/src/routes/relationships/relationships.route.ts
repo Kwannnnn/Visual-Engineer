@@ -157,6 +157,8 @@ relationshipRouter.post(
  * @apiGroup Relationship
  *
  * @apiParam {String} pipelineTag Relationship identifier
+ * @apiBody {String} firstItem First connected item identifier
+ * @apiBody {String} secondItem Second connected item identifier
  *
  * @apiSuccess (Success 201) {Relationship} relationship A resource response containing the
  * updated relationship
@@ -221,7 +223,6 @@ relationshipRouter.patch(
   '/:pipelineTag',
   middleware.isRelationshipValid,
   middleware.isRequestBodyValid,
-  middleware.arePipelinesMatching,
   middleware.areConnectedItemsTheSame,
   middleware.areItemsValid,
   middleware.areItemsNotInstanceOfPipeline,
