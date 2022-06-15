@@ -167,13 +167,6 @@ frontend:build:
 frontend:cypress:
   image: cypress/browsers:node16.13.2-chrome97-ff96
   stage: test
-  only:
-    changes:
-      - frontend/**/*
-      - backend/**/*
-  needs:
-    - frontend:install
-    - backend:install
   cache:
     - key: $CI_COMMIT_REF_SLUG-frontend
       paths:
