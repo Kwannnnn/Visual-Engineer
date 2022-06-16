@@ -60,7 +60,7 @@ function ItemNode(props: ItemNodeProps) {
           bottom: 0,
           borderRadius: 0,
           display: !dragContext.connecting ? 'none' : 'initial',
-          // backgroundColor: 'transparent',
+          backgroundColor: 'transparent',
           border: 'none',
         }}
       />
