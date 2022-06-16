@@ -26,6 +26,9 @@ interface IDragContext {
 
 export const DragContext = createContext<IDragContext>({ connecting: false });
 
+const edgeTypes: EdgeTypes = {
+  floating: FloatingEdge,
+};
 interface NewBoardProps {
   initialNodes?: Node[];
   initialEdges?: Edge[];
@@ -144,10 +147,6 @@ function Board(props: NewBoardProps) {
   const onNodeDragStop = useCallback((event: React.MouseEvent, node: Node) => {
     if (onNodeMove) onNodeMove(node);
   }, [onNodeMove]);
-
-  const edgeTypes: EdgeTypes = {
-    floating: FloatingEdge,
-  };
 
   return (
     <div className="w-full h-full" data-cy="board" ref={reactFlowWrapper}>
