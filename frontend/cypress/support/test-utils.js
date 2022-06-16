@@ -53,31 +53,6 @@ export const dragAndDropPipeFitting = () => {
 export const connectTankToPump = () => {
   const dataTransfer = new DataTransfer();
 
-  cy.get('[data-cy=itemNode-T01]');
-
-  // cy.get('[data-cy=target-itemNode-PU01]');
-  // cy.get('[data-cy=source-itemNode-T01]').drag('[data-cy=target-itemNode-PU01]', {
-  //   source: {
-  //     position: 'center',
-  //   },
-  //   target: {
-  //     position: 'center',
-  //   },
-  //   force: true,
-  //   waitForAnimations: true,
-  // });
-
-  // cy.get('[data-cy=source-itemNode-T01]').click();
-  // cy.get('[data-cy=target-itemNode-PU01]').invoke('css', 'style', 'diplay: initial');
-  // cy.get('[data-cy=target-itemNode-PU01]').click({ force: true });
-
-  // cy.get('[data-cy=source-itemNode-T01]').move({
-  //   position: 'center',
-  //   // deltaX: -400,
-  //   deltaY: 20,
-  //   // waitForAnimations: true,
-  // });
-
   cy.get('[data-cy=source-itemNode-T01]')
     .click()
     .trigger('dragstart', { dataTransfer });
