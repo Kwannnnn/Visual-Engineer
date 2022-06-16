@@ -1,3 +1,5 @@
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import React, { useContext } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
@@ -22,58 +24,47 @@ function ItemNode(props: ItemNodeProps) {
   const dragContext = useContext(DragContext);
 
   return (
-    <>
-      <Handle
-        type="target"
-        position={Position.Top}
-        id={`top-${dataCY}`}
-        data-cy={`top-${dataCY}`}
-        className="hover:border-4 hover:border-gray-300 hidden"
-        // style={{
-        //   height: 14,
-        //   width: 14,
-        //   top: -7,
-        // }}
-      />
-      <div
-        data-cy={dataCY}
-        className={classNames(`bg-slate-50 border-2 px-12 py-8 border-black ${className}`, {
-          'bg-amber-50': isDraft,
-        })}
-        style={{ zIndex: 5 }}
-      >
+    <div
+      data-cy={dataCY}
+      className={classNames(`bg-slate-50 border-2 px-12 py-4 border-black overflow-hidden flex flex-col items-center ${className}`, {
+        'bg-amber-50': isDraft,
+      })}
+    >
+      <div className="mb-4 flex flex-col items-center">
         <div>{tag}</div>
         <div>{type}</div>
-        <Handle
-          type="source"
-          position={Position.Top}
-          id={`bottom-${dataCY}`}
-          data-cy={`bottom-${dataCY}`}
-          className="hover:border-4 hover:border-gray-300"
-          style={{
-            height: 14,
-            width: 14,
-            top: 20,
-          }}
-        />
-        <Handle
-          type="target"
-          position={Position.Bottom}
-          id={`bottom-${dataCY}`}
-          data-cy={`bottom-${dataCY}`}
-          className="hover:border-4 hover:border-gray-300"
-          style={{
-            height: '100%',
-            width: '100%',
-            bottom: 0,
-            borderRadius: 0,
-            display: !dragContext.connecting ? 'none' : 'initial',
-            backgroundColor: 'transparent',
-            border: 'none',
-          }}
-        />
       </div>
-    </>
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id={`source-${dataCY}`}
+        data-cy={`source-${dataCY}`}
+        className="!bg-gray-200 !h-6 !rounded-none !border-none !bottom-0 w-full mb-0.5"
+        style={{
+          width: 'calc(100% - 4px)',
+        }}
+      >
+        <div className="flex-1 flex items-center justify-center h-full pointer-events-none">
+          <FontAwesomeIcon icon={faPlus} className="text-gray-400" />
+        </div>
+      </Handle>
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        id={`target-${dataCY}`}
+        data-cy={`target-${dataCY}`}
+        className="hover:border-4 hover:border-gray-300"
+        style={{
+          height: '100%',
+          width: '100%',
+          bottom: 0,
+          borderRadius: 0,
+          display: !dragContext.connecting ? 'none' : 'initial',
+          // backgroundColor: 'transparent',
+          border: 'none',
+        }}
+      />
+    </div>
   );
 }
 
