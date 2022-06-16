@@ -1,5 +1,5 @@
 import {
-  getBoard, getVessel, getPipeFitting, dragAndDropVessel, dragAndDropPipeFitting, connectTankToPipeFitting
+  getBoard, getVessel, getPipeFitting, dragAndDropVessel, dragAndDropPipeFitting, connectTankToPump
 } from '../support/test-utils.js';
 
 beforeEach(() => {
@@ -67,7 +67,7 @@ describe('Board', () => {
 
         cy.get('@boardVessel')
           .find('div')
-          .last().as('label');
+          .eq(2).as('label');
 
         cy.get('@label')
           .should('contain', 'vessel');
@@ -117,10 +117,10 @@ describe('Board', () => {
 
           const dataTransfer = new DataTransfer();
 
-          cy.get(`[data-cy=right-itemNode-${vesselTag}]`)
+          cy.get(`[data-cy=source-itemNode-${vesselTag}]`)
             .trigger('dragstart', { dataTransfer, force: true });
 
-          cy.get(`[data-cy=left-itemNode-${pipeFittingTag}]`)
+          cy.get(`[data-cy=source-itemNode-${pipeFittingTag}]`)
             .trigger('drop', { dataTransfer });
         });
       });
@@ -131,7 +131,7 @@ describe('Board', () => {
     it('should send a POST request with a new relationship', () => {
       cy.intercept('POST', '/api/*/relationships').as('postRelationship');
 
-      connectTankToPipeFitting();
+      connectTankToPump();
 
       cy.wait('@postRelationship').then(({ request, response }) => {
         const { pipeline, firstItem, secondItem } = request.body;
