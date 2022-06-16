@@ -13,9 +13,9 @@ function Projects() {
 
   const onClickHandler = (board: IBoard) => {
     const boards: IBoard[] = JSON.parse(localStorage.getItem('boards') || '[]');
+    localStorage.setItem('currentBoard', board.id.toString());
     if (boards.find((b) => b.id === board.id)) return;
     boards.push(board);
-    localStorage.setItem('currentBoard', board.id.toString());
     localStorage.setItem('boards', JSON.stringify(boards));
   };
 
