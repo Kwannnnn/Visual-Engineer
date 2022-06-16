@@ -14,7 +14,6 @@ interface PropertiesSidebarProps {
   onDelete: (node: Node | Edge) => void;
   onFieldChange?: (node: Node | Edge, field: string, value: string) => void;
   publishItem: (item: Partial<IObjectContext>) => void;
-  fetchBoardObjects: () => Promise<unknown>;
 }
 
 function getPropertyValue(node: Node | Edge | null, propName: string) {
@@ -36,7 +35,6 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     onFieldChange,
     onDelete,
     publishItem,
-    fetchBoardObjects,
   } = props;
 
   const [propValues, setPropValues] = useState<IPropertyListing[]>([]);

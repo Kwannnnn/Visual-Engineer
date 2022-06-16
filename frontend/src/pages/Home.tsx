@@ -66,7 +66,7 @@ function Home() {
   );
 
   // API Util Hooks
-  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<
+  const { data: boardObjects } = useAPIUtil<
     Partial<IObjectContext>[]
   >(getBoardObjectsCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -211,14 +211,9 @@ function Home() {
 
   const handleTab = (id: number) => {
     setCurrentBoardId(id);
-    console.log('id in handleTab: ', id);
     setCurrentNode(null);
     localStorage.setItem('currentBoard', id.toString());
   };
-
-  useEffect(() => {
-    console.log('currentBoardId in useEffect: ', currentBoardId);
-  }, [currentBoardId]);
 
   const handleCloseTab = (id: number) => {
     const newBoards = boards.filter((b) => b.id !== id);
@@ -280,7 +275,6 @@ function Home() {
       );
       const newNodes: Node[] = nodes.filter((node) => node.id !== n!.id);
 
-      console.log('handlePublishItem');
       const {
         tag, type, x, y,
       } = item;
@@ -289,6 +283,7 @@ function Home() {
       n!.data = {
         dataCY: `itemNode-${tag}`,
         type,
+        position: { x, y },
         ...item,
       };
       n!.data.isDraft = false;
@@ -348,7 +343,6 @@ function Home() {
             onClose={() => setCurrentNode(null)}
             onFieldChange={onFieldChangeHandler}
             publishItem={handlePublishItem}
-            fetchBoardObjects={fetchBoardObjects}
             onDelete={() => setShowModal(true)}
           />
         </div>
