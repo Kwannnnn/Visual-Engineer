@@ -211,9 +211,14 @@ function Home() {
 
   const handleTab = (id: number) => {
     setCurrentBoardId(id);
+    console.log('id in handleTab: ', id);
     setCurrentNode(null);
     localStorage.setItem('currentBoard', id.toString());
   };
+
+  useEffect(() => {
+    console.log('currentBoardId in useEffect: ', currentBoardId);
+  }, [currentBoardId]);
 
   const handleCloseTab = (id: number) => {
     const newBoards = boards.filter((b) => b.id !== id);
@@ -231,10 +236,6 @@ function Home() {
     }
   };
 
-  const handleDropNode = (node: Node) => {
-    setCurrentNode(node);
-  };
-
   const handleEdgeUpdate = (oldEdge: Edge, newConnection: Connection) => {
     const pipelineTag = oldEdge.id;
     const firstItem = newConnection.source;
@@ -247,10 +248,56 @@ function Home() {
     setEdges((els) => updateEdge(oldEdge, newConnection, els));
   };
 
-  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item }).catch((err) => {
-    setErrorMessage(err.response?.data?.message || 'Unknown error');
-    return Promise.reject();
-  });
+  const postItem = useCallback(
+    (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item }).catch((err) => {
+      setErrorMessage(err.response?.data?.message || 'Unknown error');
+      return Promise.reject();
+    }),
+    [currentBoardId]
+  );
+
+  const handlePostInitialItem = useCallback((initialItem: Partial<IObjectContext>) => {
+    postItem(initialItem).then(
+      (item) => {
+        // onFullfilled
+        const newNode = transformObjectToNode([item])[0];
+
+        setNodes((oldNodes) => oldNodes.concat(newNode));
+        setCurrentNode(newNode);
+      },
+      () => {
+        // onRejected
+      }
+    );
+  }, [postItem]);
+
+  const handlePublishItem = (publishingItem: Partial<IObjectContext>) => {
+    postItem(publishingItem).then((item) => {
+      if (!currentNode) return;
+
+      const n: Node | undefined = nodes.find(
+        (node) => node.id === currentNode.id
+      );
+      const newNodes: Node[] = nodes.filter((node) => node.id !== n!.id);
+
+      console.log('handlePublishItem');
+      const {
+        tag, type, x, y,
+      } = item;
+
+      n!.id = tag;
+      n!.data = {
+        dataCY: `itemNode-${tag}`,
+        type,
+        ...item,
+      };
+      n!.data.isDraft = false;
+      newNodes.push(n!);
+
+      setNodes(newNodes);
+      setCurrentNode(n!);
+    });
+  };
 
   return (
     <ReactFlowProvider>
@@ -284,13 +331,12 @@ function Home() {
             )}
             <Board
               initialNodes={nodes}
-              onDropNodeHandler={handleDropNode}
               onEdgeUpdate={handleEdgeUpdate}
               onNodeClick={(node) => node.id !== currentNode?.id && setCurrentNode(node)}
               onEdgeClick={(edge) => edge.id !== currentNode?.id && setCurrentNode(edge)}
               onNodeMove={onNodeMoveHandler}
               initialEdges={edges}
-              postItem={postItem}
+              postInitialItem={handlePostInitialItem}
             />
           </div>
           <PropertiesSidebar
@@ -301,7 +347,7 @@ function Home() {
             initialProperties={properties}
             onClose={() => setCurrentNode(null)}
             onFieldChange={onFieldChangeHandler}
-            postItem={postItem}
+            publishItem={handlePublishItem}
             fetchBoardObjects={fetchBoardObjects}
             onDelete={() => setShowModal(true)}
           />

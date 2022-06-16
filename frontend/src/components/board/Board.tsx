@@ -21,12 +21,11 @@ import ItemNode from './ItemNode';
 interface NewBoardProps {
   initialNodes?: Node[];
   initialEdges?: Edge[];
-  onDropNodeHandler?: (node: Node) => void;
   onNodeClick: (node: Node) => void;
   onEdgeClick: (edge: Edge) => void;
   onEdgeUpdate?: (oldEdge: Edge, newConnection: Connection) => void;
   onNodeMove?: (node: Node) => void;
-  postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
+  postInitialItem: (item: Partial<IObjectContext>) => void;
 }
 
 // This string key must match the key in the nodeTypes object in order to render the correct
@@ -49,11 +48,10 @@ function Board(props: NewBoardProps) {
   const {
     initialNodes,
     initialEdges,
-    onDropNodeHandler,
     onNodeClick,
     onEdgeClick,
     onNodeMove,
-    postItem,
+    postInitialItem,
     onEdgeUpdate,
   } = props;
 
@@ -135,24 +133,8 @@ function Board(props: NewBoardProps) {
         y: position.y,
         type: name,
       };
-      postItem(initialItem).then((item) => { // onFullfilled
-        const newNode = {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          id: item.tag!,
-          type: NODE_TYPE,
-          position,
-          data: {
-            type: name,
-            tag: item.tag,
-            dataCY: `itemNode-${item.tag}`,
-          },
-        };
 
-        setNodes((nodesState) => nodesState.concat(newNode));
-        if (onDropNodeHandler) onDropNodeHandler(newNode);
-      }, () => { // onRejected
-
-      });
+      postInitialItem(initialItem);
     },
     [reactFlowInstance]
   );
