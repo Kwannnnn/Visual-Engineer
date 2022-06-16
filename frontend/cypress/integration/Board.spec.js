@@ -14,8 +14,8 @@ describe('ItemNode', () => {
 
       cy.get('[data-id=PU01]')
         .move({
-          deltaX: 10,
-          deltaY: 0,
+          deltaX: 0,
+          deltaY: 400,
         });
 
       cy.wait('@patchObject').should(({ request, response }) => {
