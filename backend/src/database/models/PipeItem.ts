@@ -8,10 +8,10 @@ import { ObjectProperty, PropertyType } from '../../util/properties';
 })
 export default abstract class PipeItem extends Item {
   constructor(
-    tag: string,
     type: string,
     x: number,
     y: number,
+    tag?: string,
     name?: string,
     length?: number,
     width?: number,
@@ -19,7 +19,7 @@ export default abstract class PipeItem extends Item {
     diameter?: number,
     pressureClass?: PressureClass,
   ) {
-    super(type, tag, x, y, name, length, width, depth, diameter);
+    super(type, x, y, tag, name, length, width, depth, diameter);
     this.pressureClass = pressureClass;
   }
 

@@ -6,7 +6,7 @@ const objectsRouter: Router = Router();
 /**
  * @api {get} /api/v1/objects Get all objects
  * @apiDescription Returns a resource response containing all fields for every object in the system.
- * @apiVersion 3.0.0
+ * @apiVersion 2.0.0
  * @apiName GetObjects
  * @apiGroup Object
  * @apiDeprecated use (#Board:GetBoardObjects)
@@ -44,7 +44,7 @@ objectsRouter.get('/', objectController.getAll);
  * @api {get} /api/v1/objects/:id Get a specific object by its identifier
  * @apiDescription Returns a resource response containing the specified object. Returns a 404 error
  * message if no such object is found.
- * @apiVersion 3.0.0
+ * @apiVersion 2.0.0
  * @apiDeprecated use (#Board:GetBoardObjects) to fetch all board items instead
  * @apiName GetObject
  * @apiGroup Object

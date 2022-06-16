@@ -14,10 +14,10 @@ import Board from './Board';
 })
 export default abstract class Item {
   constructor(
-    tag: string,
     type: string,
     x: number,
     y: number,
+    tag?: string,
     name?: string,
     length?: number,
     width?: number,
@@ -42,11 +42,11 @@ export default abstract class Item {
   @Property({ nullable: false })
     type!: string;
 
-  @Property({ nullable: false })
-  @ObjectProperty(PropertyType.STRING)
-    tag!: string;
-
   @Property({ nullable: true })
+  @ObjectProperty(PropertyType.STRING)
+    tag?: string;
+
+  @Property({ nullable: true, type: 'string' })
   @ObjectProperty(PropertyType.STRING)
     name?: string;
 

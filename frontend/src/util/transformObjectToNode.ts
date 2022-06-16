@@ -6,7 +6,7 @@ export default function transformObjectToNode(objects: Partial<IObjectContext>[]
 
   objects.forEach((object) => {
     const {
-      id, tag, type, x, y,
+      id, type, x, y,
     } = object;
     if (!(id && type && x && y)) return;
     if (type === 'pipeline') return;
