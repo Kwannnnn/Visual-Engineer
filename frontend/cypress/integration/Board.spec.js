@@ -14,7 +14,7 @@ describe('ItemNode', () => {
 
       cy.get('[data-id=PU01]')
         .move({
-          deltaX: 0,
+          deltaX: 100,
           deltaY: 400,
         });
 
