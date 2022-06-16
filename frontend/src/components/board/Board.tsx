@@ -28,9 +28,6 @@ interface NewBoardProps {
   postInitialItem: (item: Partial<IObjectContext>) => void;
 }
 
-// This string key must match the key in the nodeTypes object in order to render the correct
-// custom node. Otherwise a default node will be rendered.
-const NODE_TYPE = 'itemNode';
 const nodeTypes: NodeTypes = {
   itemNode: ItemNode,
 };
@@ -136,7 +133,7 @@ function Board(props: NewBoardProps) {
 
       postInitialItem(initialItem);
     },
-    [reactFlowInstance]
+    [reactFlowInstance, postInitialItem]
   );
 
   const onNodeDragStop = useCallback((event: React.MouseEvent, node: Node) => {
