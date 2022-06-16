@@ -42,6 +42,7 @@ function Projects() {
             {boardsState.map((board) => (
               <Link
                 key={board.id}
+                data-cy={`board-${board.id}`}
                 className="grid grid-cols-12 bg-white hover:bg-slate-50 border shadow-md shadow-slate-200 rounded-sm py-3 outline-slate-600 text-slate-800 cursor-pointer"
                 to="/"
                 onClick={() => onClickHandler(board)}

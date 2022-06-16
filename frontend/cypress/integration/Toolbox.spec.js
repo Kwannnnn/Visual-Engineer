@@ -1,6 +1,7 @@
 beforeEach(() => {
   cy.visit('http://localhost:8080');
   cy.viewport(1440, 900);
+  cy.get('[data-cy="board-1"]').click();
 });
 
 describe('Toolbox Sidebar', () => {
