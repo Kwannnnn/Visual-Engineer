@@ -189,18 +189,21 @@ function Home() {
 
   const handleCloseTab = (id: number) => {
     const newBoards = boards.filter((b) => b.id !== id);
-    const newCurrentBoard = newBoards.at(newBoards.length - 1)?.id;
+
+    if (id === currentBoardId) {
+      const newCurrentBoard = newBoards.at(newBoards.length - 1)?.id;
+      setCurrentBoardId(newCurrentBoard || 0);
+
+      if (newCurrentBoard) {
+        localStorage.setItem('currentBoard', newCurrentBoard.toString());
+      } else {
+        localStorage.removeItem('currentBoard');
+      }
+    }
 
     setBoards(newBoards);
-    setCurrentBoardId(newCurrentBoard || 0);
     setCurrentNode(null);
     localStorage.setItem('boards', JSON.stringify(newBoards));
-
-    if (newCurrentBoard) {
-      localStorage.setItem('currentBoard', newCurrentBoard.toString());
-    } else {
-      localStorage.removeItem('currentBoard');
-    }
   };
 
   const handleDropNode = (node: Node) => {
