@@ -13,9 +13,9 @@ function Projects() {
 
   const onClickHandler = (board: IBoard) => {
     const boards: IBoard[] = JSON.parse(localStorage.getItem('boards') || '[]');
+    localStorage.setItem('currentBoard', board.id.toString());
     if (boards.find((b) => b.id === board.id)) return;
     boards.push(board);
-    localStorage.setItem('currentBoard', board.id.toString());
     localStorage.setItem('boards', JSON.stringify(boards));
   };
 
@@ -42,6 +42,7 @@ function Projects() {
             {boardsState.map((board) => (
               <Link
                 key={board.id}
+                data-cy={`board-${board.id}`}
                 className="grid grid-cols-12 bg-white hover:bg-slate-50 border shadow-md shadow-slate-200 rounded-sm py-3 outline-slate-600 text-slate-800 cursor-pointer"
                 to="/"
                 onClick={() => onClickHandler(board)}
