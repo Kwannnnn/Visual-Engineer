@@ -45,6 +45,7 @@ export default function Navbar(props: NavbarProps) {
           <ul className="flex items-center space-x-5">
             <li>
               <button
+                data-cy="create-project-button"
                 className="py-2 px-5 text-sm shadow-md font-medium text-white focus:outline-none bg-wb-blue hover:bg-sky-600 rounded-xl"
                 type="button"
                 onClick={createNewProject}

@@ -60,7 +60,7 @@ function App() {
 
       {showModal && (
         <Modal
-          dataCY="new-project-modal"
+          dataCY="create-project-modal"
           showModal={showModal}
           modalType={ModalType.Link}
           className="modal fixed z-10 inset-0 bg-slate-50 bg-opacity-70"
@@ -76,6 +76,7 @@ function App() {
               </p>
             )}
             <input
+              data-cy="project-name-input"
               type="text"
               placeholder="Project Name"
               required

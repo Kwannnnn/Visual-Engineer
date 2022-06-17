@@ -17,6 +17,7 @@ describe('ItemNode', () => {
         .move({
           deltaX: 10,
           deltaY: 0,
+          force: true,
         });
 
       cy.wait('@patchObject').should(({ request, response }) => {

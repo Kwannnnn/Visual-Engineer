@@ -32,6 +32,7 @@ function Tab({
     })}
     >
       <button
+        data-cy={`tab-project-${id}`}
         type="button"
         onClick={handleSelect}
         className="flex-1 flex justify-center"
