@@ -127,20 +127,26 @@ function Home() {
    * It updates the position of the node in the database. On error it will call the
    * onErrorHandler function.
    */
-  const onNodeMoveHandler = useCallback(
-    (node: Node) => {
-      const { x, y } = node.position;
+  const onNodeMoveHandler = (node: Node) => {
+    const { x, y } = node.position;
 
-      if (!node.data.tag) return;
-      updateBoardObject(currentBoardId, node.data.tag, {
-        x: Math.round(x * 1000) / 1000,
-        y: Math.round(y * 1000) / 1000,
-      }).catch((err: AxiosError) => {
-        onErrorHandler(err, node);
-      });
-    },
-    [currentBoardId, onErrorHandler]
-  );
+    if (!node.data.tag) return;
+    updateBoardObject(currentBoardId, node.data.tag, {
+      x: Math.round(x * 1000) / 1000,
+      y: Math.round(y * 1000) / 1000,
+    }).then((item) => {
+      const newNodes: Node[] = nodes.filter((n) => n.data.tag !== node.id);
+      const nodeToChange: Node | undefined = nodes.find((n) => n.data.tag === node.id);
+
+      nodeToChange!.position.x = item.x;
+      nodeToChange!.position.y = item.y;
+
+      newNodes.push(nodeToChange!);
+      setNodes(newNodes);
+    }).catch((err: AxiosError) => {
+      onErrorHandler(err, node);
+    });
+  };
 
   /**
    * This function is called when a field of a Node/Edge has been updated in the
@@ -163,6 +169,8 @@ function Home() {
     if (!boardObjects) return;
     const transformedNodes = transformObjectToNode(boardObjects);
     setNodes(transformedNodes);
+    // console.log('nodes: ', nodes);
+    // console.log('boardObjects: ', boardObjects);
   }, [boardObjects]);
 
   useEffect(() => {
@@ -262,9 +270,6 @@ function Home() {
 
         setNodes((oldNodes) => oldNodes.concat(newNode));
         setCurrentNode(newNode);
-      },
-      () => {
-        // onRejected
       }
     );
   }, [postItem]);
