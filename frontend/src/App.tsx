@@ -13,6 +13,7 @@ import { createBoard } from './util/api/utility-functions';
 function App() {
   const [newProjectName, setNewProjectName] = useState<string>('');
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,7 +42,7 @@ function App() {
         }
       })
       .catch((err) => {
-        alert(err.response?.data?.message || 'Unknown error');
+        setErrorMessage(err.response?.data?.message || 'Unknown error');
       });
   };
 
@@ -69,6 +70,11 @@ function App() {
           formId="new-project-form"
         >
           <form id="new-project-form" onSubmit={handleSubmit}>
+            {errorMessage && (
+              <p className="text-red-500">
+                {errorMessage}
+              </p>
+            )}
             <input
               type="text"
               placeholder="Project Name"
