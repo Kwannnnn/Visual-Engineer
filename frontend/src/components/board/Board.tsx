@@ -108,13 +108,11 @@ function Board(props: NewBoardProps) {
         const newNode = {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           id: item.id!,
-          tag: item.tag,
           type: NODE_TYPE,
           position,
           data: {
             type: name,
             id: item.id,
-            tag: item.tag,
             dataCY: `itemNode-${item.id}`,
           },
         };

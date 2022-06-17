@@ -162,7 +162,7 @@ function Home() {
             id: pipelineId,
             source: result.firstItem.id,
             target: result.secondItem.id,
-            label: pipelineId,
+            label: result.pipeline.tag,
             type: 'straight',
             style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
             data: {

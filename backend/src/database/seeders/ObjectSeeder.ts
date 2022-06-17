@@ -17,8 +17,8 @@ export default class ObjectSeeder extends Seeder {
 
     // Add sample items to the exported array
     sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId, id: 'PL01' }));
-    sampleBoardObjects.push(new PumpFactory(em).makeOne({ board: sampleBoardId , id: 'PU01'}));
-    sampleBoardObjects.push(new BlowerFactory(em).makeOne({ board: sampleBoardId, id: 'BL01 '}));
+    sampleBoardObjects.push(new PumpFactory(em).makeOne({ board: sampleBoardId, id: 'PU01' }));
+    sampleBoardObjects.push(new BlowerFactory(em).makeOne({ board: sampleBoardId, id: 'BL01' }));
     sampleBoardObjects.push(new PipeFittingFactory(em).makeOne({ board: sampleBoardId, id: 'PF01' }));
     sampleBoardObjects.push(new PipelineFactory(em).makeOne({ board: sampleBoardId, id: 'PL02' }));
     sampleBoardObjects.push(new TankFactory(em).makeOne({ board: sampleBoardId, id: 'T01' }));
