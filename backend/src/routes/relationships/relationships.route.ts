@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { body } from 'express-validator';
 import { relationshipController } from '../../controllers';
 import * as middleware from '../../middleware/relationships.middleware';
-import validate from '../../middleware/validate';
+import relationshipValidator from '../../middleware/relationships.validators';
 
 const relationshipRouter: Router = Router();
 
@@ -133,25 +132,7 @@ relationshipRouter.get('/:pipelineId', relationshipController.getOneRelationship
  */
 relationshipRouter.post(
   '/',
-  validate([
-    body('pipeline')
-      .exists()
-      .withMessage({
-        message: 'Pipeline ID is missing!',
-        statusCode: 400,
-      }),
-    body(['firstItem', 'secondItem'])
-      .exists()
-      .withMessage({
-        message: 'Two items are needed to create a relationship.',
-        statusCode: 400,
-      }),
-  ]),
-  middleware.isPipelineValid,
-  middleware.areItemsValid,
-  middleware.isPipelineInstanceOfPipeline,
-  middleware.areItemsNotInstanceOfPipeline,
-  middleware.areConnectedItemsTheSame,
+  relationshipValidator,
   relationshipController.postRelationship,
 );
 

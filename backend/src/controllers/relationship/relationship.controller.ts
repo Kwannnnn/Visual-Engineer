@@ -41,7 +41,11 @@ export const postRelationship = async (
   res: Response,
 ) => {
   try {
-    const relationship: Relationship = DI.em.create(Relationship, req.body!);
+    const relationship: Relationship = DI.em.create(Relationship, {
+      pipeline: res.locals.pipeline,
+      firstItem: res.locals.firstItem,
+      secondItem: res.locals.secondItem,
+    });
     await DI.relationshipRepository.persist(relationship).flush();
 
     return res.status(201).json(relationship);
