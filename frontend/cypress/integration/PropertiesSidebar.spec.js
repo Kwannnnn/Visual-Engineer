@@ -99,8 +99,8 @@ describe('PropertiesSidebar', () => {
 
       cy.wait('@postVessel').then(({ response }) => {
         expect(response.statusCode).to.eq(201);
-        expect(response.body).property('tag').to.exist;
-        return response.body.tag;
+        expect(response.body).property('id').to.exist;
+        return response.body.id;
       }).then((vesselId) => {
         cy.get(`[data-cy=itemNode-${vesselId}]`)
           .as('boardVessel');
