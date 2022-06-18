@@ -19,13 +19,8 @@ import {
 import IBoard from '../typings/IBoard';
 import useAPIUtil from '../util/hooks/useAPIUtil';
 import {
-  createItem,
+  getBoardObjects, getObjectTypes, getTypeProperties, getObjectEdges, updateBoardObject, createRelationship, createItem,
   deleteBoardObject,
-  getBoardObjects,
-  getObjectTypes,
-  getTypeProperties,
-  updateBoardObject,
-  getObjectEdges,
   updateRelationship
 } from '../util/api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
@@ -120,6 +115,8 @@ function Home() {
     setCurrentNode(null);
     const newNodes = nodes.filter((n) => n.data.tag !== currentNode.data.tag);
     setNodes(newNodes);
+    const newEdges = edges.filter((e) => e.data.tag !== currentNode.data.tag);
+    setEdges(newEdges);
   }, [currentNode]);
 
   /**
@@ -163,6 +160,81 @@ function Home() {
     },
     [currentBoardId, onErrorHandler]
   );
+
+  const postItem = useCallback(
+    (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item }).catch((err) => {
+      setErrorMessage(err.response?.data?.message || 'Unknown error');
+      return Promise.reject();
+    }),
+    [currentBoardId]
+  );
+
+  const postRelationship = (relationship: Partial<IOConnectionContext>) => createRelationship(relationship).catch((err) => {
+    setErrorMessage(err.response?.data?.message || 'Unknown error');
+    return Promise.reject();
+  });
+
+  const onConnectionCallback = useCallback((type: string, source: string, target: string) => {
+    const objectBody: Partial<IObjectContext> = {
+      type,
+      x: 0,
+      y: 0,
+    };
+
+    postItem(objectBody).then((response) => {
+      const newConnection: IOConnectionContext = {
+        pipeline: response.tag,
+        firstItem: source,
+        secondItem: target,
+      };
+
+      postRelationship(newConnection)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .then((result: any) => {
+          const pipelineTag = result.pipeline.tag;
+          const newEdge: Edge = {
+            id: pipelineTag,
+            source: result.firstItem.tag,
+            target: result.secondItem.tag,
+            label: pipelineTag,
+            type: 'straight',
+            labelStyle: { cursor: 'pointer' },
+            labelBgStyle: { cursor: 'pointer' },
+            style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
+            data: {
+              type: 'pipeline',
+              tag: pipelineTag,
+              dataCY: `pipelineEdge-${pipelineTag}`,
+            },
+          };
+
+          setEdges((edgesState) => edgesState.concat(newEdge));
+          setCurrentNode(newEdge);
+        }).catch((err: AxiosError) => {
+          const draftConnection: Edge = {
+            id: `${source}_${target}`,
+            source: source ?? '',
+            target: target ?? '',
+            label: 'Draft Pipeline',
+            labelBgPadding: [8, 4],
+            labelBgBorderRadius: 4,
+            labelBgStyle: {
+              cursor: 'pointer', fill: '#FFCC00', color: '#fff',
+            },
+            type: 'straight',
+            style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
+            data: {
+              type: 'pipeline',
+              isDraft: true,
+            },
+          };
+
+          setEdges((edgesState) => edgesState.concat(draftConnection));
+          onErrorHandler(err, draftConnection);
+          setCurrentNode(draftConnection);
+        });
+    });
+  }, [currentBoardId]);
 
   // Use effects
   useEffect(() => {
@@ -254,14 +326,6 @@ function Home() {
     setEdges((els) => updateEdge(oldEdge, newConnection, els));
   };
 
-  const postItem = useCallback(
-    (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item }).catch((err) => {
-      setErrorMessage(err.response?.data?.message || 'Unknown error');
-      return Promise.reject();
-    }),
-    [currentBoardId]
-  );
-
   const handlePostInitialItem = useCallback((initialItem: Partial<IObjectContext>) => {
     postItem(initialItem).then(
       (item) => {
@@ -334,6 +398,7 @@ function Home() {
             )}
             <Board
               initialNodes={nodes}
+              onEdgeConnect={(type, source, target) => onConnectionCallback(type, source, target)}
               onEdgeUpdate={handleEdgeUpdate}
               onNodeClick={(node) => node.id !== currentNode?.id && setCurrentNode(node)}
               onEdgeClick={(edge) => edge.id !== currentNode?.id && setCurrentNode(edge)}

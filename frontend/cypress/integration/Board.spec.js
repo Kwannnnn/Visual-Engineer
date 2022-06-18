@@ -1,5 +1,5 @@
 import {
-  getBoard, getVessel, getPipeFitting, dragAndDropVessel, dragAndDropPipeFitting
+  getBoard, getVessel, getPipeFitting, dragAndDropVessel, dragAndDropPipeFitting, connectTankToPipeFitting
 } from '../support/test-utils.js';
 
 beforeEach(() => {
@@ -125,6 +125,22 @@ describe('Board', () => {
           cy.get(`[data-cy=left-itemNode-${pipeFittingTag}]`)
             .trigger('drop', { dataTransfer });
         });
+      });
+    });
+  });
+
+  describe('When a Tank is connected to a PipeFitting', () => {
+    it('should send a POST request with a new relationship', () => {
+      cy.intercept('POST', '/api/*/relationships').as('postRelationship');
+
+      connectTankToPipeFitting();
+
+      cy.wait('@postRelationship').then(({ request, response }) => {
+        const { pipeline, firstItem, secondItem } = request.body;
+        expect(response.statusCode).to.eq(201);
+        expect(response.body.pipeline).property('tag').to.be.equal(pipeline);
+        expect(response.body.firstItem).property('tag').to.be.equal(firstItem);
+        expect(response.body.secondItem).property('tag').to.be.equal(secondItem);
       });
     });
   });
