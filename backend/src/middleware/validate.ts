@@ -6,6 +6,7 @@ import { validationResult, ValidationChain } from 'express-validator';
  */
 const errorHandler = (req: Request, res: Response, next: NextFunction) => {
   const error = validationResult(req).array({ onlyFirstError: true })[0];
+
   if (!error) {
     return next();
   }
@@ -16,7 +17,12 @@ const errorHandler = (req: Request, res: Response, next: NextFunction) => {
 const validate = (
   validations: ValidationChain[],
 ) => async (req: Request, res: Response, next: NextFunction) => {
-  await Promise.all(validations.map((validation) => validation.run(req)));
+  // eslint-disable-next-line no-restricted-syntax
+  for (const validation of validations) {
+    // eslint-disable-next-line no-await-in-loop
+    const result: any = await validation.run(req);
+    if (result.errors.length) break;
+  }
 
   errorHandler(req, res, next);
 };
