@@ -137,7 +137,7 @@ function Home() {
   });
   const postRelationship = (relationship: Partial<IOConnectionContext>) => createRelationship(relationship).catch((err) => {
     setErrorMessage(err.response?.data?.message || 'Unknown error');
-    return Promise.reject();
+    throw err;
   });
 
   const onConnectionCallback = useCallback((type: string, source: string, target: string) => {
@@ -175,6 +175,13 @@ function Home() {
           setEdges((edgesState) => edgesState.concat(newEdge));
           setCurrentNode(newEdge);
         }).catch((err: AxiosError) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { data } = err.response as any;
+
+          if (data.errorCode === 'DUPLICATE_RELATIONSHIP') {
+            return;
+          }
+
           const draftConnection: Edge = {
             id: `${source}_${target}`,
             source: source ?? '',

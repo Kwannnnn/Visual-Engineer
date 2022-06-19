@@ -99,7 +99,7 @@ export async function createRelationship(tags: Partial<IOConnectionContext>) {
     ...tags,
   })
     .then((response) => response.data)
-    .catch((err) => err.data);
+    .catch((err) => { throw err; });
 
   return result;
 }
