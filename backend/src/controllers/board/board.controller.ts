@@ -86,16 +86,12 @@ export const postObjectToBoard = async (req: Request, res: Response) => {
     const id: number = +req.params.id;
     const board = await DI.boardRepository.findOne(id);
 
-    if (!board) {
-      throw new ValidationError(`Board with id ${id} not found`, 404);
-    }
-
     checkRequiredAttributes(req.body);
 
     const itemClass = getClass(req.body.type);
     const item: Item = DI.em.create(itemClass, req.body);
 
-    board.items.add(item);
+    board!.items.add(item);
     await DI.em.flush();
 
     res.status(201);
