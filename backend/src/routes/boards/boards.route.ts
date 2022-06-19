@@ -149,7 +149,7 @@ router.patch(
  */
 router.patch(
   '/:id/objects/:objectId',
-  boardValidators.patchBoardObjects,
+  boardValidators.isBoardObject,
   boardController.patchBoardObjects as any,
 );
 
@@ -184,7 +184,11 @@ router.patch(
  *       "message": "Board not found"
  *     }
  */
-router.post('/', boardValidators.postBoard, boardController.postBoard);
+router.post(
+  '/',
+  boardValidators.postBoard,
+  boardController.postBoard,
+);
 
 /**
  * @api {post} /api/v1/boards/:id/objects Post an object to a specific board
@@ -310,7 +314,11 @@ router.delete(
  *       "message": "Item not found"
  *     }
  */
-router.delete('/:id/objects/:objectId', boardController.deleteObjectFromBoard);
+router.delete(
+  '/:id/objects/:objectId',
+  boardValidators.isBoardObject,
+  boardController.deleteObjectFromBoard as any,
+);
 
 export default router;
 

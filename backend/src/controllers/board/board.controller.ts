@@ -170,25 +170,11 @@ export const deleteObjectFromBoard = async (
   req: TypedRequest<BoardObjectParams, any>,
   res: Response,
 ) => {
-  const { id, objectId } = req.params;
-
   try {
-    const board = await DI.boardRepository.findOne(id);
-
-    if (!board) {
-      return res.status(404).json({
-        message: 'Board not found',
-      });
-    }
+    const { board } = res.locals;
     await board.items.init();
 
-    const item = await DI.itemRepository.findOne(objectId);
-
-    if (!item) {
-      return res.status(404).json({
-        message: 'Item not found',
-      });
-    }
+    const { item } = res.locals;
 
     DI.itemRepository.removeAndFlush(item);
     board.items.remove(item);

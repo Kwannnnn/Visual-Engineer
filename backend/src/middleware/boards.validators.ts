@@ -61,7 +61,7 @@ export const validateRequestBody = async (
   ])(req, res, next);
 };
 
-export const patchBoardObjects = async (
+export const isBoardObject = async (
   req: Request,
   res: Response,
   next: NextFunction,
