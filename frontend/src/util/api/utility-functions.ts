@@ -27,25 +27,17 @@ export async function getBoardObjects(id: number) {
 export async function createBoard(properties: Partial<IBoard>) {
   const result = await axios.post(`${url}/v1/boards/`, {
     ...properties,
-  })
-    .then((response) => response.data)
-    .catch((err) => {
-      throw err;
-    });
+  });
 
-  return result;
+  return result.data;
 }
 
 export async function createItem(boardId: number, properties: Partial<IObjectContext>) {
   const result = await axios.post(`${url}/v1/boards/${boardId}/objects/`, {
     ...properties,
-  })
-    .then((response) => response.data)
-    .catch((err) => {
-      throw err;
-    });
+  });
 
-  return result;
+  return result.data;
 }
 
 export async function updateBoard(id: number, properties: Partial<IBoard>) {
