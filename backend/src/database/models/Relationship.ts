@@ -1,10 +1,11 @@
 import {
-  Entity, ManyToOne, OneToOne, PrimaryKeyType,
+  Entity, ManyToOne, OneToOne, PrimaryKeyType, Unique,
 } from '@mikro-orm/core';
 import Item from './Item';
 import Pipeline from './Pipeline';
 
 @Entity()
+@Unique({ properties: ['firstItem', 'secondItem'] })
 export default class Relationship {
   constructor(
     pipeline: Pipeline,
