@@ -212,17 +212,6 @@ describe('PATCH Board endpoints', () => {
         });
 
       expect(response.statusCode).toEqual(400);
-      expect(response.body).toEqual(
-        {
-          errors: [
-            {
-              msg: 'Illegal field',
-              param: 'id',
-              location: 'body',
-            },
-          ],
-        },
-      );
     });
 
     test('should return 400 when an illegal field is updated (flange, for a pump object type)', async () => {
@@ -236,17 +225,6 @@ describe('PATCH Board endpoints', () => {
         });
 
       expect(response.statusCode).toEqual(400);
-      expect(response.body).toEqual(
-        {
-          errors: [
-            {
-              msg: 'Illegal field',
-              param: 'flange',
-              location: 'body',
-            },
-          ],
-        },
-      );
     });
   });
 
