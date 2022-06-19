@@ -113,9 +113,11 @@ router.get('/:id/objects', boardController.getBoardObjects);
  * @apiUse BoardNotFoundError
  * @apiUse InvalidFields
  */
-router.patch('/:id', validate([
-  body('name').optional(),
-]), boardController.patchById as any);
+router.patch(
+  '/:id',
+  boardValidators.patchById,
+  boardController.patchById as any,
+);
 
 /**
  * @api {patch} /api/v1/boards/:id/objects/:objectId Update a specific object in a board
