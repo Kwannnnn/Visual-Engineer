@@ -217,7 +217,7 @@ function Home() {
 
   return (
     <ReactFlowProvider>
-      <div className={classNames('flex-1 h-full', {
+      <div className={classNames('flex-1 h-full overflow-hidden', {
         'z-0': showModal,
       })}
       >
