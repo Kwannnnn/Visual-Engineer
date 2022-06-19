@@ -32,16 +32,8 @@ export const getBoardObjects = async (
   req: TypedRequest<BoardParams, any>,
   res: Response,
 ) => {
-  const { id } = req.params;
-
   try {
-    const board = await DI.boardRepository.findOne({ id });
-
-    if (!board) {
-      return res.status(404).json({
-        message: 'Board not found',
-      });
-    }
+    const { board } = res.locals;
 
     await board.items.init();
     const items = board.items.getItems();

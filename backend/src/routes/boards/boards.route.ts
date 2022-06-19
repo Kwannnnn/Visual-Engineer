@@ -92,7 +92,11 @@ router.get(
  *     ]
  * @apiUse BoardNotFoundError
  */
-router.get('/:id/objects', boardController.getBoardObjects);
+router.get(
+  '/:id/objects',
+  boardValidators.isBoard,
+  boardController.getBoardObjects as any,
+);
 
 /**
  * @api {patch} /api/v1/boards/:id Update a specific board by its identifier
