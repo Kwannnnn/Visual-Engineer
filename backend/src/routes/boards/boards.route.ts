@@ -276,7 +276,11 @@ router.post(
  *       "message": "Board not found"
  *     }
  */
-router.delete('/:id', boardController.deleteBoard);
+router.delete(
+  '/:id',
+  boardValidators.isBoard,
+  boardController.deleteBoard as any,
+);
 
 /**
  * @api {delete} /api/v1/boards/:id/objects/:tag Delete an item from a board
