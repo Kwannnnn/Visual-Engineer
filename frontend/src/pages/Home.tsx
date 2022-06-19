@@ -243,6 +243,10 @@ function Home() {
     setCurrentBoardId(id);
   };
 
+  const handleAlertDismiss = () => {
+    setErrorMessage('');
+  };
+
   const handleDropNode = (node: Node) => {
     setCurrentNode(node);
   };
@@ -285,6 +289,7 @@ function Home() {
               <AlertPane
                 className="transition-opacity ease-in"
                 message={errorMessage}
+                onDismiss={handleAlertDismiss}
               />
             )}
             <Board

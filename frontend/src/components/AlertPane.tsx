@@ -5,10 +5,11 @@ import React from 'react';
 interface AlertPaneProps {
   className?: string;
   message: string;
+  onDismiss: () => void;
 }
 
 function AlertPane(props: AlertPaneProps) {
-  const { className = '', message } = props;
+  const { className = '', message, onDismiss } = props;
   return (
     <div className={`p-3 ${className}`}>
       <div className="bg-amber-100 rounded-md text-gray-900 px-4 py-3 shadow-lg border-l-4 border-amber-500" role="alert">
@@ -22,6 +23,7 @@ function AlertPane(props: AlertPaneProps) {
             data-cy="close-sidebar-btn"
             className="text-amber-700 hover:bg-amber-200 text-sm px-2 py-0.5 rounded-full cursor-pointer"
             type="button"
+            onClick={() => onDismiss()}
           >
             <FontAwesomeIcon icon={faX} size="xs" />
           </button>
