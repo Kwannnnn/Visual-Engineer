@@ -330,6 +330,10 @@ function Home() {
     localStorage.setItem('boards', JSON.stringify(newBoards));
   };
 
+  const handleAlertDismiss = () => {
+    setErrorMessage('');
+  };
+
   const handleEdgeUpdate = (oldEdge: Edge, newConnection: Connection) => {
     const pipelineId = oldEdge.id;
     const firstItem = newConnection.source;
@@ -409,6 +413,7 @@ function Home() {
               <AlertPane
                 className="transition-opacity ease-in"
                 message={errorMessage}
+                onDismiss={handleAlertDismiss}
               />
             )}
             <Board
