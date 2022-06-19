@@ -30,7 +30,7 @@ function App() {
       name: newProjectName,
     })
       .then((board: IBoard) => {
-        boards.push(board);
+        boards.push({ id: board.id, name: board.name });
         localStorage.setItem('currentBoard', board.id.toString());
         localStorage.setItem('boards', JSON.stringify(boards));
         setNewProjectName('');
