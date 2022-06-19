@@ -164,18 +164,25 @@ relationshipRouter.post(
  *       "message": "Relationship not found"
  *     }
  *
- * @apiError IncorrectBody Body is empty
- * @apiErrorExample IncorrectBody:
- *     HTTP/1.1 400 BAD REQUEST
- *     {
- *       "message": "Mandatory fields in request body are missing"
- *     }
- *
  * @apiError NonMatchingPipelines Pipeline IDs in request body and parameter do not match
  * @apiErrorExample NonMatchingPipelines:
  *     HTTP/1.1 400 BAD REQUEST
  *     {
  *       "message": "Pipeline ID in request body does not match"
+ *     }
+ *
+ *  * @apiError PipelineTagMissing The request body is missing the pipeline ID.
+ * @apiErrorExample PipelineIDMissing:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "Pipeline ID is missing."
+ *     }
+ *
+ * @apiError ItemMissing The request body is missing one or both to-be-connected items.
+ * @apiErrorExample ItemMissing:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "Two items are needed to create a relationship."
  *     }
  *
  * @apiError ConnectItemToItself Items to connect are the same
@@ -197,13 +204,6 @@ relationshipRouter.post(
  *     HTTP/1.1 404 NOT FOUND
  *     {
  *       "message": "Item not found"
- *     }
- *
- * @apiError InvalidRelationship The provided items cannot be associated.
- * @apiErrorExample InvalidRelationship:
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "message": "You cannot associate a Pump with a Blower."
  *     }
  */
 relationshipRouter.patch(
