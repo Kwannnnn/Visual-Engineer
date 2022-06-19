@@ -14,7 +14,6 @@ services:
           cpus: '0.5'
           memory: '0.5G'
   init:
-    # image: visualengineer.azurecr.io/init:latest
     image: registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/init:$IMAGE_TAG
     container_name: ve-db-init
     deploy:
