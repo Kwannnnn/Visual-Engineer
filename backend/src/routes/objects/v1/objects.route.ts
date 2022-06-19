@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { objectController } from '../../../controllers';
+import objectValidators from '../../../middleware/objects.validators';
 
 const objectsRouter: Router = Router();
 
@@ -69,6 +70,10 @@ objectsRouter.get('/', objectController.getAll);
  *       "message": "Item not found"
  *     }
  */
-objectsRouter.get('/:id', objectController.getById);
+objectsRouter.get(
+  '/:id',
+  objectValidators,
+  objectController.getById,
+);
 
 export default objectsRouter;

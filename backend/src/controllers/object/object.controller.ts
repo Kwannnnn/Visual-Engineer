@@ -13,16 +13,8 @@ export const getAll = async (req: Request, res: Response) => {
 };
 
 export const getById = async (req: Request, res: Response) => {
-  const id = req.params;
-
   try {
-    const item = await DI.itemRepository.findOne(id);
-
-    if (!item) {
-      return res.status(404).json({
-        message: 'Item not found',
-      });
-    }
+    const { item } = res.locals;
 
     return res.json(item);
   } catch (e: any) {
