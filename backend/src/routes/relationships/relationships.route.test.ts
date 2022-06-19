@@ -155,6 +155,22 @@ describe('POST Relationship endpoints', () => {
         });
       expect(response.statusCode).toEqual(400);
     });
+
+    test('should return 400 when there is an existing Relationship with the requested pipeline', async () => {
+      const pipeline = sampleBoards[0].items[0].id;
+      const firstItem = sampleBoards[0].items[4].id;
+      const secondItem = sampleBoards[0].items[2].id;
+
+      const response = await request(app)
+        .post('/api/v2/relationships')
+        .send({
+          pipeline,
+          firstItem,
+          secondItem,
+        });
+      expect(response.statusCode).toEqual(400);
+    });
+
   });
 });
 
