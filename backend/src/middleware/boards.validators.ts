@@ -4,12 +4,6 @@ import DI from '../DI';
 import ValidationError from '../error/ValidationError';
 import validate from './validate';
 
-const validators = () => [
-  body('name')
-    .exists()
-    .withMessage(new ValidationError('Board name is missing', 400)),
-];
-
 const nameMissing = [
   body('name')
     .exists()
@@ -25,7 +19,7 @@ const boardNotFound = (
       const id = +req.params.id;
       const board = await DI
         .boardRepository
-        .findOne({ id });
+        .findOne({ id }, { populate: ['items'] });
       if (!board) {
         return Promise.reject();
       }
@@ -36,7 +30,27 @@ const boardNotFound = (
     .withMessage(new ValidationError('Board not found', 404)),
 ];
 
-export const patchById = async (
+const objectNotFound = (
+  req: Request,
+  res: Response,
+) => [
+  body()
+    .custom(async () => {
+      const { objectId } = req.params;
+      const item = await DI.itemRepository.findOne(objectId);
+      const { items } = res.locals.board;
+
+      if (!item || !items.contains(item)) {
+        return Promise.reject();
+      }
+
+      res.locals.item = item;
+      return true;
+    })
+    .withMessage(new ValidationError('Object not found', 404)),
+];
+
+export const validateRequestBody = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -47,59 +61,23 @@ export const patchById = async (
   ])(req, res, next);
 };
 
-export const postObjectToBoardValidators = (
+export const patchBoardObjects = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const validatorsArray = validators();
-  validatorsArray.push(
-    body()
-      .custom(async () => {
-        const id = +req.params.id;
-        const board = await DI
-          .boardRepository
-          .findOne({ id });
-        if (!board) {
-          return Promise.reject();
-        }
-        return true;
-      })
-      .withMessage(new ValidationError('Board not found', 404)),
-  );
-
-  validate(validatorsArray)(req, res, next);
+  validate([
+    ...boardNotFound(req, res),
+    ...objectNotFound(req, res),
+  ])(req, res, next);
 };
 
-export const patchBoardValidators = (
+export const postBoard = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const validatorsArray = validators();
-  validatorsArray.push(
-    body()
-      .custom(async () => {
-        const id = +req.params.id;
-        const board = await DI
-          .boardRepository
-          .findOne({ id });
-        if (!board) {
-          return Promise.reject();
-        }
-        return true;
-      })
-      .withMessage(new ValidationError('Board not found', 404)),
-  );
-
-  validate(validatorsArray)(req, res, next);
-};
-
-export const postBoardValidators = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  const validatorsArray = validators();
-  validate(validatorsArray)(req, res, next);
+  validate([
+    ...nameMissing,
+  ])(req, res, next);
 };
