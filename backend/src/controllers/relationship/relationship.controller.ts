@@ -96,24 +96,8 @@ export const deleteRelationship = async (
   req: TypedRequest<RelationshipParams, any>,
   res: Response,
 ) => {
-  const { pipelineId } = req.params;
-
   try {
-    const pipeline: any = await DI.itemRepository.findOne(pipelineId);
-
-    if (!pipeline) {
-      return res.status(404).json({
-        message: 'Pipeline not found',
-      });
-    }
-
-    const relationship = await DI.relationshipRepository.findOne(pipelineId);
-    if (!relationship) {
-      return res.status(404).json({
-        message: 'Relationship not found',
-      });
-    }
-
+    const { pipeline } = res.locals;
     await DI.itemRepository.removeAndFlush(pipeline);
 
     return res.status(204).send();

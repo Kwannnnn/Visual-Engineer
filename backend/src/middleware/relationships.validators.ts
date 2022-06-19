@@ -137,3 +137,33 @@ export const patchValidators = (
 
   validate(validatorsArray)(req, res, next);
 };
+
+export const deleteValidators = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  validate([
+    body()
+      .custom(() => DI
+        .itemRepository
+        .findOne({ id: +req.params.pipelineId })
+        .then((pipeline) => {
+          if (!pipeline) {
+            return Promise.reject();
+          }
+
+          res.locals.pipeline = pipeline;
+          return true;
+        }))
+      .withMessage(new ValidationError('Pipeline not found', 404))
+      .custom(async () => {
+        if (await isRelationship(res)) {
+          return true;
+        }
+
+        return Promise.reject();
+      })
+      .withMessage(new ValidationError('Relationship not found', 404)),
+  ])(req, res, next);
+};

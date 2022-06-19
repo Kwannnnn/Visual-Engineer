@@ -239,6 +239,10 @@ relationshipRouter.patch(
  *       "message": "Relationship not found"
  *     }
  */
-relationshipRouter.delete('/:pipelineId', relationshipController.deleteRelationship);
+relationshipRouter.delete(
+  '/:pipelineId',
+  relationshipValidator.deleteValidators,
+  relationshipController.deleteRelationship as any,
+);
 
 export default relationshipRouter;
