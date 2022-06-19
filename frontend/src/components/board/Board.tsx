@@ -168,7 +168,6 @@ function Board(props: NewBoardProps) {
           edgeTypes={edgeTypes}
           fitView
           connectionLineType={ConnectionLineType.Straight}
-        // connectionLineComponent={FloatingConnectionLine}
           onNodeDragStop={(e, n) => onNodeDragStop(e, n)}
           onConnectStart={() => {
             setConnecting(true);
