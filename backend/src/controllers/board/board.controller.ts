@@ -113,22 +113,14 @@ export const patchById = async (
   req: TypedRequest<BoardParams, PatchBoardBody>,
   res: Response,
 ) => {
-  const { id } = req.params;
-
   try {
-    const board = await DI.boardRepository.findOne({ id });
-
-    if (!board) {
-      return res.status(404).json({
-        message: 'Board not found',
-      });
-    }
+    const { board } = res.locals;
 
     if (req.body?.name) {
-      board.name = req.body.name;
+      board!.name = req.body.name;
     }
 
-    await DI.boardRepository.persistAndFlush(board);
+    await DI.boardRepository.persistAndFlush(board!);
 
     return res.json(board);
   } catch (e: any) {
