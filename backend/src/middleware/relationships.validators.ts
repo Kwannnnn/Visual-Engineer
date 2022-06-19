@@ -48,58 +48,92 @@ async function isRelationship(res: Response) {
     .findOne({ pipeline: res.locals.pipeline.id })
     .then((relationship) => {
       if (relationship) {
-        return Promise.reject();
+        return true;
       }
 
-      return true;
+      return false;
     });
 }
 
-const relationshipValidator = (
+const validators = (
+  req: Request,
+  res: Response,
+) => [
+  body('pipeline')
+    .exists()
+    .withMessage(new ValidationError('Pipeline is missing', 400))
+    .custom(() => isPipelineValid(req, res))
+    .withMessage(new ValidationError('Pipeline not found', 404))
+    .custom(() => {
+      if (!(res.locals.pipeline instanceof Pipeline)) {
+        return Promise.reject();
+      }
+      return true;
+    })
+    .withMessage(new ValidationError('The connector must be of type Pipeline.', 400)),
+  body('firstItem')
+    .exists()
+    .withMessage(new ValidationError('Two items are needed to create a relationship.', 400)),
+  body('secondItem')
+    .exists()
+    .withMessage(new ValidationError('Two items are needed to create a relationship.', 400))
+    .custom(() => areItemsValid(req, res))
+    .withMessage(new ValidationError('Item not found', 404))
+    .custom(() => {
+      if ((res.locals.firstItem instanceof Pipeline)
+          || res.locals.secondItem instanceof Pipeline) {
+        return Promise.reject();
+      }
+      return true;
+    })
+    .withMessage(new ValidationError('Cannot connect a pipeline to a pipeline', 400))
+    .custom(() => {
+      if (res.locals.firstItem === res.locals.secondItem) {
+        return Promise.reject();
+      }
+      return true;
+    })
+    .withMessage(new ValidationError('First and second item cannot be the same', 400)),
+];
+
+export const postValidators = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  validate([
-    body('pipeline')
-      .exists()
-      .withMessage(new ValidationError('Pipeline is missing', 400))
-      .custom(() => isPipelineValid(req, res))
-      .withMessage(new ValidationError('Pipeline not found', 404))
-      .custom(() => {
-        if (!(res.locals.pipeline instanceof Pipeline)) {
+  const validatorsArray = validators(req, res);
+  validatorsArray.push(
+    body()
+      .custom(async () => {
+        if (await isRelationship(res)) {
           return Promise.reject();
         }
-        return true;
-      })
-      .withMessage(new ValidationError('The connector must be of type Pipeline.', 400))
-      .custom(() => isRelationship(res))
-      .withMessage(new ValidationError('Relationship already exists', 400)), // TODO: write test for this
-    body('firstItem')
-      .exists()
-      .withMessage(new ValidationError('Two items are needed to create a relationship.', 400)),
-    body('secondItem')
-      .exists()
-      .withMessage(new ValidationError('Two items are needed to create a relationship.', 400))
-      .custom(() => areItemsValid(req, res))
-      .withMessage(new ValidationError('Item not found', 404))
-      .custom(() => {
-        if ((res.locals.firstItem instanceof Pipeline)
-        || res.locals.secondItem instanceof Pipeline) {
-          return Promise.reject();
-        }
-        return true;
-      })
-      .withMessage(new ValidationError('Cannot connect a pipeline to a pipeline', 400))
-      .custom(() => {
-        if (res.locals.firstItem === res.locals.secondItem) {
-          return Promise.reject();
-        }
-        return true;
-      })
-      .withMessage(new ValidationError('First and second item cannot be the same', 400)),
 
-  ])(req, res, next);
+        return true;
+      })
+      .withMessage(new ValidationError('Relationship already exists', 400)),
+  );
+
+  validate(validatorsArray)(req, res, next);
 };
 
-export default relationshipValidator;
+export const patchValidators = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const validatorsArray = validators(req, res);
+  validatorsArray.push(
+    body()
+      .custom(async () => {
+        if (await isRelationship(res)) {
+          return true;
+        }
+
+        return Promise.reject();
+      })
+      .withMessage(new ValidationError('Relationship not found', 404)),
+  );
+
+  validate(validatorsArray)(req, res, next);
+};
