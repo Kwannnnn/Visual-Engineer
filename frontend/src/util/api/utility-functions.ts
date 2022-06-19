@@ -94,7 +94,7 @@ export async function createRelationship(ids: Partial<IOConnectionContext>) {
     ...ids,
   })
     .then((response) => response.data)
-    .catch((err) => err.data);
+    .catch((err) => { throw err; });
 
   return result;
 }
