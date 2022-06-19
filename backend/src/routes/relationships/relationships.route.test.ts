@@ -170,7 +170,6 @@ describe('POST Relationship endpoints', () => {
         });
       expect(response.statusCode).toEqual(400);
     });
-
   });
 });
 
@@ -213,15 +212,19 @@ describe('PATCH /relationships/:pipelineId', () => {
     });
 
     describe('given the request body contains incorrect data', () => {
-      it('should not allow to an empty body', async () => {
+      it('should not allow to a missing pipeline in the body', async () => {
         const relationship = sampleRelationships[0];
         const response = await request(app)
-          .patch(`/api/v2/relationships/${relationship.pipeline.id}`);
+          .patch(`/api/v2/relationships/${relationship.pipeline.id}`)
+          .send({
+            firstItem: relationship.firstItem.id,
+            secondItem: relationship.secondItem.id,
+          });
         expect(response.status).toEqual(400);
         const exrsp = {
-          message: 'Mandatory fields in request body are missing',
+          message: 'Pipeline is missing',
         };
-        expect(response.body).toEqual(exrsp);
+        expect(response.body).toEqual(exrsp.message);
       });
 
       it('should not allow to update an item with a pipeline', async () => {
@@ -237,7 +240,7 @@ describe('PATCH /relationships/:pipelineId', () => {
         const exrsp = {
           message: 'Cannot connect a pipeline to a pipeline',
         };
-        expect(response.body).toEqual(exrsp);
+        expect(response.body).toEqual(exrsp.message);
       });
 
       it('should not allow to update when the two items to update are the same', async () => {
@@ -253,7 +256,7 @@ describe('PATCH /relationships/:pipelineId', () => {
         const exrsp = {
           message: 'First and second item cannot be the same',
         };
-        expect(response.body).toEqual(exrsp);
+        expect(response.body).toEqual(exrsp.message);
       });
 
       it('should not allow to update when the item to update to does not exist', async () => {
@@ -263,12 +266,13 @@ describe('PATCH /relationships/:pipelineId', () => {
           .send({
             pipeline: relationship.pipeline.id,
             firstItem: '4000',
+            secondItem: relationship.secondItem.id,
           });
         expect(response.status).toEqual(404);
         const exrsp = {
           message: 'Item not found',
         };
-        expect(response.body).toEqual(exrsp);
+        expect(response.body).toEqual(exrsp.message);
       });
     });
 
