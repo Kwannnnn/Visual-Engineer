@@ -70,8 +70,8 @@ export const patchRelationship = async (
   try {
     const relationship = await DI.relationshipRepository.findOne(pipelineId);
 
-    const firstItem = req.body!.firstItem!;
-    const secondItem = req.body!.secondItem!;
+    const firstItem = res.locals.firstItem!;
+    const secondItem = res.locals.secondItem!;
 
     relationship!.firstItem = firstItem;
     relationship!.secondItem = secondItem;
