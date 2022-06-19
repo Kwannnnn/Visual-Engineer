@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { body } from 'express-validator';
 import { boardController } from '../../controllers';
 import validate from '../../middleware/validate';
+import boardValidators from '../../middleware/boards.validators';
 
 const router: Router = Router();
 
@@ -174,7 +175,7 @@ router.patch(
  *       "message": "Board not found"
  *     }
  */
-router.post('/', boardController.postBoard);
+router.post('/', boardValidators, boardController.postBoard);
 
 /**
  * @api {post} /api/v1/boards/:id/objects Post an object to a specific board
