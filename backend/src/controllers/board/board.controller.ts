@@ -4,7 +4,7 @@ import { Item, Board } from '../../database/models';
 import ValidationError from '../../error/ValidationError';
 import { checkRequiredAttributes, getClass } from './board.util';
 import {
-  BoardObjectParams, BoardParams, FieldError, PatchBoardBody, PatchBoardObject,
+  BoardObjectParams, BoardParams, PatchBoardBody, PatchBoardObject,
 } from '../../routes/boards/boards.types';
 import { TypedRequest } from '../../routes/util/typed-request';
 
@@ -134,46 +134,20 @@ export const patchBoardObjects = async (
   req: TypedRequest<BoardObjectParams, PatchBoardObject>,
   res: Response,
 ) => {
-  const { id: boardId, objectId } = req.params;
-
   try {
-    const board = await DI.boardRepository.findOne({ id: boardId }, { populate: ['items'] });
-
-    if (!board) {
-      return res.status(404).json({
-        message: 'Board not found',
-      });
-    }
-
-    const { items } = board;
-
-    const item = await DI.itemRepository.findOne(objectId);
-
-    if (!item || !items.contains(item)) {
-      return res.status(404).json({
-        message: 'Object not found',
-      });
-    }
+    const { board } = res.locals;
+    const { item } = res.locals;
 
     const hiddenFields = ['__gettersDefined', 'board', 'id'];
 
     const properties = Object.getOwnPropertyNames(item).filter(((p) => !hiddenFields.includes(p)));
 
-    const fieldErrors: FieldError[] = [];
-
+    // eslint-disable-next-line consistent-return
     Object.keys(req.body!).forEach((param) => {
       if (!properties.includes(param)) {
-        fieldErrors.push({
-          msg: 'Illegal field',
-          param,
-          location: 'body',
-        });
+        throw new ValidationError('Illegal field', 400);
       }
     });
-
-    if (fieldErrors.length > 0) {
-      return res.status(400).json({ errors: fieldErrors });
-    }
 
     Object.assign(item, req.body);
 
