@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { relationshipController } from '../../controllers';
-import * as middleware from '../../middleware/relationships.middleware';
-import relationshipValidator from '../../middleware/relationships.validators';
+import * as relationshipValidator from '../../middleware/relationships.validators';
 
 const relationshipRouter: Router = Router();
 
@@ -133,7 +132,7 @@ relationshipRouter.get('/:pipelineId', relationshipController.getOneRelationship
  */
 relationshipRouter.post(
   '/',
-  relationshipValidator,
+  relationshipValidator.postValidators,
   relationshipController.postRelationship,
 );
 
@@ -209,11 +208,7 @@ relationshipRouter.post(
  */
 relationshipRouter.patch(
   '/:pipelineId',
-  middleware.isRelationshipValid,
-  middleware.isRequestBodyValid,
-  middleware.areConnectedItemsTheSame,
-  middleware.areItemsValid,
-  middleware.areItemsNotInstanceOfPipeline,
+  relationshipValidator.patchValidators,
   relationshipController.patchRelationship,
 );
 
