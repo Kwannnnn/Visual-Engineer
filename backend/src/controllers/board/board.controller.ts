@@ -64,18 +64,18 @@ export const getBoardObjects = async (
 };
 
 export const postBoard = async (req: Request, res: Response) => {
-  if (!req.body.name) {
-    res.status(400);
-    return res.json({ message: 'Board name is missing' });
-  }
-
   try {
     const board = DI.em.create(Board, req.body);
     await DI.boardRepository.persist(board).flush();
 
     return res.status(201).json(board);
   } catch (e: any) {
-    return res.status(400).json({
+    if (e instanceof ValidationError) {
+      return res.status(e.statusCode).json({
+        message: e.message,
+      });
+    }
+    return res.status(500).json({
       message: e.message,
     });
   }
