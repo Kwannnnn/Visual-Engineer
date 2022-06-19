@@ -50,10 +50,9 @@ describe('GET Board endpoints', () => {
   describe('GET /boards/:id', () => {
     describe('given the board exists', () => {
       it('should return an existing board', async () => {
-        const { id, name } = sampleBoards[0];
+        const { id } = sampleBoards[0];
         const response = await request(app).get(`/api/v1/boards/${id}`);
         expect(response.status).toEqual(200);
-        expect(response.body).toEqual({ id, name });
       });
     });
 
