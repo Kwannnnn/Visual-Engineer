@@ -1,7 +1,5 @@
 import { Router } from 'express';
-import { body } from 'express-validator';
 import { boardController } from '../../controllers';
-import validate from '../../middleware/validate';
 import * as boardValidators from '../../middleware/boards.validators';
 
 const router: Router = Router();
@@ -115,7 +113,7 @@ router.get('/:id/objects', boardController.getBoardObjects);
  */
 router.patch(
   '/:id',
-  boardValidators.patchById,
+  boardValidators.validateRequestBody,
   boardController.patchById as any,
 );
 
@@ -143,7 +141,8 @@ router.patch(
  */
 router.patch(
   '/:id/objects/:objectId',
-  boardController.patchBoardObjects,
+  boardValidators.patchBoardObjects,
+  boardController.patchBoardObjects as any,
 );
 
 /**
@@ -177,7 +176,7 @@ router.patch(
  *       "message": "Board not found"
  *     }
  */
-router.post('/', boardValidators.postBoardValidators, boardController.postBoard);
+router.post('/', boardValidators.postBoard, boardController.postBoard);
 
 /**
  * @api {post} /api/v1/boards/:id/objects Post an object to a specific board
@@ -245,7 +244,7 @@ router.post('/', boardValidators.postBoardValidators, boardController.postBoard)
  */
 router.post(
   '/:id/objects',
-  boardValidators.postObjectToBoardValidators,
+  boardValidators.validateRequestBody,
   boardController.postObjectToBoard,
 );
 
