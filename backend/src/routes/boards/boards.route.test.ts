@@ -162,6 +162,7 @@ describe('PATCH Board endpoints', () => {
       const response = await request(app)
         .patch('/api/v1/boards/77')
         .send({
+          name: 'my board',
         });
       expect(response.statusCode).toEqual(404);
     });
