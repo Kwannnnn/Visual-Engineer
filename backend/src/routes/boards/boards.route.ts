@@ -49,7 +49,11 @@ router.get('/', boardController.getAll);
  *       "message": "Board not found"
  *     }
  */
-router.get('/:id', boardController.getById);
+router.get(
+  '/:id',
+  boardValidators.isBoard,
+  boardController.getById as any,
+);
 
 /**
  * @api {get} /api/v1/boards/:id/objects Get all objects from a specific board

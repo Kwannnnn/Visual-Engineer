@@ -81,3 +81,13 @@ export const postBoard = (
     ...nameMissing,
   ])(req, res, next);
 };
+
+export const isBoard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  validate([
+    ...boardNotFound(req, res),
+  ])(req, res, next);
+};
