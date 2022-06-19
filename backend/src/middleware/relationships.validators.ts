@@ -167,3 +167,25 @@ export const deleteValidators = (
       .withMessage(new ValidationError('Relationship not found', 404)),
   ])(req, res, next);
 };
+
+export const getValidators = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  validate([
+    body()
+      .custom(() => DI
+        .relationshipRepository
+        .findOne({ pipeline: req.params.pipelineId })
+        .then((relationship) => {
+          if (relationship) {
+            res.locals.relationship = relationship;
+            return true;
+          }
+
+          return Promise.reject();
+        }))
+      .withMessage(new ValidationError('Relationship not found', 404)),
+  ])(req, res, next);
+};

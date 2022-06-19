@@ -56,7 +56,11 @@ relationshipRouter.get('/', relationshipController.getAllRelationships);
  *       "message": "Relationship not found"
  *     }
  */
-relationshipRouter.get('/:pipelineId', relationshipController.getOneRelationship);
+relationshipRouter.get(
+  '/:pipelineId',
+  relationshipValidator.getValidators,
+  relationshipController.getOneRelationship as any,
+);
 
 /**
  * @api {post} /api/v2/relationships Post a relationship

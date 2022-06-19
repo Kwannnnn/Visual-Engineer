@@ -17,17 +17,8 @@ export const getOneRelationship = async (
   req: TypedRequest<RelationshipParams, any>,
   res: Response,
 ) => {
-  const { pipelineId } = req.params;
-
   try {
-    const relationship = await DI.relationshipRepository.findOne(pipelineId);
-
-    if (!relationship) {
-      return res.status(404).json({
-        message: 'Relationship not found',
-      });
-    }
-
+    const { relationship } = res.locals;
     return res.json(relationship);
   } catch (e: any) {
     return res.status(400).json({
