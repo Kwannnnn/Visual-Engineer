@@ -109,13 +109,6 @@ relationshipRouter.get('/:pipelineId', relationshipController.getOneRelationship
  *       "message": "The connector must be of type Pipeline."
  *     }
  *
- * @apiError InvalidRelationship The provided items cannot be associated.
- * @apiErrorExample InvalidRelationship:
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "message": "You cannot associate a Pump with a Blower."
- *     }
- *
  * @apiError ConnectItemToItself Items to connect are the same
  * @apiErrorExample ConnectItemToItself:
  *     HTTP/1.1 400 BAD REQUEST
@@ -127,7 +120,15 @@ relationshipRouter.get('/:pipelineId', relationshipController.getOneRelationship
  * @apiErrorExample ConnectPipeToPipe:
  *     HTTP/1.1 400 BAD REQUEST
  *     {
- *       "message": "Connected item cannot be a pipe item"
+ *       "message": "Cannot connect a pipeline to a pipeline"
+ *     }
+ *
+ *  * @apiError RelationshipExists When there is an existing relationship with
+ * the provided pipeline
+ * @apiErrorExample RelationshipExists:
+ *     HTTP/1.1 400 BAD REQUEST
+ *     {
+ *       "message": "Relationship already exists"
  *     }
  */
 relationshipRouter.post(
