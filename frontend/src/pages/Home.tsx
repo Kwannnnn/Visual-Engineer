@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  ReactFlowProvider, Node, Edge, updateEdge, Connection
+  ReactFlowProvider,
+  Node,
+  Edge,
+  updateEdge,
+  Connection
 } from 'react-flow-renderer';
 import classNames from 'classnames';
 import axios, { AxiosError } from 'axios';
+import { useNavigate } from 'react-router-dom';
 import {
   AlertPane,
   PropertiesSidebar,
@@ -16,7 +21,8 @@ import useAPIUtil from '../util/hooks/useAPIUtil';
 import {
   getBoardObjects, getObjectTypes, getTypeProperties, getObjectEdges, updateBoardObject, createRelationship, createItem,
   deleteBoardObject,
-  updateRelationship
+  updateRelationship,
+  getBoardById
 } from '../util/api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
 import transformConnectionToEdge from '../util/transformConnectionToEdge';
@@ -27,8 +33,9 @@ import { IPropertyListing } from '../typings/IPropertyListing';
 import IOConnectionContext from '../typings/IOConnectionContext';
 
 function Home() {
+  const navigate = useNavigate();
   // States
-  const [currentBoardId, setCurrentBoardId] = useState<number>(1);
+  const [currentBoardId, setCurrentBoardId] = useState<number>(0);
   const [currentNode, setCurrentNode] = useState<Node | Edge | null>(null);
   const [nodes, setNodes] = useState<Node[]>([]);
   const [properties, setProperties] = useState<IPropertyListing[]>([]);
@@ -37,19 +44,27 @@ function Home() {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [edges, setEdges] = useState<Edge[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [boards, setBoards] = useState<IBoard[]>([
-    { id: 1, name: 'PTPFu01' },
-    { id: 2, name: 'PTPFu02' }
-  ]);
+  const [boards, setBoards] = useState<IBoard[]>([]);
 
   // Utility functions callbacks
-  const getBoardObjectsCallback = useCallback(async () => getBoardObjects(currentBoardId), [currentBoardId]);
-  const getEdgesCallback = useCallback(async () => getObjectEdges(), [currentBoardId]);
+  const getBoardObjectsCallback = useCallback(
+    async () => currentBoardId !== 0 && getBoardObjects(currentBoardId),
+    [currentBoardId]
+  );
+  const getEdgesCallback = useCallback(
+    async () => currentBoardId !== 0 && getObjectEdges(),
+    [currentBoardId]
+  );
   const getObjectTypesCallback = useCallback(async () => getObjectTypes(), []);
-  const getPropertiesCallback = useCallback(async () => currentNode && getTypeProperties(currentNode.data.type), [currentNode]);
+  const getPropertiesCallback = useCallback(
+    async () => currentNode && getTypeProperties(currentNode.data.type),
+    [currentNode]
+  );
 
   // API Util Hooks
-  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<Partial<IObjectContext>[]>(getBoardObjectsCallback);
+  const { data: boardObjects } = useAPIUtil<
+    Partial<IObjectContext>[]
+  >(getBoardObjectsCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -90,7 +105,9 @@ function Home() {
       if (axios.isAxiosError(err)) {
         const { response } = err;
         if (response && (response.status === 500 || response.status === 0)) {
-          setErrorMessage('Unable to connect to the server. Please try again later.');
+          setErrorMessage(
+            'Unable to connect to the server. Please try again later.'
+          );
           return;
         }
       }
@@ -99,6 +116,8 @@ function Home() {
     setCurrentNode(null);
     const newNodes = nodes.filter((n) => n.data.tag !== currentNode.data.tag);
     setNodes(newNodes);
+    const newEdges = edges.filter((e) => e.data.tag !== currentNode.data.tag);
+    setEdges(newEdges);
   }, [currentNode]);
 
   /**
@@ -106,35 +125,51 @@ function Home() {
    * It updates the position of the node in the database. On error it will call the
    * onErrorHandler function.
    */
-  const onNodeMoveHandler = useCallback((node: Node) => {
+  const onNodeMoveHandler = (node: Node) => {
     const { x, y } = node.position;
 
     if (!node.data.tag) return;
     updateBoardObject(currentBoardId, node.data.tag, {
       x: Math.round(x * 1000) / 1000,
       y: Math.round(y * 1000) / 1000,
+    }).then((item) => {
+      const newNodes: Node[] = nodes.filter((n) => n.data.tag !== node.id);
+      const nodeToChange: Node | undefined = nodes.find((n) => n.data.tag === node.id);
+
+      nodeToChange!.position.x = item.x;
+      nodeToChange!.position.y = item.y;
+
+      newNodes.push(nodeToChange!);
+      setNodes(newNodes);
     }).catch((err: AxiosError) => {
       onErrorHandler(err, node);
     });
-  }, [currentBoardId, onErrorHandler]);
+  };
 
   /**
    * This function is called when a field of a Node/Edge has been updated in the
    * Properties Sidebar. It updates the changed field of the node/edge in the database.
    */
-  const onFieldChangeHandler = useCallback((node: Node | Edge, field: string, value: string) => {
-    if (!node.data.tag) return;
-    updateBoardObject(currentBoardId, node.data.tag, {
-      [field]: value,
-    }).catch((err: AxiosError) => {
-      onErrorHandler(err, node);
-    });
-  }, [currentBoardId, onErrorHandler]);
+  const onFieldChangeHandler = useCallback(
+    (node: Node | Edge, field: string, value: string) => {
+      if (!node.data.tag) return;
+      updateBoardObject(currentBoardId, node.data.tag, {
+        [field]: value,
+      }).catch((err: AxiosError) => {
+        onErrorHandler(err, node);
+      });
+    },
+    [currentBoardId, onErrorHandler]
+  );
 
-  const postItem = (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item }).catch((err) => {
-    setErrorMessage(err.response?.data?.message || 'Unknown error');
-    return Promise.reject();
-  });
+  const postItem = useCallback(
+    (item: Partial<IObjectContext>) => createItem(currentBoardId, { ...item }).catch((err) => {
+      setErrorMessage(err.response?.data?.message || 'Unknown error');
+      return Promise.reject();
+    }),
+    [currentBoardId]
+  );
+
   const postRelationship = (relationship: Partial<IOConnectionContext>) => createRelationship(relationship).catch((err) => {
     setErrorMessage(err.response?.data?.message || 'Unknown error');
     return Promise.reject();
@@ -164,6 +199,8 @@ function Home() {
             target: result.secondItem.tag,
             label: pipelineTag,
             type: 'straight',
+            labelStyle: { cursor: 'pointer' },
+            labelBgStyle: { cursor: 'pointer' },
             style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
             data: {
               type: 'pipeline',
@@ -198,13 +235,15 @@ function Home() {
           setCurrentNode(draftConnection);
         });
     });
-  }, []);
+  }, [currentBoardId]);
 
   // Use effects
   useEffect(() => {
     if (!boardObjects) return;
     const transformedNodes = transformObjectToNode(boardObjects);
     setNodes(transformedNodes);
+    // console.log('nodes: ', nodes);
+    // console.log('boardObjects: ', boardObjects);
   }, [boardObjects]);
 
   useEffect(() => {
@@ -231,13 +270,57 @@ function Home() {
     }
   }, [errorMessage]);
 
+  useEffect(() => {
+    const boardsLocalStorage: IBoard[] = JSON.parse(
+      localStorage.getItem('boards') || '[]'
+    );
+    const newBoardsLocalStorage: IBoard[] = [...boardsLocalStorage];
+
+    boardsLocalStorage.forEach((b, i) => {
+      getBoardById(b.id).catch(() => {
+        newBoardsLocalStorage.splice(i, 1);
+      });
+    });
+
+    setBoards(newBoardsLocalStorage);
+  }, []);
+
+  useEffect(() => {
+    const currentBoardLocalStorage = localStorage.getItem('currentBoard');
+    if (!currentBoardLocalStorage) return;
+
+    const currentBoard: number = parseInt(currentBoardLocalStorage, 10);
+    setCurrentBoardId(currentBoard);
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem('currentBoard')) return;
+    navigate('/projects');
+  }, [currentBoardId]);
+
   const handleTab = (id: number) => {
-    setCurrentNode(null);
     setCurrentBoardId(id);
+    setCurrentNode(null);
+    localStorage.setItem('currentBoard', id.toString());
   };
 
-  const handleDropNode = (node: Node) => {
-    setCurrentNode(node);
+  const handleCloseTab = (id: number) => {
+    const newBoards = boards.filter((b) => b.id !== id);
+
+    if (id === currentBoardId) {
+      const newCurrentBoard = newBoards.at(newBoards.length - 1)?.id;
+      setCurrentBoardId(newCurrentBoard || 0);
+
+      if (newCurrentBoard) {
+        localStorage.setItem('currentBoard', newCurrentBoard.toString());
+      } else {
+        localStorage.removeItem('currentBoard');
+      }
+    }
+
+    setBoards(newBoards);
+    setCurrentNode(null);
+    localStorage.setItem('boards', JSON.stringify(newBoards));
   };
 
   const handleEdgeUpdate = (oldEdge: Edge, newConnection: Connection) => {
@@ -252,9 +335,49 @@ function Home() {
     setEdges((els) => updateEdge(oldEdge, newConnection, els));
   };
 
+  const handlePostInitialItem = useCallback((initialItem: Partial<IObjectContext>) => {
+    postItem(initialItem).then(
+      (item) => {
+        // onFullfilled
+        const newNode = transformObjectToNode([item])[0];
+
+        setNodes((oldNodes) => oldNodes.concat(newNode));
+        setCurrentNode(newNode);
+      }
+    );
+  }, [postItem]);
+
+  const handlePublishItem = (publishingItem: Partial<IObjectContext>) => {
+    postItem(publishingItem).then((item) => {
+      if (!currentNode) return;
+
+      const n: Node | undefined = nodes.find(
+        (node) => node.id === currentNode.id
+      );
+      const newNodes: Node[] = nodes.filter((node) => node.id !== n!.id);
+
+      const {
+        tag, type, x, y,
+      } = item;
+
+      n!.id = tag;
+      n!.data = {
+        dataCY: `itemNode-${tag}`,
+        type,
+        position: { x, y },
+        ...item,
+      };
+      n!.data.isDraft = false;
+      newNodes.push(n!);
+
+      setNodes(newNodes);
+      setCurrentNode(n!);
+    });
+  };
+
   return (
     <ReactFlowProvider>
-      <div className={classNames('flex-1 h-full', {
+      <div className={classNames('flex-1 h-full overflow-hidden', {
         'z-0': showModal,
       })}
       >
@@ -273,6 +396,7 @@ function Home() {
               currentBoardId={currentBoardId}
               boards={boards}
               onSelect={handleTab}
+              onClose={handleCloseTab}
             />
             {errorMessage && (
               <AlertPane
@@ -282,14 +406,13 @@ function Home() {
             )}
             <Board
               initialNodes={nodes}
-              onDropNodeHandler={handleDropNode}
               onEdgeConnect={(type, source, target) => onConnectionCallback(type, source, target)}
               onEdgeUpdate={handleEdgeUpdate}
               onNodeClick={(node) => node.id !== currentNode?.id && setCurrentNode(node)}
               onEdgeClick={(edge) => edge.id !== currentNode?.id && setCurrentNode(edge)}
               onNodeMove={onNodeMoveHandler}
               initialEdges={edges}
-              postItem={postItem}
+              postInitialItem={handlePostInitialItem}
             />
           </div>
           <PropertiesSidebar
@@ -300,8 +423,7 @@ function Home() {
             initialProperties={properties}
             onClose={() => setCurrentNode(null)}
             onFieldChange={onFieldChangeHandler}
-            postItem={postItem}
-            fetchBoardObjects={fetchBoardObjects}
+            publishItem={handlePublishItem}
             onDelete={() => setShowModal(true)}
           />
         </div>
@@ -314,11 +436,14 @@ function Home() {
           className="modal fixed z-1 inset-0 bg-slate-50 bg-opacity-70"
           buttonText="Delete"
           title="Delete item"
-          description={`Are you sure you want to delete ${currentNode?.data.type}
-                        with tag ${currentNode?.data.tag}?`}
           closeModal={() => setShowModal(false)}
           onButtonClick={onNodeDeleteHandler}
-        />
+        >
+          <p className="text-sm text-gray-500 mt-1.5">
+            {`Are you sure you want to delete ${currentNode?.data.type}
+                        with tag ${currentNode?.data.tag}?`}
+          </p>
+        </Modal>
       )}
     </ReactFlowProvider>
   );

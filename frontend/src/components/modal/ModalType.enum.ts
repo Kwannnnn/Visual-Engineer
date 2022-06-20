@@ -1,7 +1,8 @@
 enum ModalType {
   Info,
   Normal,
-  Destructive
+  Destructive,
+  Link
 }
 
 export default ModalType;
