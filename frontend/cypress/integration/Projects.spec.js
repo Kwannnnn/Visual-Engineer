@@ -19,8 +19,6 @@ describe('Projects page', () => {
       cy.get('[data-cy="boards-list"]')
         .should('exist')
         .and('be.visible')
-        .children()
-        .should('have.length', 3);
 
       cy.get('[data-cy="board-1"]')
         .should('exist')
