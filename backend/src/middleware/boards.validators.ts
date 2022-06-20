@@ -56,7 +56,6 @@ export const validateRequestBody = async (
   next: NextFunction,
 ) => {
   validate([
-    ...nameMissing,
     ...boardNotFound(req, res),
   ])(req, res, next);
 };
