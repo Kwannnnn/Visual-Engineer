@@ -21,18 +21,14 @@ import ItemNode from './ItemNode';
 interface NewBoardProps {
   initialNodes?: Node[];
   initialEdges?: Edge[];
-  onDropNodeHandler?: (node: Node) => void;
   onNodeClick: (node: Node) => void;
   onEdgeClick: (edge: Edge) => void;
   onEdgeUpdate?: (oldEdge: Edge, newConnection: Connection) => void;
   onNodeMove?: (node: Node) => void;
-  onEdgeConnect: (type: string, firstItemId: string, secondItemId: string) => void;
-  postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
+  postInitialItem: (item: Partial<IObjectContext>) => void;
+  onEdgeConnect: (type: string, firstItemTag: string, secondItemTag: string) => void;
 }
 
-// This string key must match the key in the nodeTypes object in order to render the correct
-// custom node. Otherwise a default node will be rendered.
-const NODE_TYPE = 'itemNode';
 const nodeTypes: NodeTypes = {
   itemNode: ItemNode,
 };
@@ -41,12 +37,11 @@ function Board(props: NewBoardProps) {
   const {
     initialNodes,
     initialEdges,
-    onDropNodeHandler,
     onNodeClick,
     onEdgeClick,
     onNodeMove,
+    postInitialItem,
     onEdgeConnect,
-    postItem,
     onEdgeUpdate,
   } = props;
 
@@ -73,7 +68,7 @@ function Board(props: NewBoardProps) {
   const onConnect = useCallback((params: Connection) => {
     if (!(params.source && params.target)) return;
     onEdgeConnect('pipeline', params.source, params.target);
-  }, [setEdges]);
+  }, [setEdges, onEdgeConnect]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -104,26 +99,10 @@ function Board(props: NewBoardProps) {
         y: position.y,
         type: name,
       };
-      postItem(initialItem).then((item) => { // onFullfilled
-        const newNode = {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          id: item.id!,
-          type: NODE_TYPE,
-          position,
-          data: {
-            type: name,
-            id: item.id,
-            dataCY: `itemNode-${item.id}`,
-          },
-        };
 
-        setNodes((nodesState) => nodesState.concat(newNode));
-        if (onDropNodeHandler) onDropNodeHandler(newNode);
-      }, () => { // onRejected
-
-      });
+      postInitialItem(initialItem);
     },
-    [reactFlowInstance]
+    [reactFlowInstance, postInitialItem]
   );
 
   const onNodeDragStop = useCallback((event: React.MouseEvent, node: Node) => {
@@ -146,7 +125,6 @@ function Board(props: NewBoardProps) {
         onNodeClick={(e, n) => onNodeClick(n)}
         onEdgeClick={(e, n) => onEdgeClick(n)}
         onEdgeUpdate={onEdgeUpdate}
-        fitView
         connectionLineType={ConnectionLineType.Straight}
         onNodeDragStop={(e, n) => onNodeDragStop(e, n)}
       >

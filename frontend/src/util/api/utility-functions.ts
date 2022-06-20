@@ -6,15 +6,14 @@ import IOConnectionContext from '../../typings/IOConnectionContext';
 const url = process.env.REACT_APP_API_URL;
 
 export async function getAllBoards() {
-  await axios.get(`${url}/v1/boards`)
-    .then((response) => response.data)
-    .catch((err) => err.data);
+  const response = await axios.get(`${url}/v1/boards`);
+  return response.data;
 }
 
-export async function getBoardById(boardId: number) {
-  await axios.get(`${url}/v1/boards/${boardId}`)
-    .then((response) => response.data)
-    .catch((err) => err.data);
+export async function getBoardById(id: number) {
+  const result = await axios.get(`${url}/v1/boards/${id}`);
+
+  return result.data;
 }
 
 export async function getBoardObjects(boardId: number) {
@@ -26,23 +25,19 @@ export async function getBoardObjects(boardId: number) {
 }
 
 export async function createBoard(properties: Partial<IBoard>) {
-  await axios.post(`${url}/v1/boards/`, {
+  const result = await axios.post(`${url}/v1/boards/`, {
     ...properties,
-  })
-    .then((response) => response.data)
-    .catch((err) => err.data);
+  });
+
+  return result.data;
 }
 
 export async function createItem(boardId: number, properties: Partial<IObjectContext>) {
   const result = await axios.post(`${url}/v1/boards/${boardId}/objects/`, {
     ...properties,
-  })
-    .then((response) => response.data)
-    .catch((err) => {
-      throw err;
-    });
+  });
 
-  return result;
+  return result.data;
 }
 
 export async function updateBoard(boardId: number, properties: Partial<IBoard>) {

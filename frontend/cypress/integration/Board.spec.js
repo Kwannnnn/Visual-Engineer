@@ -5,6 +5,7 @@ import {
 beforeEach(() => {
   cy.visit('http://localhost:8080');
   cy.viewport(1440, 900);
+  cy.get('[data-cy="board-1"]').click();
 });
 
 describe('ItemNode', () => {
@@ -16,6 +17,7 @@ describe('ItemNode', () => {
         .move({
           deltaX: 10,
           deltaY: 0,
+          force: true,
         });
 
       cy.wait('@patchObject').should(({ request, response }) => {
