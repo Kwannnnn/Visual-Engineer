@@ -105,6 +105,7 @@ export async function updateRelationship(
   secondItem: string
 ) {
   const response = await axios.patch(`${url}/v2/relationships/${pipelineId}`, {
+    pipeline: pipelineId,
     firstItem,
     secondItem,
   });
