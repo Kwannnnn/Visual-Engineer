@@ -153,7 +153,7 @@ function Home() {
   const onFieldChangeHandler = useCallback(
     (node: Node | Edge, field: string, value: string) => {
       if (!node.data.tag) return;
-      updateBoardObject(currentBoardId, node.data.tag, {
+      updateBoardObject(currentBoardId, node.id, {
         [field]: value,
       }).catch((err: AxiosError) => {
         onErrorHandler(err, node);

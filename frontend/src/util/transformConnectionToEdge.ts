@@ -20,7 +20,7 @@ export default function transformConnectionToEdge(allEdges: Partial<IOConnection
       id: pipeline,
       source: firstItem,
       target: secondItem,
-      label: pipeline,
+      label: pipelineObject.tag,
       type: 'straight',
       labelStyle: { cursor: 'pointer' },
       labelBgStyle: { cursor: 'pointer' },
