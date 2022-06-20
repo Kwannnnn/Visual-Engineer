@@ -62,14 +62,14 @@ function Home() {
   );
 
   // API Util Hooks
-  const { data: boardObjects } = useAPIUtil<
+  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<
     Partial<IObjectContext>[]
   >(getBoardObjectsCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: typeProperties } = useAPIUtil<any>(getPropertiesCallback);
-  const { data: objectEdges } = useAPIUtil<IOConnectionContext[]>(getEdgesCallback);
+  const { data: objectEdges, fetch: fetchBoardEdges } = useAPIUtil<IOConnectionContext[]>(getEdgesCallback);
 
   // Event Handlers
   const onErrorHandler = useCallback((error: AxiosError, node: Node | Edge) => {
@@ -155,6 +155,12 @@ function Home() {
       if (!node.data.tag) return;
       updateBoardObject(currentBoardId, node.id, {
         [field]: value,
+      }).then(() => {
+        fetchBoardObjects();
+
+        if (node.data.type === 'pipeline') {
+          fetchBoardEdges();
+        }
       }).catch((err: AxiosError) => {
         onErrorHandler(err, node);
       });
