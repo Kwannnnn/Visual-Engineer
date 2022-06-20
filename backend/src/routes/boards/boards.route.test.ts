@@ -244,7 +244,7 @@ describe('PATCH Board endpoints', () => {
     });
   });
 
-  describe('DELETE /boards/:id/objects/:tag', () => {
+  describe('DELETE /boards/:boardId/objects/:objectId', () => {
     describe('given the board exists', () => {
       describe('given the item exists', () => {
         it('should return 204', async () => {

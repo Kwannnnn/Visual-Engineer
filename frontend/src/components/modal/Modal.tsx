@@ -14,12 +14,13 @@ interface ModalProps {
   description: string;
   buttonText: string;
   className?: string;
+  dataCY?: string;
   onButtonClick?: () => void;
 }
 
 function Modal(props: ModalProps) {
   const {
-    showModal, className = '',
+    showModal, className = '', dataCY = 'modal',
     title, description, modalType = ModalType.Normal,
     buttonText,
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -57,7 +58,10 @@ function Modal(props: ModalProps) {
       block: showModal,
     })}
     >
-      <div className="bg-white rounded-lg overflow-hidden shadow-2xl transform transition-all border sm:max-w-md">
+      <div
+        data-cy={dataCY}
+        className="bg-white rounded-lg overflow-hidden shadow-2xl transform transition-all border sm:max-w-md"
+      >
         <div className="flex items-start space-x-4 px-6 py-5">
           {modalType === ModalType.Destructive && (
             <div className="flex justify-center items-center p-3 rounded-full bg-red-100">
@@ -74,7 +78,10 @@ function Modal(props: ModalProps) {
             <p className="text-sm text-gray-500 mt-1.5">{description}</p>
           </div>
         </div>
-        <div className="flex justify-end space-x-2 bg-gray-50 px-6 py-2">
+        <div
+          data-cy={`${dataCY}-buttons`}
+          className="flex justify-end space-x-2 bg-gray-50 px-6 py-2"
+        >
           {buttons()}
         </div>
       </div>

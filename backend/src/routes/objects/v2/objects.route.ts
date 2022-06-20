@@ -15,6 +15,10 @@ const objectsRouter: Router = Router();
  * HTTP/1.1 200 OK
  *      [
  *          {
+ *              "name": "tag",
+ *              "type": "string"
+ *          },
+ *          {
  *              "name": "name",
  *              "type": "string"
  *          },

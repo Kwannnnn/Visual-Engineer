@@ -16,8 +16,8 @@ const objectsRouter: Router = Router();
  * HTTP/1.1 200 OK
  *     [
  *       {
- *          "id": "12",
- *          "tag": "112-3sa2-da2",
+ *          "id": "112-3sa2-da2",
+ *          "tag": "BL01",
  *          "name": "Blower",
  *          "length": "23",
  *          "width": "23",
@@ -27,8 +27,8 @@ const objectsRouter: Router = Router();
  *          "y": "50"
  *       },
  *       {
- *          "id": "34",
- *          "tag": "113-7d87-aa2",
+ *          "id": "113-7d87-aa2",
+ *          "tag": "PU01",
  *          "name": "Pump",
  *          "length": "37",
  *          "width": "37",
@@ -49,13 +49,13 @@ objectsRouter.get('/', objectController.getAll);
  * @apiDeprecated use (#Board:GetBoardObjects) to fetch all board items instead
  * @apiName GetObject
  * @apiGroup Object
- * @apiParam {Integer} id Object identifier
+ * @apiParam {String} id Object identifier
  * @apiSuccess (Success 200) {Object} object A resource response containing an object.
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *        "id": " 12",
- *        "tag": "112-3sa2-da2",
+ *        "id": "112-3sa2-da2",
+ *        "tag": "BL01",
  *        "name": "Blower",
  *        "length": "23",
  *        "width": "23",

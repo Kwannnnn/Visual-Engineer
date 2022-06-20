@@ -2,6 +2,7 @@
 import {
   Property, PrimaryKey, ManyToOne, Entity,
 } from '@mikro-orm/core';
+import { v4 } from 'uuid';
 import { ObjectProperty, PropertyType } from '../../util/properties';
 // eslint-disable-next-line
 import Board from './Board';
@@ -13,16 +14,17 @@ import Board from './Board';
 })
 export default abstract class Item {
   constructor(
-    tag: string,
     type: string,
     x: number,
     y: number,
+    tag?: string,
     name?: string,
     length?: number,
     width?: number,
     depth?: number,
     diameter?: number,
   ) {
+    this.id = v4();
     this.tag = tag;
     this.name = name;
     this.length = length;
@@ -34,17 +36,17 @@ export default abstract class Item {
     this.y = y;
   }
 
-  @PrimaryKey({ autoincrement: true })
-    id!: number;
+  @PrimaryKey({ nullable: false })
+    id!: string;
 
   @Property({ nullable: false })
     type!: string;
 
-  @Property({ nullable: false })
-  @ObjectProperty(PropertyType.STRING)
-    tag!: string;
-
   @Property({ nullable: true })
+  @ObjectProperty(PropertyType.STRING)
+    tag?: string;
+
+  @Property({ nullable: true, type: 'string' })
   @ObjectProperty(PropertyType.STRING)
     name?: string;
 

@@ -285,7 +285,7 @@ describe('PATCH /relationships/:pipelineId', () => {
   });
 });
 
-describe('DELETE /relationships/:pipelineTag', () => {
+describe('DELETE /relationships/:pipelineId', () => {
   describe('given the relationship exists', () => {
     it('should return 204 and the other items should still exist', async () => {
       const relationship = sampleRelationships[0];

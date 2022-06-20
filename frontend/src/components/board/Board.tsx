@@ -23,10 +23,10 @@ interface NewBoardProps {
   initialEdges?: Edge[];
   onDropNodeHandler?: (node: Node) => void;
   onNodeClick: (node: Node) => void;
-  onEdgesDelete: (edge: Edge[]) => void;
   onEdgeClick: (edge: Edge) => void;
   onEdgeUpdate?: (oldEdge: Edge, newConnection: Connection) => void;
   onNodeMove?: (node: Node) => void;
+  onEdgeConnect: (type: string, firstItemId: string, secondItemId: string) => void;
   postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
 }
 
@@ -37,15 +37,6 @@ const nodeTypes: NodeTypes = {
   itemNode: ItemNode,
 };
 
-let edgeID = 0;
-
-const getEdgeId = () => {
-  // Used for Cypress to track unsaved item edges
-  const result = `itemTmpEdge_${edgeID}`;
-  edgeID += 1;
-  return result;
-};
-
 function Board(props: NewBoardProps) {
   const {
     initialNodes,
@@ -53,19 +44,20 @@ function Board(props: NewBoardProps) {
     onDropNodeHandler,
     onNodeClick,
     onEdgeClick,
-    onEdgesDelete,
     onNodeMove,
+    onEdgeConnect,
     postItem,
     onEdgeUpdate,
   } = props;
 
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
-  // State containing the nodes of the board
 
+  // State containing the nodes of the board
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
 
   // State containing the edges of the board
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
   // State containing the React Flow Instance
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance>();
 
@@ -78,34 +70,10 @@ function Board(props: NewBoardProps) {
   }, [initialEdges]);
 
   // Whenever a edge gets created update the edges state
-  // eslint-disable-next-line max-len
-  const onConnect = useCallback(
-    (params: Connection) => {
-      const newConnection: Edge = {
-        id: `${params.source}_${params.target}`,
-        source: params.source ?? '',
-        target: params.target ?? '',
-        label: 'Draft Pipeline',
-        labelBgPadding: [8, 4],
-        labelBgBorderRadius: 4,
-        labelBgStyle: {
-          cursor: 'pointer', fill: '#FFCC00', color: '#fff',
-        },
-        type: 'straight',
-        sourceHandle: params.sourceHandle ?? '',
-        targetHandle: params.targetHandle ?? '',
-        style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
-        data: {
-          type: 'pipeline',
-        },
-        className: getEdgeId(),
-      };
-
-      setEdges((edgesState) => edgesState.concat(newConnection));
-      onEdgeClick(newConnection);
-    },
-    [setEdges]
-  );
+  const onConnect = useCallback((params: Connection) => {
+    if (!(params.source && params.target)) return;
+    onEdgeConnect('pipeline', params.source, params.target);
+  }, [setEdges]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -116,7 +84,6 @@ function Board(props: NewBoardProps) {
   // The callback that creates the node whenever a new node is dropped on the board
   const onDrop = useCallback(
     (event: React.DragEvent) => {
-      // TODO: improve those null checks
       if (!reactFlowInstance || !reactFlowWrapper || !reactFlowWrapper.current) return;
 
       event.preventDefault();
@@ -137,21 +104,23 @@ function Board(props: NewBoardProps) {
         y: position.y,
         type: name,
       };
-      postItem(initialItem).then((item) => {
+      postItem(initialItem).then((item) => { // onFullfilled
         const newNode = {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          id: item.tag!,
+          id: item.id!,
           type: NODE_TYPE,
           position,
           data: {
             type: name,
-            tag: item.tag,
-            dataCY: `itemNode-${item.tag}`,
+            id: item.id,
+            dataCY: `itemNode-${item.id}`,
           },
         };
 
         setNodes((nodesState) => nodesState.concat(newNode));
         if (onDropNodeHandler) onDropNodeHandler(newNode);
+      }, () => { // onRejected
+
       });
     },
     [reactFlowInstance]
@@ -176,7 +145,6 @@ function Board(props: NewBoardProps) {
         deleteKeyCode={null}
         onNodeClick={(e, n) => onNodeClick(n)}
         onEdgeClick={(e, n) => onEdgeClick(n)}
-        onEdgesDelete={(ed) => onEdgesDelete(ed)}
         onEdgeUpdate={onEdgeUpdate}
         fitView
         connectionLineType={ConnectionLineType.Straight}

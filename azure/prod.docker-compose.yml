@@ -8,6 +8,11 @@ services:
       POSTGRES_USER: $POSTGRES_USER
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_DB: $POSTGRES_DB
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: '0.5G'
   init:
     # image: visualengineer.azurecr.io/init:latest
     image: registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/init:$IMAGE_TAG
@@ -15,14 +20,25 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: '0.2G'
     build:
       context: ../backend
       dockerfile: init.Dockerfile
     environment:
       DATABASE_URL: postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres:5432/$POSTGRES_DB
+    depends_on:
+      - postgres
   backend:
     image: registry.gitlab.com/saxion.nl/hbo-ict/2.4-project/e1/dhi2ve1/backend:$IMAGE_TAG
     container_name: ve-backend
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: '0.5G'
     domainname: $DOMAIN_NAME
     depends_on:
       - init

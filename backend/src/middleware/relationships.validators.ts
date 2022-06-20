@@ -147,7 +147,7 @@ export const deleteValidators = (
     body()
       .custom(() => DI
         .itemRepository
-        .findOne({ id: +req.params.pipelineId })
+        .findOne({ id: req.params.pipelineId })
         .then((pipeline) => {
           if (!pipeline) {
             return Promise.reject();

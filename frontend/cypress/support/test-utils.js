@@ -49,3 +49,8 @@ export const dragAndDropPipeFitting = () => {
   cy.get('@board')
     .trigger('drop', { dataTransfer });
 };
+
+export const connectTankToPipeFitting = () => {
+  cy.get('[data-cy=right-itemNode-T01]').click();
+  cy.get('[data-cy=left-itemNode-PU01]').click();
+}

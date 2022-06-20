@@ -31,7 +31,7 @@ export function checkRequiredAttributes(body: any): void {
   });
 
   requiredAttributes.forEach((a) => {
-    if (!body[a]) {
+    if (body[a] === undefined) {
       throw new ValidationError(`Attribute ${a} is required`, 400);
     }
   });
