@@ -11,9 +11,9 @@ export async function getAllBoards() {
 }
 
 export async function getBoardById(id: number) {
-  await axios.get(`${url}/v1/boards/${id}`)
-    .then((response) => response.data)
-    .catch((err) => err.data);
+  const result = await axios.get(`${url}/v1/boards/${id}`);
+
+  return result.data;
 }
 
 export async function getBoardObjects(id: number) {

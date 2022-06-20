@@ -38,7 +38,7 @@ function Projects() {
               <span className="col-span-10 sm:col-span-11">Project name</span>
             </div>
           </div>
-          <div className="flex flex-col space-y-1">
+          <div data-cy="boards-list" className="flex flex-col space-y-1">
             {boardsState.map((board) => (
               <Link
                 key={board.id}

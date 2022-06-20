@@ -27,9 +27,11 @@ function Tab({
   };
 
   return (
-    <div className={classNames('flex-1 flex max-w-xs items-center', {
-      'border-b-4': active,
-    })}
+    <div
+      data-cy={`tab-board-${id}`}
+      className={classNames('flex-1 flex max-w-xs items-center', {
+        'border-b-4': active,
+      })}
     >
       <button
         data-cy={`tab-project-${id}`}

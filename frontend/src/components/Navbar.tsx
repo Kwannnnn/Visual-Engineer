@@ -33,6 +33,7 @@ export default function Navbar(props: NavbarProps) {
           </header>
           <NavLink
             className="font-medium text-slate-500 hover:text-slate-700"
+            data-cy="nav-projects"
             to="/projects"
           >
             Projects

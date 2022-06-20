@@ -25,7 +25,10 @@ function TabBar({
   };
 
   return (
-    <div className="bg-white border-b border-slate-200 z-10 w-full h-12 flex overflow-hidden">
+    <div
+      data-cy="tabBar"
+      className="bg-white border-b border-slate-200 z-10 w-full h-12 flex overflow-hidden"
+    >
       {boards.map((board) => (
         <Tab
           key={board.id}

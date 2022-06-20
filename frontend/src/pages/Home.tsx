@@ -21,7 +21,8 @@ import useAPIUtil from '../util/hooks/useAPIUtil';
 import {
   getBoardObjects, getObjectTypes, getTypeProperties, getObjectEdges, updateBoardObject, createRelationship, createItem,
   deleteBoardObject,
-  updateRelationship
+  updateRelationship,
+  getBoardById
 } from '../util/api/utility-functions';
 import transformObjectToNode from '../util/transformObjectToNode';
 import transformConnectionToEdge from '../util/transformConnectionToEdge';
@@ -273,7 +274,15 @@ function Home() {
     const boardsLocalStorage: IBoard[] = JSON.parse(
       localStorage.getItem('boards') || '[]'
     );
-    setBoards(boardsLocalStorage);
+    const newBoardsLocalStorage: IBoard[] = [...boardsLocalStorage];
+
+    boardsLocalStorage.forEach((b, i) => {
+      getBoardById(b.id).catch(() => {
+        newBoardsLocalStorage.splice(i, 1);
+      });
+    });
+
+    setBoards(newBoardsLocalStorage);
   }, []);
 
   useEffect(() => {
@@ -368,10 +377,9 @@ function Home() {
 
   return (
     <ReactFlowProvider>
-      <div
-        className={classNames('flex-1 h-full', {
-          'z-0': showModal,
-        })}
+      <div className={classNames('flex-1 h-full overflow-hidden', {
+        'z-0': showModal,
+      })}
       >
         <div className="grid grid-cols-20 h-full">
           <Toolbox

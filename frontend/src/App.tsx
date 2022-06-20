@@ -45,6 +45,10 @@ function App() {
         setErrorMessage(err.response?.data?.message || 'Unknown error');
       });
   };
+  // useEffect(() => {
+  //   localStorage.removeItem('currentBoard');
+  //   localStorage.removeItem('boards');
+  // }, []);
 
   return (
     <div className="flex flex-col h-screen">
