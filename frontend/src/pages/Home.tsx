@@ -62,14 +62,14 @@ function Home() {
   );
 
   // API Util Hooks
-  const { data: boardObjects } = useAPIUtil<
+  const { data: boardObjects, fetch: fetchBoardObjects } = useAPIUtil<
     Partial<IObjectContext>[]
   >(getBoardObjectsCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: objectTypes } = useAPIUtil<any>(getObjectTypesCallback);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: typeProperties } = useAPIUtil<any>(getPropertiesCallback);
-  const { data: objectEdges } = useAPIUtil<IOConnectionContext[]>(getEdgesCallback);
+  const { data: objectEdges, fetch: fetchBoardEdges } = useAPIUtil<IOConnectionContext[]>(getEdgesCallback);
 
   // Event Handlers
   const onErrorHandler = useCallback((error: AxiosError, node: Node | Edge) => {
@@ -79,7 +79,7 @@ function Home() {
       node.data.isDraft = true;
       setErrorMessage(`${node.data.type} ${id} does not exist in the database!
         It has been marked as draft`);
-      node.data.tag = undefined;
+      node.data.id = undefined;
       setCurrentNode(node);
     }
   }, []);
@@ -94,13 +94,13 @@ function Home() {
 
     if (currentNode.data.isDraft) {
       setCurrentNode(null);
-      const newNodes = nodes.filter((n) => n.data.tag !== currentNode.data.tag);
+      const newNodes = nodes.filter((n) => n.data.id !== currentNode.data.id);
       setNodes(newNodes);
       return;
     }
 
     try {
-      await deleteBoardObject(currentBoardId, currentNode.data.tag);
+      await deleteBoardObject(currentBoardId, currentNode.data.id);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const { response } = err;
@@ -114,7 +114,7 @@ function Home() {
     }
 
     setCurrentNode(null);
-    const newNodes = nodes.filter((n) => n.data.tag !== currentNode.data.tag);
+    const newNodes = nodes.filter((n) => n.data.id !== currentNode.data.id);
     setNodes(newNodes);
     const newEdges = edges.filter((e) => e.data.tag !== currentNode.data.tag);
     setEdges(newEdges);
@@ -128,8 +128,8 @@ function Home() {
   const onNodeMoveHandler = (node: Node) => {
     const { x, y } = node.position;
 
-    if (!node.data.tag) return;
-    updateBoardObject(currentBoardId, node.data.tag, {
+    if (!node.data.id) return;
+    updateBoardObject(currentBoardId, node.data.id, {
       x: Math.round(x * 1000) / 1000,
       y: Math.round(y * 1000) / 1000,
     }).then((item) => {
@@ -153,8 +153,14 @@ function Home() {
   const onFieldChangeHandler = useCallback(
     (node: Node | Edge, field: string, value: string) => {
       if (!node.data.tag) return;
-      updateBoardObject(currentBoardId, node.data.tag, {
+      updateBoardObject(currentBoardId, node.id, {
         [field]: value,
+      }).then(() => {
+        fetchBoardObjects();
+
+        if (node.data.type === 'pipeline') {
+          fetchBoardEdges();
+        }
       }).catch((err: AxiosError) => {
         onErrorHandler(err, node);
       });
@@ -184,7 +190,7 @@ function Home() {
 
     postItem(objectBody).then((response) => {
       const newConnection: IOConnectionContext = {
-        pipeline: response.tag,
+        pipeline: response.id,
         firstItem: source,
         secondItem: target,
       };
@@ -192,20 +198,20 @@ function Home() {
       postRelationship(newConnection)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .then((result: any) => {
-          const pipelineTag = result.pipeline.tag;
+          const pipelineId = result.pipeline.id;
           const newEdge: Edge = {
-            id: pipelineTag,
-            source: result.firstItem.tag,
-            target: result.secondItem.tag,
-            label: pipelineTag,
+            id: pipelineId,
+            source: result.firstItem.id,
+            target: result.secondItem.id,
+            label: result.pipeline.tag,
             type: 'straight',
             labelStyle: { cursor: 'pointer' },
             labelBgStyle: { cursor: 'pointer' },
             style: { cursor: 'pointer', strokeWidth: 3, stroke: '#000' },
             data: {
               type: 'pipeline',
-              tag: pipelineTag,
-              dataCY: `pipelineEdge-${pipelineTag}`,
+              id: pipelineId,
+              dataCY: `pipelineEdge-${pipelineId}`,
             },
           };
 
@@ -324,14 +330,14 @@ function Home() {
   };
 
   const handleEdgeUpdate = (oldEdge: Edge, newConnection: Connection) => {
-    const pipelineTag = oldEdge.id;
+    const pipelineId = oldEdge.id;
     const firstItem = newConnection.source;
     const secondItem = newConnection.target;
 
     if (!firstItem || !secondItem) {
       return;
     }
-    updateRelationship(pipelineTag, firstItem, secondItem);
+    updateRelationship(pipelineId, firstItem, secondItem);
     setEdges((els) => updateEdge(oldEdge, newConnection, els));
   };
 

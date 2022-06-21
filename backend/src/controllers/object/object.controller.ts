@@ -12,17 +12,9 @@ export const getAll = async (req: Request, res: Response) => {
   res.send(items);
 };
 
-export const getByTag = async (req: Request, res: Response) => {
-  const { tag } = req.params;
-
+export const getById = async (req: Request, res: Response) => {
   try {
-    const item = await DI.itemRepository.findOne({ tag });
-
-    if (!item) {
-      return res.status(404).json({
-        message: 'Item not found',
-      });
-    }
+    const { item } = res.locals;
 
     return res.json(item);
   } catch (e: any) {

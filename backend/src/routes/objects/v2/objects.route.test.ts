@@ -27,6 +27,10 @@ describe('V2 /objects', () => {
         expect(response.statusCode).toEqual(200);
         expect(response.body).toEqual([
           {
+            name: 'tag',
+            type: 'string',
+          },
+          {
             name: 'name',
             type: 'string',
           },

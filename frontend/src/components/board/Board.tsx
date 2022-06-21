@@ -38,10 +38,10 @@ function Board(props: NewBoardProps) {
     initialNodes,
     initialEdges,
     onNodeClick,
+    onEdgeClick,
     onNodeMove,
     postInitialItem,
     onEdgeConnect,
-    onEdgeClick,
     onEdgeUpdate,
   } = props;
 

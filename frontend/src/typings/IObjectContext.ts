@@ -1,5 +1,6 @@
 interface IObjectContext {
   boardId: number;
+  id: string;
   tag: string;
   name: string;
   length: number;

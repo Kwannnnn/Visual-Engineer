@@ -16,8 +16,8 @@ export async function getBoardById(id: number) {
   return result.data;
 }
 
-export async function getBoardObjects(id: number) {
-  const response = await axios.get(`${url}/v1/boards/${id}/objects`);
+export async function getBoardObjects(boardId: number) {
+  const response = await axios.get(`${url}/v1/boards/${boardId}/objects`);
   const objects = response.data.map((object: IObjectContext) => ({
     ...object,
   }));
@@ -40,8 +40,8 @@ export async function createItem(boardId: number, properties: Partial<IObjectCon
   return result.data;
 }
 
-export async function updateBoard(id: number, properties: Partial<IBoard>) {
-  await axios.patch(`${url}/v1/boards/${id}`, {
+export async function updateBoard(boardId: number, properties: Partial<IBoard>) {
+  await axios.patch(`${url}/v1/boards/${boardId}`, {
     ...properties,
   })
     .then((response) => response.data)
@@ -50,23 +50,23 @@ export async function updateBoard(id: number, properties: Partial<IBoard>) {
 
 export async function updateBoardObject(
   boardId: number,
-  itemTag: string,
+  objectId: string,
   properties: Partial<IObjectContext>
 ) {
-  const response = await axios.patch(`${url}/v1/boards/${boardId}/objects/${itemTag}`, {
+  const response = await axios.patch(`${url}/v1/boards/${boardId}/objects/${objectId}`, {
     ...properties,
   });
   return response.data;
 }
 
-export async function deleteBoard(id: number) {
-  await axios.delete(`${url}/v1/boards/${id}`)
+export async function deleteBoard(boardId: number) {
+  await axios.delete(`${url}/v1/boards/${boardId}`)
     .then((response) => response.data)
     .catch((err) => err.data);
 }
 
-export async function deleteBoardObject(id: number, tag: string) {
-  await axios.delete(`${url}/v1/boards/${id}/objects/${tag}`)
+export async function deleteBoardObject(boardId: number, objectId: string) {
+  await axios.delete(`${url}/v1/boards/${boardId}/objects/${objectId}`)
     .then((response) => response.data)
     .catch((err) => err.data);
 }
@@ -89,9 +89,9 @@ export async function getObjectEdges() {
   return result.data;
 }
 
-export async function createRelationship(tags: Partial<IOConnectionContext>) {
+export async function createRelationship(ids: Partial<IOConnectionContext>) {
   const result = await axios.post(`${url}/v2/relationships/`, {
-    ...tags,
+    ...ids,
   })
     .then((response) => response.data)
     .catch((err) => err.data);
@@ -100,11 +100,12 @@ export async function createRelationship(tags: Partial<IOConnectionContext>) {
 }
 
 export async function updateRelationship(
-  pipelineTag: string,
+  pipelineId: string,
   firstItem: string,
   secondItem: string
 ) {
-  const response = await axios.patch(`${url}/v2/relationships/${pipelineTag}`, {
+  const response = await axios.patch(`${url}/v2/relationships/${pipelineId}`, {
+    pipeline: pipelineId,
     firstItem,
     secondItem,
   });
