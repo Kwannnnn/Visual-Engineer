@@ -334,6 +334,7 @@ function Home() {
     localStorage.setItem('boards', JSON.stringify(newBoards));
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleEdgeUpdate = (oldEdge: Edge, newConnection: Connection) => {
     const pipelineId = oldEdge.id;
     const firstItem = newConnection.source;
@@ -419,7 +420,7 @@ function Home() {
             <Board
               initialNodes={nodes}
               onEdgeConnect={(type, source, target) => onConnectionCallback(type, source, target)}
-              onEdgeUpdate={handleEdgeUpdate}
+              // onEdgeUpdate={handleEdgeUpdate}
               onNodeClick={(node) => node.id !== currentNode?.id && setCurrentNode(node)}
               onEdgeClick={(edge) => edge.id !== currentNode?.id && setCurrentNode(edge)}
               onNodeMove={onNodeMoveHandler}

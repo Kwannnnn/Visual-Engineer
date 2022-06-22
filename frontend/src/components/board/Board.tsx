@@ -53,6 +53,7 @@ function Board(props: NewBoardProps) {
     onNodeMove,
     postInitialItem,
     onEdgeConnect,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onEdgeUpdate,
   } = props;
 
@@ -143,7 +144,7 @@ function Board(props: NewBoardProps) {
           deleteKeyCode={null}
           onNodeClick={(e, n) => onNodeClick(n)}
           onEdgeClick={(e, n) => onEdgeClick(n)}
-          onEdgeUpdate={onEdgeUpdate}
+          // onEdgeUpdate={onEdgeUpdate}
           edgeTypes={edgeTypes}
           fitView
           connectionLineType={ConnectionLineType.Straight}
