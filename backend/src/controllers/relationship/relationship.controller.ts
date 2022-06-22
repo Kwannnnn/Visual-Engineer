@@ -44,7 +44,9 @@ export const postRelationship = async (
   } catch (e: any) {
     if (e instanceof UniqueConstraintViolationException) {
       return res.status(400).json({
-        message: `Relationship already exists between ${req.body?.firstItem.tag} and ${req.body?.secondItem.tag}`,
+        message: `Relationship already exists between
+                  ${res.locals.firstItem.type} ${res.locals.firstItem.tag ? (`(${res.locals.firstItem.tag})`) : ''}
+                  and ${res.locals.secondItem.type} ${res.locals.secondItem.tag ? (`(${res.locals.secondItem.tag})`) : ''}`,
         errorCode: 'DUPLICATE_RELATIONSHIP',
       });
     }
