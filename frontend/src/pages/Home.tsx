@@ -134,6 +134,7 @@ function Home() {
       y: Math.round(y * 1000) / 1000,
     }).then(() => {
       fetchBoardObjects();
+      fetchBoardEdges();
     }).catch((err: AxiosError) => {
       onErrorHandler(err, node);
     });
