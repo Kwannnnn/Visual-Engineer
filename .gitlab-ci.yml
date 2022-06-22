@@ -6,22 +6,23 @@ stages:
   - lint
   - test
   - image
+  - deploy
 
-cache:
-  paths:
-    - backend/node_modules/
-    - frontend/node_modules/
-  when: on_success
+# Backend
 
-install:
+backend:install:
   stage: install
+  only:
+    changes:
+      - backend/**/*
   script:
     - cd backend
     - npm ci
-    - cd ../frontend
-    - npm ci
-
-# Backend
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-backend
+      paths:
+        - "$CI_PROJECT_DIR/backend/node_modules/"
+      policy: push
 
 backend:build:
   stage: build
@@ -32,7 +33,12 @@ backend:build:
     - cd backend
     - npm run build
   needs:
-    - install
+    - backend:install
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-backend
+      paths:
+        - "$CI_PROJECT_DIR/backend/node_modules/"
+      policy: pull
 
 backend:lint:
   stage: lint
@@ -40,10 +46,15 @@ backend:lint:
     changes:
       - backend/**/*
   needs:
-    - install
+    - backend:install
   script:
     - cd backend
     - npm run lint
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-backend
+      paths:
+        - "$CI_PROJECT_DIR/backend/node_modules/"
+      policy: pull
 
 backend:apidoc:
   stage: build
@@ -51,19 +62,26 @@ backend:apidoc:
     changes:
       - backend/**/*
   needs:
-    - install
+    - backend:install
   script:
     - cd backend
     - npm run apidoc
   artifacts:
     paths:
       - backend/dist/docs/apidoc/
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-backend
+      paths:
+        - "$CI_PROJECT_DIR/backend/node_modules/"
+      policy: pull
 
 backend:integration:
   stage: test
   only:
     changes:
       - backend/**/*
+  needs:
+    - backend:build
   image: docker/compose:1.29.2
   services:
     - docker:dind
@@ -94,7 +112,35 @@ backend:image:
     - main
     - staging
 
+backend:image-init:
+  stage: image
+  cache: []
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR/backend/ --dockerfile $CI_PROJECT_DIR/backend/init.Dockerfile --destination $CI_REGISTRY_IMAGE/init:${CI_COMMIT_BRANCH}
+  only:
+    - main
+    - staging
+
 # Frontend
+
+frontend:install:
+  stage: install
+  only:
+    changes:
+      - frontend/**/*
+  script:
+    - cd frontend
+    - npm ci
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-frontend
+      paths:
+        - "$CI_PROJECT_DIR/frontend/node_modules/"
+      policy: push
 
 frontend:build:
   stage: build
@@ -105,20 +151,79 @@ frontend:build:
     - cd frontend
     - npm run build
   needs:
-    - install
+    - frontend:install
+  variables:
+    REACT_APP_API_URL: $BACKEND_URL
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-frontend
+      paths:
+        - "$CI_PROJECT_DIR/frontend/node_modules/"
+      policy: pull
+    - key: frontend-build-$CI_COMMIT_REF_SLUG
+      paths:
+        - "$CI_PROJECT_DIR/frontend/build/"
+      policy: push
 
 frontend:cypress:
   image: cypress/browsers:node16.13.2-chrome97-ff96
   stage: test
-  only:
-    changes:
-      - frontend/**/*
-  needs:
-    - install
+  cache:
+    - key: $CI_COMMIT_REF_SLUG-frontend
+      paths:
+        - "$CI_PROJECT_DIR/frontend/node_modules/"
+      policy: pull
+    - key: $CI_COMMIT_REF_SLUG-backend
+      paths:
+        - "$CI_PROJECT_DIR/backend/node_modules/"
+      policy: pull
+  services:
+    - postgres:14-alpine
+  variables:
+    POSTGRES_DB: $POSTGRES_DB
+    POSTGRES_USER: $POSTGRES_USER
+    POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    POSTGRES_HOST_AUTH_METHOD: trust
+    DATABASE_URL: postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres/$POSTGRES_DB
+    REACT_APP_API_URL: http://localhost:3000/api
   script:
-    - cd frontend
+    - cd backend
+    - npm run db:update
+    - npm run db:seed
+    - npm run build
+    - PORT=3000 npm run prod &
+    - cd ../frontend
     - npx cypress install
     - npm run test:cypress
+
+frontend:deploy:
+  variables:
+    API_TOKEN: $DEPLOYMENT_TOKEN
+    APP_PATH: "$CI_PROJECT_DIR/frontend"
+    OUTPUT_PATH: "$CI_PROJECT_DIR/frontend/build"
+    BRANCH: $CI_COMMIT_REF_NAME
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "main"
+      variables:
+        ENV_NAME: production
+        DEPLOYMENT_URL: $FRONTEND_DEPLOYMENT_URL
+        REACT_APP_API_URL: $BACKEND_URL
+    - if: $CI_COMMIT_REF_NAME == "staging"
+      variables:
+        ENV_NAME: staging
+        DEPLOYMENT_URL: $FRONTEND_DEPLOYMENT_URL_STAGING
+        REACT_APP_API_URL: $BACKEND_URL_STAGING
+  stage: deploy
+  image: registry.gitlab.com/static-web-apps/azure-static-web-apps-deploy
+  script:
+    - echo "Frontend deployed successfully."
+  environment:
+    name: $ENV_NAME
+    url: $DEPLOYMENT_URL
+  cache:
+    - key: frontend-build-$CI_COMMIT_REF_SLUG
+      paths:
+        - "$CI_PROJECT_DIR/frontend/build/"
+      policy: pull
 
 sast:
   stage: test

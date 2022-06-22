@@ -1,6 +1,9 @@
+/* eslint-disable max-classes-per-file */
 import {
   Property, PrimaryKey, ManyToOne, Entity,
 } from '@mikro-orm/core';
+import { v4 } from 'uuid';
+import { ObjectProperty, PropertyType } from '../../util/properties';
 // eslint-disable-next-line
 import Board from './Board';
 
@@ -11,14 +14,17 @@ import Board from './Board';
 })
 export default abstract class Item {
   constructor(
-    tag: string,
-    name: string,
-    length: number,
-    width: number,
-    depth: number,
-    diameter: number,
     type: string,
+    x: number,
+    y: number,
+    tag?: string,
+    name?: string,
+    length?: number,
+    width?: number,
+    depth?: number,
+    diameter?: number,
   ) {
+    this.id = v4();
     this.tag = tag;
     this.name = name;
     this.length = length;
@@ -26,28 +32,45 @@ export default abstract class Item {
     this.depth = depth;
     this.diameter = diameter;
     this.type = type;
+    this.x = x;
+    this.y = y;
   }
 
   @PrimaryKey({ nullable: false })
-    tag!: string;
+    id!: string;
 
   @Property({ nullable: false })
     type!: string;
 
-  @Property({ nullable: false })
-    name!: string;
+  @Property({ nullable: true })
+  @ObjectProperty(PropertyType.STRING)
+    tag?: string;
+
+  @Property({ nullable: true, type: 'string' })
+  @ObjectProperty(PropertyType.STRING)
+    name?: string;
+
+  @Property({ nullable: true, type: 'float' })
+  @ObjectProperty(PropertyType.NUMBER)
+    length?: number;
+
+  @Property({ nullable: true, type: 'float' })
+  @ObjectProperty(PropertyType.NUMBER)
+    width?: number;
+
+  @Property({ nullable: true, type: 'float' })
+  @ObjectProperty(PropertyType.NUMBER)
+    depth?: number;
+
+  @Property({ nullable: true, type: 'float' })
+  @ObjectProperty(PropertyType.NUMBER)
+    diameter?: number;
 
   @Property({ nullable: false, type: 'float' })
-    length!: number;
+    x!: number;
 
   @Property({ nullable: false, type: 'float' })
-    width!: number;
-
-  @Property({ nullable: false, type: 'float' })
-    depth!: number;
-
-  @Property({ nullable: false, type: 'float' })
-    diameter!: number;
+    y!: number;
 
   @ManyToOne('Board')
     board!: Board;

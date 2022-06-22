@@ -2,47 +2,16 @@ import React from 'react';
 import ToolboxList from './ToolboxList';
 
 interface ToolboxProps {
-  className?: string
+  className?: string,
+  types: []
 }
 
-const apiSampleData = [
-  {
-    group: 'Item',
-    subsets: [
-      {
-        group: 'Pipe Item',
-        items: [
-          { name: 'Pipe Fitting' }
-        ],
-      },
-      {
-        group: 'Mechanical Equipment',
-        subsets: [
-          {
-            group: 'Rotating Equipment',
-            items: [
-              { name: 'Pump' },
-              { name: 'Blower' }
-            ],
-          },
-          {
-            group: 'Static Equipment',
-            items: [
-              { name: 'Tank' },
-              { name: 'Vessel' }
-            ],
-          }
-        ],
-      }
-    ],
-  }
-];
-
-function Toolbox({ className }: ToolboxProps) {
+function Toolbox(props: ToolboxProps) {
+  const { className, types } = props;
   return (
-    <aside className={`overflow-y-auto ${className}`}>
-      <div id="toolbox-list" className="p-3">
-        <ToolboxList listing={apiSampleData} subsetNbr={1} />
+    <aside className={`overflow-y-auto bg-slate-50 border-r border-slate-200 ${className}`}>
+      <div data-cy="toolbox-list" className="p-3">
+        <ToolboxList listing={types} subsetNbr={1} />
       </div>
     </aside>
   );

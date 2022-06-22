@@ -1,31 +1,31 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube } from '@fortawesome/free-solid-svg-icons';
-import { useDrag } from 'react-dnd';
-import ItemTypes from '../board/item/ItemTypes';
 
 interface Item {
   className?: string;
-  name: string;
+  displayName: string;
+  type: string;
 }
 
-function ToolboxItem({ name, className = '' }: Item) {
-  const [, drag] = useDrag({
-    type: ItemTypes.ITEM,
-    item: { name },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  });
+function ToolboxItem({ type, displayName, className = '' }: Item) {
+  const onDragStart = (event: React.DragEvent) => {
+    if (!event.dataTransfer) return;
+    event.dataTransfer.setData('application/reactflow', type);
+    // eslint-disable-next-line no-param-reassign
+    event.dataTransfer.effectAllowed = 'move';
+  };
 
   return (
     <div
-      ref={drag}
+      onDragStart={(event) => onDragStart(event)}
       className={`cursor-move p-1 text-sm select-none transition-all hover:bg-slate-100 hover:rounded-r-lg hover:font-bold
      ${className}`}
+      draggable
+      data-cy={`toolbox-item-${type}`}
     >
       <FontAwesomeIcon icon={faCube} />
-      {` ${name}`}
+      {` ${displayName}`}
     </div>
   );
 }

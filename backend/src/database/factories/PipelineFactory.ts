@@ -8,7 +8,7 @@ export default class PipelineFactory extends Factory<Pipeline> {
 
   definition(faker: Faker): Partial<Pipeline> {
     return {
-      tag: faker.datatype.uuid(),
+      tag: faker.datatype.string(),
       name: faker.datatype.string(),
       length: faker.datatype.float(),
       width: faker.datatype.float(),
@@ -17,6 +17,8 @@ export default class PipelineFactory extends Factory<Pipeline> {
       pressureClass: PressureClass.PN10,
       flange: faker.datatype.string(),
       lining: faker.datatype.string(),
+      x: faker.datatype.float({ min: -100, max: 100 }),
+      y: faker.datatype.float({ min: -100, max: 100 }),
       type: 'pipeline',
     };
   }

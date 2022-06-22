@@ -7,7 +7,7 @@ export default class PumpFactory extends Factory<Pump> {
 
   definition(faker: Faker): Partial<Pump> {
     return {
-      tag: faker.datatype.uuid(),
+      tag: faker.datatype.string(),
       name: faker.datatype.string(),
       length: faker.datatype.float(),
       width: faker.datatype.float(),
@@ -20,6 +20,8 @@ export default class PumpFactory extends Factory<Pump> {
       grossVolume: faker.datatype.float(),
       preliminaryPower: faker.datatype.float(),
       finalPower: faker.datatype.float(),
+      x: faker.datatype.float({ min: -100, max: 100 }),
+      y: faker.datatype.float({ min: -100, max: 100 }),
       type: 'pump',
     };
   }

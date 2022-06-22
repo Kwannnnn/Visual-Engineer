@@ -7,7 +7,7 @@ export default class BlowerFactory extends Factory<Blower> {
 
   definition(faker: Faker): Partial<Blower> {
     return {
-      tag: faker.datatype.uuid(),
+      tag: faker.datatype.string(),
       name: faker.datatype.string(),
       length: faker.datatype.float(),
       width: faker.datatype.float(),
@@ -20,6 +20,8 @@ export default class BlowerFactory extends Factory<Blower> {
       grossVolume: faker.datatype.float(),
       preliminaryPower: faker.datatype.float(),
       finalPower: faker.datatype.float(),
+      x: faker.datatype.float({ min: -100, max: 100 }),
+      y: faker.datatype.float({ min: -100, max: 100 }),
       type: 'blower',
     };
   }

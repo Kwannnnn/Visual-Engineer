@@ -2,12 +2,12 @@
 import { Factory, Faker } from '@mikro-orm/seeder';
 import { Tank } from '../models';
 
-export default class VesselFactory extends Factory<Tank> {
+export default class TankFactory extends Factory<Tank> {
   model = Tank;
 
   definition(faker: Faker): Partial<Tank> {
     return {
-      tag: faker.datatype.uuid(),
+      tag: faker.datatype.string(),
       name: faker.datatype.string(),
       length: faker.datatype.float(),
       width: faker.datatype.float(),
@@ -18,6 +18,8 @@ export default class VesselFactory extends Factory<Tank> {
       filledMass: faker.datatype.float(),
       netVolume: faker.datatype.float(),
       grossVolume: faker.datatype.float(),
+      x: faker.datatype.float({ min: -100, max: 100 }),
+      y: faker.datatype.float({ min: -100, max: 100 }),
       type: 'tank',
     };
   }

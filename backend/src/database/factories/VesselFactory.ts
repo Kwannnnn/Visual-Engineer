@@ -7,7 +7,7 @@ export default class VesselFactory extends Factory<Vessel> {
 
   definition(faker: Faker): Partial<Vessel> {
     return {
-      tag: faker.datatype.uuid(),
+      tag: faker.datatype.string(),
       name: faker.datatype.string(),
       length: faker.datatype.float(),
       width: faker.datatype.float(),
@@ -18,6 +18,8 @@ export default class VesselFactory extends Factory<Vessel> {
       filledMass: faker.datatype.float(),
       netVolume: faker.datatype.float(),
       grossVolume: faker.datatype.float(),
+      x: faker.datatype.float({ min: -100, max: 100 }),
+      y: faker.datatype.float({ min: -100, max: 100 }),
       type: 'vessel',
     };
   }

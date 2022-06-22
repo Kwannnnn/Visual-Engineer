@@ -1,0 +1,46 @@
+[
+    {
+      "group": "Item",
+      "subsets": [
+        {
+          "group": "Pipe Item",
+          "items": [
+            { 
+              "type": "pipeFitting",
+              "displayName": "Pipe Fitting"
+            }
+          ]
+        },
+        {
+          "group": "Mechanical Equipment",
+          "subsets": [
+            {
+              "group": "Rotating Equipment",
+              "items": [
+                { 
+                  "type": "pump",
+                  "displayName": "Pump" 
+                },
+                { 
+                  "type": "blower",
+                  "displayName": "Blower" }
+              ]
+            },
+            {
+              "group": "Static Equipment",
+              "items": [
+                { 
+                  "type": "tank",
+                  "displayName": "Tank"
+                },
+                { 
+                  "type": "vessel",
+                  "displayName": "Vessel"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+]

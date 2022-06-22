@@ -1,42 +1,62 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import {
   faSearch,
-  faFileCirclePlus,
+  faPlus,
   faUserCircle,
   faBars,
   faTableColumns
 } from '@fortawesome/free-solid-svg-icons';
-import logo from '../assets/images/wb-logo.png';
+import logo from '../assets/images/logo.svg';
 
-export default function Navbar() {
+interface NavbarProps {
+  createNewProject: () => void;
+}
+
+export default function Navbar(props: NavbarProps) {
+  const { createNewProject } = props;
+
   return (
     <>
-      <div className="flex justify-between items-center bg-white p-5 border-b">
-        <button className="sm:hidden text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer" type="button">
+      <div className="flex justify-between items-center bg-slate-200 border-b border-slate-200 px-5 py-7">
+        <button className="lg:hidden text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer" type="button">
           <FontAwesomeIcon icon={faTableColumns} size="lg" />
         </button>
-        <header className="mx-auto sm:mx-0">
-          <img
-            src={logo}
-            alt="WB logo"
-            className="max-h-6 sm:max-h-10"
-          />
-        </header>
-        <button className="sm:hidden text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer" type="button">
+        <div className="flex items-center space-x-10">
+          <header className="mx-auto sm:mx-0">
+            <img
+              src={logo}
+              alt="Witeveen+Bos Logo"
+              className="h-12 w-auto"
+            />
+          </header>
+          <NavLink
+            className="font-medium text-slate-500 hover:text-slate-700"
+            data-cy="nav-projects"
+            to="/projects"
+          >
+            Projects
+          </NavLink>
+        </div>
+        <button className="lg:hidden text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer" type="button">
           <FontAwesomeIcon icon={faBars} size="lg" />
         </button>
-        <nav className="hidden sm:block">
+        <nav className="hidden lg:block">
           <ul className="flex items-center space-x-5">
             <li>
-              <button className="py-2 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-xl border border-gray-200 hover:bg-gray-100 hover:text-blue-700" type="button">
-                <FontAwesomeIcon icon={faFileCirclePlus} className="pr-2" />
+              <button
+                data-cy="create-project-button"
+                className="py-2 px-5 text-sm shadow-md font-medium text-white focus:outline-none bg-wb-blue hover:bg-sky-600 rounded-xl"
+                type="button"
+                onClick={createNewProject}
+              >
+                <FontAwesomeIcon icon={faPlus} className="pr-2" />
                 New Project
               </button>
             </li>
             <li>
-              <form className="flex items-center bg-gray-200 py-2 rounded-xl text-sm text-gray-400">
+              <form className="flex items-center bg-neutral-50 py-2 rounded-xl text-sm text-slate-600">
                 <FontAwesomeIcon icon={faSearch} className="pl-3 pr-2" />
                 <input
                   type="text"
@@ -45,8 +65,8 @@ export default function Navbar() {
                 />
               </form>
             </li>
-            <li className="text-gray-900 hover:bg-gray-100 rounded-lg text-sm px-4 py-2 cursor-pointer">
-              <FontAwesomeIcon icon={faUserCircle} size="lg" />
+            <li className="text-slate-800 hover:bg-gray-300 rounded-full text-sm px-2 py-2 cursor-pointer">
+              <FontAwesomeIcon icon={faUserCircle} size="2x" />
             </li>
           </ul>
         </nav>

@@ -7,16 +7,16 @@ interface TabProps {
     id: number;
     name: string;
     active?: boolean;
-    onDelete?: (id: number) => void;
+    onClose?: (id: number) => void;
     onSelect?: (id: number) => void;
 }
 
 function Tab({
-  id, name, active, onDelete, onSelect,
+  id, name, active, onClose, onSelect,
 }: TabProps) {
-  const handleDelete = () => {
-    if (onDelete) {
-      onDelete(id);
+  const handleClose = () => {
+    if (onClose) {
+      onClose(id);
     }
   };
 
@@ -27,14 +27,27 @@ function Tab({
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleSelect}
-      className={classNames({ 'border-black max-w-xs p-1.5 flex flex-1 items-center space-x-2': true, 'border-2': active })}
+    <div
+      data-cy={`tab-board-${id}`}
+      className={classNames('flex-1 flex max-w-xs items-center', {
+        'border-b-4': active,
+      })}
     >
-      <p className="truncate flex-1">{name}</p>
-      <FontAwesomeIcon icon={faXmark} onClick={handleDelete} />
-    </button>
+      <button
+        data-cy={`tab-project-${id}`}
+        type="button"
+        onClick={handleSelect}
+        className="flex-1 flex justify-center"
+      >
+        <p className="truncate max-w-[15rem]">{name}</p>
+      </button>
+      <FontAwesomeIcon
+        icon={faXmark}
+        className="hover:bg-gray-100 text-gray-500 hover:text-gray-800 rounded-full px-2 py-1.5"
+        size="sm"
+        onClick={handleClose}
+      />
+    </div>
   );
 }
 

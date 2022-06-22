@@ -1,4 +1,5 @@
 import { Entity, Property } from '@mikro-orm/core';
+import { ObjectProperty, PropertyType } from '../../util/properties';
 import Item from './Item';
 
 @Entity({
@@ -6,20 +7,22 @@ import Item from './Item';
 })
 export default abstract class MechanicalEquipment extends Item {
   constructor(
-    tag: string,
-    name: string,
-    length: number,
-    width: number,
-    depth: number,
-    diameter: number,
-    emptyMass: number,
-    head: number,
-    filledMass: number,
-    netVolume: number,
-    grossVolume: number,
     type: string,
+    x: number,
+    y: number,
+    tag?: string,
+    name?: string,
+    length?: number,
+    width?: number,
+    depth?: number,
+    diameter?: number,
+    emptyMass?: number,
+    head?: number,
+    filledMass?: number,
+    netVolume?: number,
+    grossVolume?: number,
   ) {
-    super(tag, name, length, width, depth, diameter, type);
+    super(type, x, y, tag, name, length, width, depth, diameter);
     this.emptyMass = emptyMass;
     this.head = head;
     this.filledMass = filledMass;
@@ -28,17 +31,22 @@ export default abstract class MechanicalEquipment extends Item {
   }
 
   @Property({ nullable: true, type: 'float' })
-    emptyMass!: number;
+  @ObjectProperty(PropertyType.NUMBER)
+    emptyMass?: number;
 
   @Property({ nullable: true, type: 'float' })
-    head!: number;
+  @ObjectProperty(PropertyType.NUMBER)
+    head?: number;
 
   @Property({ nullable: true, type: 'float' })
-    filledMass!: number;
+  @ObjectProperty(PropertyType.NUMBER)
+    filledMass?: number;
 
   @Property({ nullable: true, type: 'float' })
-    netVolume!: number;
+  @ObjectProperty(PropertyType.NUMBER)
+    netVolume?: number;
 
   @Property({ nullable: true, type: 'float' })
-    grossVolume!: number;
+  @ObjectProperty(PropertyType.NUMBER)
+    grossVolume?: number;
 }
