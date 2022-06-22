@@ -32,18 +32,14 @@ const edgeTypes: EdgeTypes = {
 interface NewBoardProps {
   initialNodes?: Node[];
   initialEdges?: Edge[];
-  onDropNodeHandler?: (node: Node) => void;
   onNodeClick: (node: Node) => void;
   onEdgeClick: (edge: Edge) => void;
   onEdgeUpdate?: (oldEdge: Edge, newConnection: Connection) => void;
   onNodeMove?: (node: Node) => void;
+  postInitialItem: (item: Partial<IObjectContext>) => void;
   onEdgeConnect: (type: string, firstItemTag: string, secondItemTag: string) => void;
-  postItem: (item: Partial<IObjectContext>) => Promise<Partial<IObjectContext>>;
 }
 
-// This string key must match the key in the nodeTypes object in order to render the correct
-// custom node. Otherwise a default node will be rendered.
-const NODE_TYPE = 'itemNode';
 const nodeTypes: NodeTypes = {
   itemNode: ItemNode,
 };
@@ -52,12 +48,11 @@ function Board(props: NewBoardProps) {
   const {
     initialNodes,
     initialEdges,
-    onDropNodeHandler,
     onNodeClick,
-    onNodeMove,
-    onEdgeConnect,
     onEdgeClick,
-    postItem,
+    onNodeMove,
+    postInitialItem,
+    onEdgeConnect,
     onEdgeUpdate,
   } = props;
 
@@ -91,7 +86,7 @@ function Board(props: NewBoardProps) {
   const onConnect = useCallback((params: Connection) => {
     if (!(params.source && params.target)) return;
     onEdgeConnect('pipeline', params.source, params.target);
-  }, [setEdges]);
+  }, [setEdges, onEdgeConnect]);
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -122,26 +117,10 @@ function Board(props: NewBoardProps) {
         y: position.y,
         type: name,
       };
-      postItem(initialItem).then((item) => { // onFullfilled
-        const newNode = {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          id: item.tag!,
-          type: NODE_TYPE,
-          position,
-          data: {
-            type: name,
-            tag: item.tag,
-            dataCY: `itemNode-${item.tag}`,
-          },
-        };
 
-        setNodes((nodesState) => nodesState.concat(newNode));
-        if (onDropNodeHandler) onDropNodeHandler(newNode);
-      }, () => { // onRejected
-
-      });
+      postInitialItem(initialItem);
     },
-    [reactFlowInstance]
+    [reactFlowInstance, postInitialItem]
   );
 
   const onNodeDragStop = useCallback((event: React.MouseEvent, node: Node) => {

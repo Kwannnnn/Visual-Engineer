@@ -18,17 +18,8 @@ export const getOneRelationship = async (
   req: TypedRequest<RelationshipParams, any>,
   res: Response,
 ) => {
-  const { pipelineTag } = req.params;
-
   try {
-    const relationship = await DI.relationshipRepository.findOne(pipelineTag);
-
-    if (!relationship) {
-      return res.status(404).json({
-        message: 'Relationship not found',
-      });
-    }
-
+    const { relationship } = res.locals;
     return res.json(relationship);
   } catch (e: any) {
     return res.status(400).json({
@@ -42,7 +33,11 @@ export const postRelationship = async (
   res: Response,
 ) => {
   try {
-    const relationship: Relationship = DI.em.create(Relationship, req.body!);
+    const relationship: Relationship = DI.em.create(Relationship, {
+      pipeline: res.locals.pipeline,
+      firstItem: res.locals.firstItem,
+      secondItem: res.locals.secondItem,
+    });
     await DI.relationshipRepository.persist(relationship).flush();
 
     return res.status(201).json(relationship);
@@ -65,48 +60,17 @@ export const postRelationship = async (
   }
 };
 
-export const deleteRelationship = async (
-  req: TypedRequest<RelationshipParams, any>,
-  res: Response,
-) => {
-  const { pipelineTag } = req.params;
-
-  try {
-    const pipeline: any = await DI.itemRepository.findOne(pipelineTag);
-    if (!pipeline) {
-      return res.status(404).json({
-        message: 'Pipeline not found',
-      });
-    }
-
-    const relationship = await DI.relationshipRepository.findOne(pipelineTag);
-    if (!relationship) {
-      return res.status(404).json({
-        message: 'Relationship not found',
-      });
-    }
-
-    await DI.itemRepository.removeAndFlush(pipeline);
-
-    return res.status(204).send();
-  } catch (e: any) {
-    return res.status(400).json({
-      message: e.message,
-    });
-  }
-};
-
 export const patchRelationship = async (
   req: TypedRequest<any, RelationshipRequestBody>,
   res: Response,
 ) => {
-  const { pipelineTag } = req.params;
+  const { pipelineId } = req.params;
 
   try {
-    const relationship = await DI.relationshipRepository.findOne(pipelineTag);
+    const relationship = await DI.relationshipRepository.findOne(pipelineId);
 
-    const firstItem = req.body!.firstItem!;
-    const secondItem = req.body!.secondItem!;
+    const firstItem = res.locals.firstItem!;
+    const secondItem = res.locals.secondItem!;
 
     relationship!.firstItem = firstItem;
     relationship!.secondItem = secondItem;
@@ -121,6 +85,22 @@ export const patchRelationship = async (
         message: e.message,
       });
     }
+    return res.status(400).json({
+      message: e.message,
+    });
+  }
+};
+
+export const deleteRelationship = async (
+  req: TypedRequest<RelationshipParams, any>,
+  res: Response,
+) => {
+  try {
+    const { pipeline } = res.locals;
+    await DI.itemRepository.removeAndFlush(pipeline);
+
+    return res.status(204).send();
+  } catch (e: any) {
     return res.status(400).json({
       message: e.message,
     });

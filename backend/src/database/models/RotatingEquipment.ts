@@ -7,10 +7,10 @@ import MechanicalEquipment from './MechanicalEquipment';
 })
 export default abstract class RotatingEquipment extends MechanicalEquipment {
   constructor(
-    // tag: string,
     type: string,
     x: number,
     y: number,
+    tag?: string,
     name?: string,
     length?: number,
     width?: number,
@@ -25,7 +25,7 @@ export default abstract class RotatingEquipment extends MechanicalEquipment {
     finalPower?: number,
   ) {
     // eslint-disable-next-line max-len
-    super(type, x, y, name, length, width, depth, diameter, emptyMass, head, filledMass, netVolume, grossVolume);
+    super(type, x, y, tag, name, length, width, depth, diameter, emptyMass, head, filledMass, netVolume, grossVolume);
     this.preliminaryPower = preliminaryPower;
     this.finalPower = finalPower;
   }

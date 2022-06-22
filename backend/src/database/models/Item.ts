@@ -14,17 +14,18 @@ import Board from './Board';
 })
 export default abstract class Item {
   constructor(
-    // tag: string,
     type: string,
     x: number,
     y: number,
+    tag?: string,
     name?: string,
     length?: number,
     width?: number,
     depth?: number,
     diameter?: number,
   ) {
-    this.tag = v4();
+    this.id = v4();
+    this.tag = tag;
     this.name = name;
     this.length = length;
     this.width = width;
@@ -36,12 +37,16 @@ export default abstract class Item {
   }
 
   @PrimaryKey({ nullable: false })
-    tag!: string;
+    id!: string;
 
   @Property({ nullable: false })
     type!: string;
 
   @Property({ nullable: true })
+  @ObjectProperty(PropertyType.STRING)
+    tag?: string;
+
+  @Property({ nullable: true, type: 'string' })
   @ObjectProperty(PropertyType.STRING)
     name?: string;
 

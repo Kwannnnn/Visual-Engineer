@@ -7,7 +7,7 @@ export default class TankFactory extends Factory<Tank> {
 
   definition(faker: Faker): Partial<Tank> {
     return {
-      tag: faker.datatype.uuid(),
+      tag: faker.datatype.string(),
       name: faker.datatype.string(),
       length: faker.datatype.float(),
       width: faker.datatype.float(),

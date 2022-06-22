@@ -28,11 +28,11 @@ describe('/objects', () => {
     });
   });
 
-  describe('GET /objects/:tag', () => {
+  describe('GET /objects/:id', () => {
     describe('given the object does exist', () => {
       it('should return an existing object', async () => {
         const { board, ...otherProps } = sampleBoardObjects[0];
-        const response = await request(app).get(`/api/v1/objects/${otherProps.tag}`);
+        const response = await request(app).get(`/api/v1/objects/${otherProps.id}`);
         expect(response.statusCode).toEqual(200);
         expect(response.body).toEqual({
           ...otherProps,

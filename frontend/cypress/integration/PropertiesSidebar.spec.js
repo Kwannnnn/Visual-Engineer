@@ -5,6 +5,7 @@ import {
 beforeEach(() => {
   cy.visit('http://localhost:8080');
   cy.viewport(1440, 900);
+  cy.get('[data-cy="board-1"]').click();
 });
 
 // const closeSidebar = () => {
@@ -99,8 +100,8 @@ describe('PropertiesSidebar', () => {
 
       cy.wait('@postVessel').then(({ response }) => {
         expect(response.statusCode).to.eq(201);
-        expect(response.body).property('tag').to.exist;
-        return response.body.tag;
+        expect(response.body).property('id').to.exist;
+        return response.body.id;
       }).then((vesselId) => {
         cy.get(`[data-cy=itemNode-${vesselId}]`)
           .as('boardVessel');

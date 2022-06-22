@@ -11,7 +11,7 @@ export default function transformConnectionToEdge(allEdges: Partial<IOConnection
       pipeline, firstItem, secondItem,
     } = object;
 
-    const pipelineObject = allObjects.find((item) => item.tag === pipeline);
+    const pipelineObject = allObjects.find((item) => item.id === pipeline);
     if (!pipelineObject) return;
 
     if (!(pipeline && firstItem && secondItem)) return;
@@ -20,7 +20,7 @@ export default function transformConnectionToEdge(allEdges: Partial<IOConnection
       id: pipeline,
       source: firstItem,
       target: secondItem,
-      label: pipeline,
+      label: pipelineObject.tag,
       type: 'floating',
       labelStyle: { cursor: 'pointer' },
       labelBgStyle: { cursor: 'pointer' },

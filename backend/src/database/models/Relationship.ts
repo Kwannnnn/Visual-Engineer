@@ -20,7 +20,7 @@ export default class Relationship {
   @OneToOne({ primary: true })
     pipeline!: Pipeline;
 
-  [PrimaryKeyType]?: string;
+  [PrimaryKeyType]?: number;
 
   @ManyToOne({ nullable: false, onDelete: 'cascade' })
     firstItem!: Item;

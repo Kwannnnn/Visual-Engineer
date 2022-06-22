@@ -5,6 +5,7 @@ import {
 beforeEach(() => {
   cy.visit('http://localhost:8080');
   cy.viewport(1440, 900);
+  cy.get('[data-cy="board-1"]').click();
 });
 
 describe('ItemNode', () => {
@@ -14,8 +15,9 @@ describe('ItemNode', () => {
 
       cy.get('[data-id=PU01]')
         .move({
-          deltaX: 100,
-          deltaY: 400,
+          deltaX: 10,
+          deltaY: 0,
+          force: true,
         });
 
       cy.wait('@patchObject').should(({ request, response }) => {
@@ -41,7 +43,7 @@ describe('Board', () => {
         expect(response.body).property('type').to.be.equal(type);
         expect(response.body).property('x').to.be.equal(x);
         expect(response.body).property('y').to.be.equal(y);
-        expect(response.body).property('tag').to.exist;
+        expect(response.body).property('id').to.exist;
       });
     });
 
@@ -56,11 +58,11 @@ describe('Board', () => {
         expect(response.body).property('type').to.be.equal(type);
         expect(response.body).property('x').to.be.equal(x);
         expect(response.body).property('y').to.be.equal(y);
-        expect(response.body).property('tag').to.exist;
+        expect(response.body).property('id').to.exist;
 
-        const vesselTag = response.body.tag;
+        const vesselId = response.body.id;
 
-        cy.get(`[data-cy=itemNode-${vesselTag}]`)
+        cy.get(`[data-cy=itemNode-${vesselId}]`)
           .should('exist')
           .and('be.visible')
           .as('boardVessel');
@@ -91,10 +93,10 @@ describe('Board', () => {
         expect(response.body).property('type').to.be.equal(type);
         expect(response.body).property('x').to.be.equal(x);
         expect(response.body).property('y').to.be.equal(y);
-        expect(response.body).property('tag').to.exist;
+        expect(response.body).property('id').to.exist;
 
-        const vesselTag = response.body.tag;
-        cy.get(`[data-cy=itemNode-${vesselTag}]`)
+        const vesselId = response.body.id;
+        cy.get(`[data-cy=itemNode-${vesselId}]`)
           .should('exist')
           .and('be.visible')
           .as('boardVessel');
@@ -107,20 +109,20 @@ describe('Board', () => {
           expect(response.body).property('type').to.be.equal(type);
           expect(response.body).property('x').to.be.equal(x);
           expect(response.body).property('y').to.be.equal(y);
-          expect(response.body).property('tag').to.exist;
-          const pipeFittingTag = response.body.tag;
+          expect(response.body).property('id').to.exist;
+          const pipeFittingId = response.body.id;
 
-          cy.get(`[data-cy=itemNode-${pipeFittingTag}]`)
+          cy.get(`[data-cy=itemNode-${pipeFittingId}]`)
             .should('exist')
             .and('be.visible')
             .as('boardPipeFitting');
 
           const dataTransfer = new DataTransfer();
 
-          cy.get(`[data-cy=source-itemNode-${vesselTag}]`)
+          cy.get(`[data-cy=source-itemNode-${vesselId}]`)
             .trigger('dragstart', { dataTransfer, force: true });
 
-          cy.get(`[data-cy=source-itemNode-${pipeFittingTag}]`)
+          cy.get(`[data-cy=source-itemNode-${pipeFittingId}]`)
             .trigger('drop', { dataTransfer });
         });
       });
@@ -136,9 +138,9 @@ describe('Board', () => {
       cy.wait('@postRelationship').then(({ request, response }) => {
         const { pipeline, firstItem, secondItem } = request.body;
         expect(response.statusCode).to.eq(201);
-        expect(response.body.pipeline).property('tag').to.be.equal(pipeline);
-        expect(response.body.firstItem).property('tag').to.be.equal(firstItem);
-        expect(response.body.secondItem).property('tag').to.be.equal(secondItem);
+        expect(response.body.pipeline).property('id').to.be.equal(pipeline);
+        expect(response.body.firstItem).property('id').to.be.equal(firstItem);
+        expect(response.body.secondItem).property('id').to.be.equal(secondItem);
       });
     });
   });
