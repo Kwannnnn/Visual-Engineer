@@ -132,15 +132,8 @@ function Home() {
     updateBoardObject(currentBoardId, node.data.id, {
       x: Math.round(x * 1000) / 1000,
       y: Math.round(y * 1000) / 1000,
-    }).then((item) => {
-      const newNodes: Node[] = nodes.filter((n) => n.data.tag !== node.id);
-      const nodeToChange: Node | undefined = nodes.find((n) => n.data.tag === node.id);
-
-      nodeToChange!.position.x = item.x;
-      nodeToChange!.position.y = item.y;
-
-      newNodes.push(nodeToChange!);
-      setNodes(newNodes);
+    }).then(() => {
+      fetchBoardObjects();
     }).catch((err: AxiosError) => {
       onErrorHandler(err, node);
     });
