@@ -132,15 +132,9 @@ function Home() {
     updateBoardObject(currentBoardId, node.data.id, {
       x: Math.round(x * 1000) / 1000,
       y: Math.round(y * 1000) / 1000,
-    }).then((item) => {
-      const newNodes: Node[] = nodes.filter((n) => n.data.tag !== node.id);
-      const nodeToChange: Node | undefined = nodes.find((n) => n.data.tag === node.id);
-
-      nodeToChange!.position.x = item.x;
-      nodeToChange!.position.y = item.y;
-
-      newNodes.push(nodeToChange!);
-      setNodes(newNodes);
+    }).then(() => {
+      fetchBoardObjects();
+      fetchBoardEdges();
     }).catch((err: AxiosError) => {
       onErrorHandler(err, node);
     });
@@ -178,7 +172,7 @@ function Home() {
 
   const postRelationship = (relationship: Partial<IOConnectionContext>) => createRelationship(relationship).catch((err) => {
     setErrorMessage(err.response?.data?.message || 'Unknown error');
-    return Promise.reject();
+    throw err;
   });
 
   const onConnectionCallback = useCallback((type: string, source: string, target: string) => {
@@ -218,6 +212,13 @@ function Home() {
           setEdges((edgesState) => edgesState.concat(newEdge));
           setCurrentNode(newEdge);
         }).catch((err: AxiosError) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { data } = err.response as any;
+
+          if (data.errorCode === 'DUPLICATE_RELATIONSHIP') {
+            return;
+          }
+
           const draftConnection: Edge = {
             id: `${source}_${target}`,
             source: source ?? '',
@@ -329,6 +330,10 @@ function Home() {
     localStorage.setItem('boards', JSON.stringify(newBoards));
   };
 
+  const handleAlertDismiss = () => {
+    setErrorMessage('');
+  };
+
   const handleEdgeUpdate = (oldEdge: Edge, newConnection: Connection) => {
     const pipelineId = oldEdge.id;
     const firstItem = newConnection.source;
@@ -408,6 +413,7 @@ function Home() {
               <AlertPane
                 className="transition-opacity ease-in"
                 message={errorMessage}
+                onDismiss={handleAlertDismiss}
               />
             )}
             <Board

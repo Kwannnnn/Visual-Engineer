@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { UniqueConstraintViolationException } from '@mikro-orm/core';
 import DI from '../../DI';
 import { TypedRequest } from '../../routes/util/typed-request';
 import { Relationship } from '../../database/models';
@@ -41,6 +42,15 @@ export const postRelationship = async (
 
     return res.status(201).json(relationship);
   } catch (e: any) {
+    if (e instanceof UniqueConstraintViolationException) {
+      return res.status(400).json({
+        message: `Relationship already exists between
+                  ${res.locals.firstItem.type} ${res.locals.firstItem.tag ? (`(${res.locals.firstItem.tag})`) : ''}
+                  and ${res.locals.secondItem.type} ${res.locals.secondItem.tag ? (`(${res.locals.secondItem.tag})`) : ''}`,
+        errorCode: 'DUPLICATE_RELATIONSHIP',
+      });
+    }
+
     if (e instanceof ValidationError) {
       return res.status(e.statusCode).json({
         message: e.message,

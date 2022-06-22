@@ -112,6 +112,14 @@ relationshipRouter.get(
  *       "message": "The connector must be of type Pipeline."
  *     }
  *
+ * @apiError ExistingRelationship The provided items are already associated.
+ * @apiErrorExample ExistingRelationship:
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "message": "Relationship already exists between X and Y",
+ *       "errorCode": "DUPLICATE_RELATIONSHIP",
+ *     }
+ *
  * @apiError ConnectItemToItself Items to connect are the same
  * @apiErrorExample ConnectItemToItself:
  *     HTTP/1.1 400 BAD REQUEST
