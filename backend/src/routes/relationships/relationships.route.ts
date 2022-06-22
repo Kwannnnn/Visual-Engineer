@@ -112,13 +112,6 @@ relationshipRouter.get(
  *       "message": "The connector must be of type Pipeline."
  *     }
  *
- * @apiError InvalidRelationship The provided items cannot be associated.
- * @apiErrorExample InvalidRelationship:
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "message": "You cannot associate a Pump with a Blower."
- *     }
- *
  * @apiError ExistingRelationship The provided items are already associated.
  * @apiErrorExample ExistingRelationship:
  *     HTTP/1.1 400 Bad Request
