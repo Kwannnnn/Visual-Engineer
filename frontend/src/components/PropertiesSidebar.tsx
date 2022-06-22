@@ -111,7 +111,7 @@ function PropertiesSidebar(props: PropertiesSidebarProps) {
     >
       <form onSubmit={handleSubmit}>
         <div className="sticky top-0 px-6 py-3 bg-white shadow-md">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-3">
             <span>
               <h2
                 data-cy="siderbar-item-type"
