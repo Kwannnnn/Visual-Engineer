@@ -249,8 +249,6 @@ function Home() {
     if (!boardObjects) return;
     const transformedNodes = transformObjectToNode(boardObjects);
     setNodes(transformedNodes);
-    // console.log('nodes: ', nodes);
-    // console.log('boardObjects: ', boardObjects);
   }, [boardObjects]);
 
   useEffect(() => {
@@ -281,15 +279,38 @@ function Home() {
     const boardsLocalStorage: IBoard[] = JSON.parse(
       localStorage.getItem('boards') || '[]'
     );
-    const newBoardsLocalStorage: IBoard[] = [...boardsLocalStorage];
+    let boardsLocalStorageCopy: IBoard[] = [...boardsLocalStorage];
+    const currentBoardIndex = parseInt(localStorage.getItem('currentBoardIndex') || '0', 10);
 
-    boardsLocalStorage.forEach((b, i) => {
-      getBoardById(b.id).catch(() => {
-        newBoardsLocalStorage.splice(i, 1);
-      });
+    boardsLocalStorage.forEach(async (b) => {
+      try {
+        const board = await getBoardById(b.id);
+        if (board.name !== b.name) {
+          boardsLocalStorageCopy = boardsLocalStorageCopy.filter((bd) => bd.id !== b.id);
+          if (currentBoardIndex === b.id && boardsLocalStorageCopy.length !== 0) {
+            localStorage.setItem('currentBoardIndex', currentBoardIndex.toString());
+            setCurrentBoardId(boardsLocalStorageCopy[0].id);
+          }
+        }
+      } catch (err) {
+        boardsLocalStorageCopy = boardsLocalStorageCopy.filter((board) => board.id !== b.id);
+        if (currentBoardIndex === b.id && boardsLocalStorageCopy.length !== 0) {
+          localStorage.setItem('currentBoardIndex', currentBoardIndex.toString());
+          setCurrentBoardId(boardsLocalStorageCopy[0].id);
+        }
+      } finally {
+        if (boardsLocalStorageCopy.length === 0) {
+          localStorage.removeItem('boards');
+          localStorage.removeItem('currentBoard');
+          setBoards(boardsLocalStorageCopy);
+          setCurrentBoardId(0);
+          navigate('/projects');
+        } else {
+          localStorage.setItem('boards', JSON.stringify(boardsLocalStorageCopy));
+          setBoards(boardsLocalStorageCopy);
+        }
+      }
     });
-
-    setBoards(newBoardsLocalStorage);
   }, []);
 
   useEffect(() => {
