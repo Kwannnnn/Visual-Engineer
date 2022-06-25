@@ -201,23 +201,14 @@ frontend:deploy:
     APP_PATH: "$CI_PROJECT_DIR/frontend"
     OUTPUT_PATH: "$CI_PROJECT_DIR/frontend/build"
     BRANCH: $CI_COMMIT_REF_NAME
-  rules:
-    - if: $CI_COMMIT_REF_NAME == "main"
-      variables:
-        ENV_NAME: production
-        DEPLOYMENT_URL: $FRONTEND_DEPLOYMENT_URL
-        REACT_APP_API_URL: $BACKEND_URL
-    - if: $CI_COMMIT_REF_NAME == "staging"
-      variables:
-        ENV_NAME: staging
-        DEPLOYMENT_URL: $FRONTEND_DEPLOYMENT_URL_STAGING
-        REACT_APP_API_URL: $BACKEND_URL_STAGING
+    DEPLOYMENT_URL: $FRONTEND_DEPLOYMENT_URL
+    REACT_APP_API_URL: $BACKEND_URL
   stage: deploy
   image: registry.gitlab.com/static-web-apps/azure-static-web-apps-deploy
   script:
     - echo "Frontend deployed successfully."
   environment:
-    name: $ENV_NAME
+    name: production
     url: $DEPLOYMENT_URL
   cache:
     - key: frontend-build-$CI_COMMIT_REF_SLUG
